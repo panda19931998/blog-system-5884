@@ -44,10 +44,9 @@
 				</ul>
 			</li>
 
-				</ul>
-			</li>
+
 			<!-- begin sidebar minify button -->
-			
+
 			<!-- end sidebar minify button -->
 		</ul>
 		<!-- end sidebar nav -->
