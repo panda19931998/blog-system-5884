@@ -30,7 +30,7 @@
 		<!-- begin sidebar nav -->
 		<ul class="nav">
 
-			<li class="has-sub">
+			<li class="has-sub active">
 				<a href="javascript:;">
 					<b class="caret"></b>
 					<i class="fa fa-th-large"></i>
