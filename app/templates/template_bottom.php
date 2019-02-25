@@ -1,4 +1,6 @@
-</div>
+
+
+
 <!-- end #content -->
 
 <!-- begin theme-panel -->

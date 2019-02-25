@@ -20,11 +20,6 @@
 		<?php include(TEMPLATE_PATH."/sidebar.php"); ?>
 
 
-		<!-- begin #content -->
-		<div id="content" class="content">
-			<!-- begin breadcrumb -->
-			<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
-			<!-- end breadcrumb -->
-			<!-- begin page-header -->
-			<h1 class="page-header">Blank Page <small>header small text goes here...</small></h1>
+		
+			<!-- end input-group -->
 			<!-- end page-header -->

@@ -1,5 +1,5 @@
 <!-- begin #sidebar -->
-<div id="sidebar" class="sidebar">
+<div id="sidebar" class="sidebar sidebar-grid">
 	<!-- begin sidebar scrollbar -->
 	<div data-scrollbar="true" data-height="100%">
 		<!-- begin sidebar user -->
@@ -17,15 +17,9 @@
 					</div>
 				</a>
 			</li>
-			<li>
-				<ul class="nav nav-profile">
-					<li><a href="javascript:;"><i class="fa fa-cog"></i> Settings</a></li>
-					<li><a href="javascript:;"><i class="fa fa-pencil-alt"></i> Send Feedback</a></li>
-					<li><a href="javascript:;"><i class="fa fa-question-circle"></i> Helps</a></li>
-				</ul>
-			</li>
 		</ul>
-		<!-- end sidebar user -->
+	<!-- end sidebar user -->
+
 
 		<!-- begin sidebar nav -->
 		<ul class="nav">
@@ -37,10 +31,10 @@
 					<span>ブログ</span>
 				</a>
 				<ul class="sub-menu">
-					<li><a href="entry.php">ブログ記事作成</a></li>
-					<li><a href="index.php">記事一覧</a></li>
-					<li><a href="category.php">カテゴリー管理</a></li>
-					<li><a href="setting.php">ブログ基本設定</a></li>
+					<li><a href="/blog/entry/">ブログ記事作成</a></li>
+					<li><a href="/blog/">記事一覧</a></li>
+					<li><a href="/blog/category/">カテゴリー管理</a></li>
+					<li><a href="/blog/setting/">ブログ基本設定</a></li>
 				</ul>
 			</li>
 
