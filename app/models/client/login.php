@@ -8,23 +8,23 @@
 	<head>
 		<meta charset="utf-8" />
 <title>ログイン | BLOG SYSTEM</title>
+
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 <meta content="Blog System Demonstration" name="description" />
 <meta content="SENSE SHARE" name="author" />
-
 <!-- ================== BEGIN BASE CSS STYLE ================== -->
-<link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-<link href="/contents/assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
-<link href="/contents/assets/plugins/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
-<link href="/contents/assets/plugins/font-awesome/5.0/css/fontawesome-all.min.css" rel="stylesheet" />
-<link href="/contents/assets/plugins/animate/animate.min.css" rel="stylesheet" />
-<link href="/contents/assets/css/default/style.min.css" rel="stylesheet" />
-<link href="/contents/assets/css/default/style-responsive.min.css" rel="stylesheet" />
-<link href="/contents/assets/css/default/theme/blue.css" rel="stylesheet" id="theme" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/animate/animate.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/css/default/style.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/css/default/style-responsive.min.css" rel="stylesheet" />
+<link href="<?php echo CONTENTS_SERVER_URL ?>/assets/css/default/theme/default.css" rel="stylesheet" id="theme" />
 <!-- ================== END BASE CSS STYLE ================== -->
 
 <!-- ================== BEGIN BASE JS ================== -->
-<script src="/contents/assets/plugins/pace/pace.min.js"></script>
+<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/pace/pace.min.js"></script>
 <!-- ================== END BASE JS ================== -->
 
 <link rel="icon" type="image/vnd.microsoft.icon" href="http://blog-system-5884.localhost/contents/img/favicon.ico">
@@ -55,7 +55,7 @@
 			<div class="login login-with-news-feed">
 				<!-- begin news-feed -->
 				<div class="news-feed">
-					<div class="news-image" style="background-image: url(/contents/assets/img/login-bg/login-bg-11.jpg)"></div>
+					<div class="news-image" style="background-image: url(<?php echo CONTENTS_SERVER_URL ?>/assets/img/login-bg/login-bg-11.jpg)"></div>
 					<div class="news-caption">
 						<h4 class="caption-title"><b>BLOG SYSTEM</b></h4>
 						<p>
@@ -114,88 +114,27 @@
 		<!-- end page container -->
 
 		<!-- ================== BEGIN BASE JS ================== -->
-<script src="/contents/assets/plugins/jquery/jquery-3.2.1.min.js"></script>
-<script src="/contents/assets/plugins/jquery/jquery-migrate-1.1.0.min.js"></script>
-<script src="/contents/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
-<script src="/contents/assets/plugins/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
-<!--[if lt IE 9]>
-<script src="/contents/assets/crossbrowserjs/html5shiv.js"></script>
-<script src="/contents/assets/crossbrowserjs/respond.min.js"></script>
-<script src="/contents/assets/crossbrowserjs/excanvas.min.js"></script>
-<![endif]-->
-<script src="/contents/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="/contents/assets/plugins/js-cookie/js.cookie.js"></script>
-<script src="/contents/assets/js/theme/default.min.js"></script>
-<script src="/contents/assets/js/apps.min.js"></script>
-<!-- ================== END BASE JS ================== -->
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/jquery/jquery-3.3.1.min.js"></script>
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<!--[if lt IE 9]>
+			<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/crossbrowserjs/html5shiv.js"></script>
+			<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/crossbrowserjs/respond.min.js"></script>
+			<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/crossbrowserjs/excanvas.min.js"></script>
+		<![endif]-->
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/js-cookie/js.cookie.js"></script>
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/theme/default.min.js"></script>
+		<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/apps.min.js"></script>
+		<!-- ================== END BASE JS ================== -->
 
-<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-<!-- ================== END PAGE LEVEL JS ================== -->
-
-<script src="/contents/assets/plugins/bootstrap-sweetalert/sweetalert.min.js"></script>
-
-<script>
-$(document).ready(function() {
-	App.init();
-});
-
-function form_submit(mode, code, message) {
-	if (confirm(message)) {
-		document.mainform.mode.value = mode;
-		document.mainform.code.value = code;
-		document.mainform.submit();
-	}
-}
-
-
-
-$('[data-click="delete-confirm"]').click(function(e) {
-	e.preventDefault();
-	swal({
-		title: '削除してもよろしいですか？',
-		text: '削除したデータは元には戻せません。',
-		icon: 'error',
-		buttons: {
-			cancel: {
-				text: 'キャンセル',
-				value: null,
-				visible: true,
-				className: 'btn btn-default',
-				closeModal: true,
-			},
-			confirm: {
-				text: '削除',
-				value: true,
-				visible: true,
-				className: 'btn btn-danger',
-				closeModal: true
-			}
-		}
-	})
-	.then((willDelete) => {
-		if (willDelete) {
-			var delete_code = $(this).data('id');
-
-			var formData = new FormData(document.getElementById("mainform"));
-			formData.append('mode', 'delete');
-			formData.append('code', delete_code);
-
-			$.ajax({
-				type: "POST",
-				url: "/",
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: function(xml) {
-					var check_status = $(xml).find("status").text();
-					if (check_status == 1) {
-						$("#item_"+delete_code).remove();
-					}
-				}
+		<script>
+			$(document).ready(function() {
+				App.init();
 			});
-		}
-	});
-});
+		</script>
+
+
 </script>
 
 	</body>
