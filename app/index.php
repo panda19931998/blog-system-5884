@@ -9,6 +9,11 @@ try {
 
   $request_path = $_REQUEST['path'];
 
+
+  // サインアップページの場合はログインチェック無し
+  if ($request_path == '/signup/') {
+  include(dirname(__FILE__).'/models/client/signup.php');
+  } else {
   // ログインチェック
 if (TRUE) {
 include(dirname(__FILE__).'/models/client/login.php');
@@ -18,6 +23,7 @@ include(dirname(__FILE__).'/models/client/login.php');
       // アクセスされたURLのプログラムに処理を移譲
       include(dirname(__FILE__).$url_list[$request_path]);
   }
+}
 }
 } catch (Exception $e) {
    exit;
