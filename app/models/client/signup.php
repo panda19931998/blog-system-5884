@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
-	<title>アカウント設定 | BLOG SYSTEM</title>
+	<title>アカウント作成 | BLOG SYSTEM</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -58,7 +58,7 @@
 				<div class="register-content">
 					<form action="index.html" method="GET" class="margin-bottom-0">
 						<label class="control-label">アカウント名 <span class="text-danger">*</span></label>
-						<div class="row row-space-10">
+						<div class="row m-b-15">
 							<div class="col-md-12">
 								<input type="text" class="form-control" placeholder="" required />
 							</div>
@@ -69,7 +69,6 @@
 								<input type="text" class="form-control" placeholder="" required />
 							</div>
 						</div>
-
 						<label class="control-label">パスワード <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
 							<div class="col-md-6 m-b-15">
@@ -102,7 +101,7 @@
 						</div>
 						<hr />
 						<p class="text-center">
-							&copy; ©2019 SENSE SHARE All Rights Reserved.
+							&copy; 2019 SENSE SHARE All Rights Reserved.
 						</p>
 					</form>
 				</div>
