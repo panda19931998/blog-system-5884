@@ -1,3 +1,196 @@
+<?php
+
+session_regenerate_id(true);
+
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+
+    // 初めて画面にアクセスした時の処理
+
+
+
+	} else {
+
+	    // フォームからサブミットされた時の処理
+
+
+    // 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
+
+    $client_name = $_POST['client_name'];
+
+    $mail_address = $_POST['mail_address'];
+
+    $password = $_POST['password'];
+
+	$password2 =$_POST['password2'];
+
+	$client_code = $_POST['client_code'];
+
+
+
+
+
+    // データベースに接続する（PDOを使う）
+
+    $pdo = connectDb();
+
+
+
+    // 入力チェックを行う。
+
+	$err = array();
+
+
+
+    // [ニックネーム]未入力チェック
+
+    if ($client_name == '') {
+
+      $err['client_name'] = 'ニックネームを入力して下さい。';
+
+
+    }else{
+
+    	if(strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30){
+
+
+    		$err['client_name'] ='ニックネームは30バイト以内で入力してください';
+    	}
+    }
+
+    // [パスワード]未入力チェック
+
+    if ($password == ''||$password2=='') {
+
+    	$err['password'] = 'パスワードを入力して下さい。';
+
+    }else{
+    //再入力チェック
+
+    if ($password !=$password2 ) {
+    	$err['password'] = 'パスワードが一致しません';
+    }
+    }
+  	// [メールアドレス]未入力チェック
+
+    if ($mail_address == '') {
+
+      $err['mail_address'] = 'メールアドレスを入力して下さい。';
+
+    }else{
+
+
+    //形式チェック
+
+    if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
+    	$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
+    }else{
+
+
+   //存在チェック
+
+
+    if(checkEmail($mail_address, $pdo)){
+			$err['mail_address']='このメールアドレスは既に登録されています。';
+          }
+          }
+          }
+
+
+     //招待コードチェック
+		  if ($client_code == '') {
+
+	      	$err['client_code'] = '招待コードを入力して下さい。';
+
+	      }
+
+    // もし$err配列に何もエラーメッセージが保存されていなかったら
+
+    if (empty($err)) {
+
+      // データベース（client,blogテーブル）に新規登録する。
+
+      $sql = "insert into client
+
+            (client_name, password, mail_address, client_code, created_at, updated_at)
+
+            values
+
+            (:client_name, :password, :mail_address, :client_code, now(), now())";
+
+      $stmt = $pdo->prepare($sql);
+
+
+
+      $stmt->bindValue(':client_name', $client_name);
+
+      $stmt->bindValue(':password', $password);
+
+      $stmt->bindValue(':mail_address', $mail_address);
+
+	   $stmt->bindValue(':client_code', $client_code);
+
+
+
+
+	  $flag = $stmt->execute();
+
+	  $sql = "insert into blog
+
+	 	   (blog_author_name, created_at, updated_at)
+
+	 	   values
+
+	 	   (:client_name, now(), now())";
+
+	  $stmt2 = $pdo->prepare($sql);
+
+
+
+	  $stmt2->bindValue(':client_name', $client_name);
+
+
+
+	  $flag = $stmt2->execute();
+
+
+
+	  mb_send_mail(EMAIL, 'ユーザー登録完了',
+	      		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
+
+
+      //自動ログイン
+
+
+      $user = getUser($mail_address,$password,$pdo);
+
+
+
+      $_SESSION['USER'] = $user;
+
+
+      unset($pdo);
+
+      // signup_complete.phpに画面遷移する。
+
+
+      exit;
+}
+unset($pdo);
+
+}
+
+
+?>
+
+
+
+
+
+
+
+
+
+
 
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -38,6 +231,9 @@
 			<!-- begin news-feed -->
 			<div class="news-feed">
 				<div class="news-image" style="background-image: url(<?php echo CONTENTS_SERVER_URL ?>/assets/img/login-bg/login-bg-9.jpg)"></div>
+
+
+
 				<div class="news-caption">
 					<h4 class="caption-title"><b>BLOG SYSTEM</b> </h4>
 					<p>
@@ -55,36 +251,47 @@
 				</h1>
 				<!-- end register-header -->
 				<!-- begin register-content -->
-				<div class="register-content">
-					<form action="index.html" method="GET" class="margin-bottom-0">
+				<div class="register-content"  >
+					<form  method="POST" class="margin-bottom-0">
+					<div class="form-group <?php if ($err['client_name'] != '') echo 'has-error'; ?>">
 						<label class="control-label">アカウント名 <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
-							<div class="col-md-12">
-								<input type="text" class="form-control" placeholder="" required />
+							<div class="col-md-12" >
+								<input type="text" name="client_name" class="form-control" placeholder="" required />
+								<span class="help-block"><?php echo h($err['client_name']); ?></span>
 							</div>
 						</div>
+					</div>
+					<div class="form-group <?php if ($err['mail_address'] != '') echo 'has-error'; ?>">
 						<label class="control-label">メールアドレス <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
-							<div class="col-md-12">
-								<input type="text" class="form-control" placeholder="" required />
+							<div class="col-md-12" >
+								<input type="text" name="mail_address" class="form-control" placeholder="" required />
+								<span class="help-block"><?php echo h($err['mail_address']); ?></span>
 							</div>
 						</div>
+					</div>
+					<div class="form-group <?php if ($err['password'] != '') echo 'has-error'; ?>">
 						<label class="control-label">パスワード <span class="text-danger">*</span></label>
-						<div class="row m-b-15">
-							<div class="col-md-6 m-b-15">
-							   <input type="password" class="form-control" placeholder="8文字以上" required />
+						<div class="row m-b-15" >
+							<div class="col-md-6 m-b-15" >
+							   <input type="password" class="form-control" name="password" placeholder="8文字以上" required />
+							   <span class="help-block"><?php echo h($err['password']); ?></span>
 						   </div>
-						   <div class="col-md-6 m-b-15">
-							   <input type="password" class="form-control" placeholder="再入力" required />
+						   <div class="col-md-6 m-b-15" >
+							   <input type="password" class="form-control" name="password2" placeholder="再入力" required />
 						   </div>
 						</div>
+					</div>
+					<div class="form-group <?php if ($err['client_code'] != '') echo 'has-error'; ?>">
 						<label class="control-label">招待コード <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
-							<div class="col-md-12">
-								<input type="text" class="form-control" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
+							<div class="col-md-12 ">
+								<input type="text" class="form-control" name="client_code" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
+								<span class="help-block"><?php echo h($err['client_code']); ?></span>
 							</div>
 						</div>
-
+                   </div>
 						<div class="checkbox checkbox-css m-b-30">
 							<div class="checkbox checkbox-css m-b-30">
 								<input type="checkbox" id="agreement_checkbox" value="">
@@ -103,6 +310,7 @@
 						<p class="text-center">
 							&copy; 2019 SENSE SHARE All Rights Reserved.
 						</p>
+						<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 					</form>
 				</div>
 				<!-- end register-content -->
@@ -129,11 +337,11 @@
 	<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/theme/facebook.min.js"></script>
 	<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/apps.min.js"></script>
 	<!-- ================== END BASE JS ================== -->
-
 	<script>
-		$(document).ready(function() {
-			App.init();
-		});
-	</script>
+			$(document).ready(function() {
+				App.init();
+			});
+		</script>
+
 </body>
 </html>
