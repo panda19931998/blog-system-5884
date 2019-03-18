@@ -2,17 +2,19 @@
 
 session_regenerate_id(true);
 
+$err = NULL;
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     // 初めて画面にアクセスした時の処理
 
-
+setToken();
 
 	} else {
 
 	    // フォームからサブミットされた時の処理
 
-
+checkToken();
     // 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
 
     $client_name = $_POST['client_name'];
@@ -25,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	$client_code = $_POST['client_code'];
 
-
+    $status=1;
 
 
 
@@ -134,29 +136,31 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	  $flag = $stmt->execute();
 
+
+	  $new_client_id = $pdo->lastInsertId('client_id_seq');
+
 	  $sql = "insert into blog
 
-	 	   (blog_author_name, created_at, updated_at)
+	 	   (status,client_id, created_at, updated_at)
 
 	 	   values
 
-	 	   (:client_name, now(), now())";
+	 	   (:status,:client_id, now(), now())";
 
 	  $stmt2 = $pdo->prepare($sql);
 
+      $stmt2->bindValue(':status', $status);
 
-
-	  $stmt2->bindValue(':client_name', $client_name);
+	  $stmt2->bindValue(':client_id', $new_client_id);
 
 
 
 	  $flag = $stmt2->execute();
 
 
-
-	  mb_send_mail(EMAIL, 'ユーザー登録完了',
-	      		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
-
+//メール送信
+mb_send_mail(EMAIL, 'ユーザー登録完了',
+      		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
 
       //自動ログイン
 
