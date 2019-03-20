@@ -8,13 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     // 初めて画面にアクセスした時の処理
 
-setToken();
+	setToken();
 
-	} else {
+} else {
 
 	    // フォームからサブミットされた時の処理
 
-checkToken();
+	checkToken();
     // 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
 
     $client_name = $_POST['client_name'];
@@ -27,7 +27,7 @@ checkToken();
 
 	$client_code = $_POST['client_code'];
 
-    $status=1;
+    $status = 1;
 
 
 
@@ -39,7 +39,7 @@ checkToken();
 
     // 入力チェックを行う。
 
-	$err = array();
+	
 
 
 
@@ -61,16 +61,16 @@ checkToken();
 
     // [パスワード]未入力チェック
 
-    if ($password == ''||$password2=='') {
+    if ($password == ''||$password2 == '') {
 
     	$err['password'] = 'パスワードを入力して下さい。';
 
     }else{
     //再入力チェック
 
-    if ($password !=$password2 ) {
+    	if ($password != $password2 ) {
     	$err['password'] = 'パスワードが一致しません';
-    }
+    	}
     }
   	// [メールアドレス]未入力チェック
 
@@ -78,24 +78,24 @@ checkToken();
 
       $err['mail_address'] = 'メールアドレスを入力して下さい。';
 
-    }else{
+    } else {
 
 
     //形式チェック
 
     if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
     	$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
-    }else{
+    } else {
 
 
    //存在チェック
 
 
-    if(checkEmail($mail_address, $pdo)){
+    	if (checkEmail($mail_address, $pdo)) {
 			$err['mail_address']='このメールアドレスは既に登録されています。';
-          }
-          }
-          }
+        }
+      }
+    }
 
 
      //招待コードチェック
@@ -178,7 +178,7 @@ mb_send_mail(EMAIL, 'ユーザー登録完了',
 
 
       exit;
-}
+     }
 unset($pdo);
 
 }
