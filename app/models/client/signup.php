@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     $password = $_POST['password'];
 
-	$password2 =$_POST['password2'];
+	$password2 = $_POST['password2'];
 
 	$client_code = $_POST['client_code'];
 
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     // 入力チェックを行う。
 
-	
+
 
 
 
@@ -50,9 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
       $err['client_name'] = 'ニックネームを入力して下さい。';
 
 
-    }else{
+    } else {
 
-    	if(strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30){
+    	if (strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30) {
 
 
     		$err['client_name'] ='ニックネームは30バイト以内で入力してください';
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     	$err['password'] = 'パスワードを入力して下さい。';
 
-    }else{
+    } else {
     //再入力チェック
 
     	if ($password != $password2 ) {
@@ -99,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 
      //招待コードチェック
-		  if ($client_code == '') {
+		if ($client_code == '') {
 
-	      	$err['client_code'] = '招待コードを入力して下さい。';
+			$err['client_code'] = '招待コードを入力して下さい。';
 
-	      }
+		}
 
     // もし$err配列に何もエラーメッセージが保存されていなかったら
 
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
       // データベース（client,blogテーブル）に新規登録する。
 
-      $sql = "insert into client
+    	$sql = "insert into client
 
             (client_name, password, mail_address, client_code, created_at, updated_at)
 
@@ -119,66 +119,66 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
             (:client_name, :password, :mail_address, :client_code, now(), now())";
 
-      $stmt = $pdo->prepare($sql);
+    	$stmt = $pdo->prepare($sql);
 
 
 
-      $stmt->bindValue(':client_name', $client_name);
+    	$stmt->bindValue(':client_name', $client_name);
 
-      $stmt->bindValue(':password', $password);
+    	$stmt->bindValue(':password', $password);
 
-      $stmt->bindValue(':mail_address', $mail_address);
+    	$stmt->bindValue(':mail_address', $mail_address);
 
-	   $stmt->bindValue(':client_code', $client_code);
-
-
-
-
-	  $flag = $stmt->execute();
-
-
-	  $new_client_id = $pdo->lastInsertId('client_id_seq');
-
-	  $sql = "insert into blog
-
-	 	   (status,client_id, created_at, updated_at)
-
-	 	   values
-
-	 	   (:status,:client_id, now(), now())";
-
-	  $stmt2 = $pdo->prepare($sql);
-
-      $stmt2->bindValue(':status', $status);
-
-	  $stmt2->bindValue(':client_id', $new_client_id);
+		$stmt->bindValue(':client_code', $client_code);
 
 
 
-	  $flag = $stmt2->execute();
+
+		$flag = $stmt->execute();
 
 
-//メール送信
-mb_send_mail(EMAIL, 'ユーザー登録完了',
+		$new_client_id = $pdo->lastInsertId('client_id_seq');
+
+		$sql = "insert into blog
+
+	 		(status,client_id, created_at, updated_at)
+
+	 		values
+
+	 		(:status,:client_id, now(), now())";
+
+		$stmt2 = $pdo->prepare($sql);
+
+    	$stmt2->bindValue(':status', $status);
+
+		$stmt2->bindValue(':client_id', $new_client_id);
+
+
+
+		$flag = $stmt2->execute();
+
+
+		//メール送信
+		mb_send_mail(EMAIL, 'ユーザー登録完了',
       		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
 
-      //自動ログイン
+    	//自動ログイン
 
 
-      $user = getUser($mail_address,$password,$pdo);
+    	$user = getUser($mail_address,$password,$pdo);
 
 
 
-      $_SESSION['USER'] = $user;
+		$_SESSION['USER'] = $user;
 
 
-      unset($pdo);
+		unset($pdo);
 
-      // signup_complete.phpに画面遷移する。
+      	// signup_complete.phpに画面遷移する。
 
 
-      exit;
-     }
+      	exit;
+    }
 unset($pdo);
 
 }
