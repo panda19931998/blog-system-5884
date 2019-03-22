@@ -1,201 +1,114 @@
 <?php
-
 session_regenerate_id(true);
 
 $err = NULL;
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+	// 初めて画面にアクセスした時の処理
 
-    // 初めて画面にアクセスした時の処理
-
+	// CSRF対策
 	setToken();
-
 } else {
-
-	    // フォームからサブミットされた時の処理
-
+ 	// フォームからサブミットされた時の処理
 	checkToken();
-    // 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
 
+	// 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
     $client_name = $_POST['client_name'];
-
     $mail_address = $_POST['mail_address'];
-
     $password = $_POST['password'];
-
 	$password2 = $_POST['password2'];
-
 	$client_code = $_POST['client_code'];
-
     $status = 1;
 
-
-
     // データベースに接続する（PDOを使う）
-
     $pdo = connectDb();
-
-
 
     // 入力チェックを行う。
 
-
-
-
-
     // [ニックネーム]未入力チェック
-
     if ($client_name == '') {
-
-      $err['client_name'] = 'ニックネームを入力して下さい。';
-
-
-    } else {
-
+		$err['client_name'] = 'ニックネームを入力して下さい。';
+	} else {
+		// 文字数チェック
     	if (strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30) {
-
-
     		$err['client_name'] ='ニックネームは30バイト以内で入力してください';
     	}
     }
 
     // [パスワード]未入力チェック
-
     if ($password == ''||$password2 == '') {
-
     	$err['password'] = 'パスワードを入力して下さい。';
-
     } else {
     //再入力チェック
-
-    	if ($password != $password2 ) {
-    	$err['password'] = 'パスワードが一致しません';
-    	}
-    }
-  	// [メールアドレス]未入力チェック
-
-    if ($mail_address == '') {
-
-      $err['mail_address'] = 'メールアドレスを入力して下さい。';
-
-    } else {
-
-
-    //形式チェック
-
-    if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
-    	$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
-    } else {
-
-
-   //存在チェック
-
-
-    	if (checkEmail($mail_address, $pdo)) {
-			$err['mail_address']='このメールアドレスは既に登録されています。';
-        }
-      }
-    }
-
-
-     //招待コードチェック
-		if ($client_code == '') {
-
-			$err['client_code'] = '招待コードを入力して下さい。';
-
+    	if ($password != $password2) {
+			$err['password'] = 'パスワードが一致しません';
 		}
+    }
+
+  	// [メールアドレス]未入力チェック
+    if ($mail_address == '') {
+    	$err['mail_address'] = 'メールアドレスを入力して下さい。';
+    } else {
+    	//形式チェック
+    	if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
+			$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
+		} else {
+    		//存在チェック
+    		if (checkEmail($mail_address, $pdo)) {
+				$err['mail_address']='このメールアドレスは既に登録されています。';
+			}
+		}
+	}
+
+    //招待コードチェック
+	if ($client_code == '') {
+		$err['client_code'] = '招待コードを入力して下さい。';
+	}
 
     // もし$err配列に何もエラーメッセージが保存されていなかったら
-
     if (empty($err)) {
-
-      // データベース（client,blogテーブル）に新規登録する。
-
-    	$sql = "insert into client
-
+    	// データベース（clientテーブル）に新規登録する。
+		$sql = "insert into client
             (client_name, password, mail_address, client_code, created_at, updated_at)
-
             values
-
             (:client_name, :password, :mail_address, :client_code, now(), now())";
-
     	$stmt = $pdo->prepare($sql);
 
-
-
     	$stmt->bindValue(':client_name', $client_name);
-
     	$stmt->bindValue(':password', $password);
-
     	$stmt->bindValue(':mail_address', $mail_address);
-
 		$stmt->bindValue(':client_code', $client_code);
-
-
-
 
 		$flag = $stmt->execute();
 
-
 		$new_client_id = $pdo->lastInsertId('client_id_seq');
-
+		// データベース（blogテーブル）に新規登録する。
 		$sql = "insert into blog
-
 	 		(status,client_id, created_at, updated_at)
-
 	 		values
-
 	 		(:status,:client_id, now(), now())";
-
 		$stmt2 = $pdo->prepare($sql);
 
     	$stmt2->bindValue(':status', $status);
-
 		$stmt2->bindValue(':client_id', $new_client_id);
 
-
-
 		$flag = $stmt2->execute();
-
 
 		//メール送信
 		mb_send_mail(EMAIL, 'ユーザー登録完了',
       		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
 
     	//自動ログイン
-
-
     	$user = getUser($mail_address,$password,$pdo);
-
-
 
 		$_SESSION['USER'] = $user;
 
-
 		unset($pdo);
-
-      	// signup_complete.phpに画面遷移する。
-
-
       	exit;
     }
-unset($pdo);
-
+	unset($pdo);
 }
-
-
 ?>
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
@@ -235,9 +148,6 @@ unset($pdo);
 			<!-- begin news-feed -->
 			<div class="news-feed">
 				<div class="news-image" style="background-image: url(<?php echo CONTENTS_SERVER_URL ?>/assets/img/login-bg/login-bg-9.jpg)"></div>
-
-
-
 				<div class="news-caption">
 					<h4 class="caption-title"><b>BLOG SYSTEM</b> </h4>
 					<p>
@@ -322,8 +232,6 @@ unset($pdo);
 			<!-- end right-content -->
 		</div>
 		<!-- end register -->
-
-
 	</div>
 	<!-- end page container -->
 
@@ -346,6 +254,5 @@ unset($pdo);
 				App.init();
 			});
 		</script>
-
 </body>
 </html>
