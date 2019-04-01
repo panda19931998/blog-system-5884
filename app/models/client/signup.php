@@ -1,37 +1,36 @@
 <?php
-session_regenerate_id(true);
 
 $err = NULL;
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-	// 初めて画面にアクセスした時の処理
-
-	// CSRF対策
-	setToken();
+		// 初めて画面にアクセスした時の処理
+		// CSRF対策
+		setToken();
 } else {
- 	// フォームからサブミットされた時の処理
-	checkToken();
-
-	// 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
+		// フォームからサブミットされた時の処理
+		checkToken();
+		// 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
     $client_name = $_POST['client_name'];
     $mail_address = $_POST['mail_address'];
     $password = $_POST['password'];
-	$password2 = $_POST['password2'];
-	$client_code = $_POST['client_code'];
+		$password2 = $_POST['password2'];
+		$secret_code = $_POST['secret_code'];
     $status = 1;
+	$agreement = $_POST['agreement'];
+	$client_code = random(12);
 
     // データベースに接続する（PDOを使う）
     $pdo = connectDb();
 
-    // 入力チェックを行う。
+	// 入力チェックを行う。
 
     // [ニックネーム]未入力チェック
     if ($client_name == '') {
-		$err['client_name'] = 'ニックネームを入力して下さい。';
-	} else {
-		// 文字数チェック
+				$err['client_name'] = 'ニックネームを入力して下さい。';
+		} else {
+				// 文字数チェック
     	if (strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30) {
-    		$err['client_name'] ='ニックネームは30バイト以内で入力してください';
+    			$err['client_name'] ='ニックネームは30バイト以内で入力してください';
     	}
     }
 
@@ -41,34 +40,39 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     } else {
     //再入力チェック
     	if ($password != $password2) {
-			$err['password'] = 'パスワードが一致しません';
-		}
+						$err['password'] = 'パスワードが一致しません';
+				}
     }
 
-  	// [メールアドレス]未入力チェック
+  		// [メールアドレス]未入力チェック
     if ($mail_address == '') {
     	$err['mail_address'] = 'メールアドレスを入力して下さい。';
     } else {
-    	//形式チェック
+		//形式チェック
     	if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
-			$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
-		} else {
-    		//存在チェック
-    		if (checkEmail($mail_address, $pdo)) {
-				$err['mail_address']='このメールアドレスは既に登録されています。';
-			}
+						$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
+				} else {
+    			//存在チェック
+    			if (checkEmail($mail_address, $pdo)) {
+								$err['mail_address']='このメールアドレスは既に登録されています。';
+						}
+				}
 		}
-	}
 
-    //招待コードチェック
-	if ($client_code == '') {
-		$err['client_code'] = '招待コードを入力して下さい。';
-	}
-
+		//招待コードチェック
+   	if ($secret_code == '') {
+   		$err['secret_code'] = '招待コードを入力して下さい。';
+   	} else {
+		if ($secret_code !== 'BLOG_SYSTEM') {
+						$err['secret_code'] = '招待コードが正しくないです';
+				}
+		}
+		//同意チェック
+	if ($agreement) {
     // もし$err配列に何もエラーメッセージが保存されていなかったら
     if (empty($err)) {
     	// データベース（clientテーブル）に新規登録する。
-		$sql = "insert into client
+			$sql = "insert into client
             (client_name, password, mail_address, client_code, created_at, updated_at)
             values
             (:client_name, :password, :mail_address, :client_code, now(), now())";
@@ -89,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	 		(:status,:client_id, now(), now())";
 		$stmt2 = $pdo->prepare($sql);
 
-    	$stmt2->bindValue(':status', $status);
+    $stmt2->bindValue(':status', $status);
 		$stmt2->bindValue(':client_id', $new_client_id);
 
 		$flag = $stmt2->execute();
@@ -100,13 +104,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     	//自動ログイン
     	$user = getUser($mail_address,$password,$pdo);
+		// セッションハイジャック対策
+			session_regenerate_id(true);
+			$_SESSION['USER'] = $user;
 
-		$_SESSION['USER'] = $user;
-
-		unset($pdo);
+			unset($pdo);
       	exit;
     }
-	unset($pdo);
+	}
+		unset($pdo);
 }
 ?>
 <!DOCTYPE html>
@@ -116,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
-	<title>アカウント作成 | BLOG SYSTEM</title>
+	<title>アカウント設定 | BLOG SYSTEM</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -169,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					<form  method="POST" class="margin-bottom-0">
 					<div class="form-group <?php if ($err['client_name'] != '') echo 'has-error'; ?>">
 						<label class="control-label">アカウント名 <span class="text-danger">*</span></label>
-						<div class="row m-b-15">
+						<div class="row row-space-10">
 							<div class="col-md-12" >
 								<input type="text" name="client_name" class="form-control" placeholder="" required />
 								<span class="help-block"><?php echo h($err['client_name']); ?></span>
@@ -197,22 +203,20 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						   </div>
 						</div>
 					</div>
-					<div class="form-group <?php if ($err['client_code'] != '') echo 'has-error'; ?>">
+					<div class="form-group <?php if ($err['secret_code'] != '') echo 'has-error'; ?>">
 						<label class="control-label">招待コード <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
 							<div class="col-md-12 ">
-								<input type="text" class="form-control" name="client_code" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
-								<span class="help-block"><?php echo h($err['client_code']); ?></span>
+								<input type="text" class="form-control" name="secret_code" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
+								<span class="help-block"><?php echo h($err['secret_code']); ?></span>
 							</div>
 						</div>
                    </div>
-						<div class="checkbox checkbox-css m-b-30">
-							<div class="checkbox checkbox-css m-b-30">
-								<input type="checkbox" id="agreement_checkbox" value="">
-								<label for="agreement_checkbox">
-								<a href="javascript:;">利用規約</a> 及び <a href="javascript:;">プライバシーポリシー</a>に同意します。
-							　　</label>
-							</div>
+						<div class="checkbox checkbox-css m-b-30 ">
+								<input type="checkbox" id="agreement" name="agreement" value="1" >
+								<label for="agreement">
+									<a href="javascript:;">利用規約</a> 及び <a href="javascript:;">プライバシーポリシー</a>に同意します。
+								</label>
 						</div>
 						<div class="register-buttons">
 							<button type="submit" class="btn btn-primary btn-block btn-lg">アカウント作成</button>
@@ -222,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						</div>
 						<hr />
 						<p class="text-center">
-							&copy; 2019 SENSE SHARE All Rights Reserved.
+							&copy; ©2019 SENSE SHARE All Rights Reserved.
 						</p>
 						<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 					</form>

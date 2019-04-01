@@ -94,4 +94,11 @@ function getUser($mail_address,$password,$pdo){
 
       	return htmlspecialchars($original_str,ENT_QUOTES,"UTF-8");
       }
+
+
+	function random($length = 12){
+	      return substr(str_shuffle('1234567890abcdefghijklmnopqrstuvwxyz'), 0, $length);
+	  }
+
+
 ?>
