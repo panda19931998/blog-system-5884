@@ -108,11 +108,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			session_regenerate_id(true);
 			$_SESSION['USER'] = $user;
 
-			unset($pdo);
+		unset($pdo);
       	exit;
     }
-	}
-		unset($pdo);
+	} else {
+				$err['agreement'] = '同意チェックされていません';
+			}
+	unset($pdo);
 }
 ?>
 <!DOCTYPE html>
@@ -177,8 +179,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						<label class="control-label">アカウント名 <span class="text-danger">*</span></label>
 						<div class="row row-space-10">
 							<div class="col-md-12" >
-								<input type="text" name="client_name" class="form-control" placeholder="" required />
-								<span class="help-block"><?php echo h($err['client_name']); ?></span>
+								<input type="text" name="client_name" class="form-control" value="<?php echo h($client_name); ?>" placeholder="" required />
+								<span class="help-block"><?php if(isset($err['client_name'])) echo h($err['client_name']); ?></span>
 							</div>
 						</div>
 					</div>
@@ -186,8 +188,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						<label class="control-label">メールアドレス <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
 							<div class="col-md-12" >
-								<input type="text" name="mail_address" class="form-control" placeholder="" required />
-								<span class="help-block"><?php echo h($err['mail_address']); ?></span>
+								<input type="text" name="mail_address" class="form-control" value="<?php if(isset($err['mail_address'])) echo h($mail_address); ?>" placeholder="" required />
+								<span class="help-block"><?php if(isset($err['mail_address']))echo h($err['mail_address']); ?></span>
 							</div>
 						</div>
 					</div>
@@ -196,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						<div class="row m-b-15" >
 							<div class="col-md-6 m-b-15" >
 							   <input type="password" class="form-control" name="password" placeholder="8文字以上" required />
-							   <span class="help-block"><?php echo h($err['password']); ?></span>
+							   <span class="help-block"><?php if(isset($err['password'])) echo h($err['password']); ?></span>
 						   </div>
 						   <div class="col-md-6 m-b-15" >
 							   <input type="password" class="form-control" name="password2" placeholder="再入力" required />
@@ -207,17 +209,20 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						<label class="control-label">招待コード <span class="text-danger">*</span></label>
 						<div class="row m-b-15">
 							<div class="col-md-12 ">
-								<input type="text" class="form-control" name="secret_code" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
-								<span class="help-block"><?php echo h($err['secret_code']); ?></span>
+								<input type="text" class="form-control" name="secret_code" value="<?php echo h($secret_code); ?>" placeholder="招待コードをお持ちの方のみがご登録いただけます。" required />
+								<span class="help-block"><?php if(isset($err['secret_code'])) echo h($err['secret_code']); ?></span>
 							</div>
 						</div>
-                   </div>
+                    </div>
+				    <div class="form-group <?php if ($err['agreement'] != '') echo 'has-error'; ?>">
 						<div class="checkbox checkbox-css m-b-30 ">
 								<input type="checkbox" id="agreement" name="agreement" value="1" >
 								<label for="agreement">
 									<a href="javascript:;">利用規約</a> 及び <a href="javascript:;">プライバシーポリシー</a>に同意します。
 								</label>
+								<span class="help-block"><?php if(isset($err['agreement'])) echo h($err['agreement']); ?></span>
 						</div>
+					</div>
 						<div class="register-buttons">
 							<button type="submit" class="btn btn-primary btn-block btn-lg">アカウント作成</button>
 						</div>
