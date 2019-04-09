@@ -1,4 +1,131 @@
+<?php
 
+$err = NULL;
+
+// データベースに接続する（PDOを使う）
+$pdo = connectDb();
+
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    // 初めて画面にアクセスした時の処理
+
+	// 自動ログイン情報があるかどうかCookieをチェック
+	if (isset($_COOKIE['BLOG_SYSTEM'])) {
+		// 自動ログイン情報があればキーを取得
+		$auto_login_key = $_COOKIE['BLOG_SYSTEM'];
+
+		// 自動ログインキーをDBに照合
+		$sql = "select * from client_auto_login where c_key = :c_key and expire >= :expire limit 1";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(array(":c_key" => $auto_login_key, "expire" => date('Y-m-d H:i:s')));
+		$row = $stmt->fetch();
+
+		if ($row) {
+	        // 照合成功、自動ログイン
+	        $user = getUserbyUserId($row['client_id'], $pdo);
+			// セッションハイジャック対策
+			session_regenerate_id(true);
+        	$_SESSION['USER'] = $user;
+
+			// HOME画面に遷移する。
+			header('Location:'.SITE_URL.'index.php');
+      unset($pdo);
+			exit;
+		}
+	}
+
+	// CSRF対策
+	setToken();
+} else {
+    // フォームからサブミットされた時の処理
+	checkToken();
+
+    // 入力されたメールアドレス、パスワードを受け取り、変数に入れる。
+	$mail_address = $_POST['mail_address'];
+	$password = $_POST['password'];
+	$auto_login = $_POST['auto_login'];
+
+    // 入力チェックを行う。
+	
+
+	// [メールアドレス]未入力チェック
+	if ($mail_address == '') {
+		$err['mail_address'] = 'メールアドレスを入力して下さい。';
+	} else {
+		// [メールアドレス]形式チェック
+		if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
+			$err['mail_address'] = 'メールアドレスが不正です。';
+		} else {
+			// [メールアドレス]存在チェック
+			if (!checkEmail($mail_address, $pdo)) {
+				$err['mail_address'] = 'このメールアドレスが登録されていません。';
+			}
+		}
+	}
+
+	// [パスワード]未入力チェック
+	if ($password == '') {
+		$err['password'] = 'パスワードを入力して下さい。';
+  } else {
+    if ($mail_address && $password) {
+      // メールアドレスとパスワードが正しくない
+      $user = getUser($mail_address, $password, $pdo);
+      if (!$user) {
+        $err['password'] = 'パスワードが正しくありません。';
+      }
+    }
+	}
+
+  // もし$err配列に何もエラーメッセージが保存されていなかったら
+	if (empty($err)) {
+		// セッションハイジャック対策
+		session_regenerate_id(true);
+
+		// ログインに成功したのでセッションにユーザデータを保存する。
+		$_SESSION['USER'] = $user;
+
+		// 自動ログイン情報を一度クリアする。
+		if (isset($_COOKIE['BLOG_SYSTEM'])) {
+			$auto_login_key = $_COOKIE['BLOG_SYSTEM'];
+
+			// Cookie情報をクリア
+			setcookie('BLOG_SYSTEM', '', time()-86400, '/dev/blog-system-5884/web/');
+
+			// DB情報をクリア
+			$sql = "delete from client_auto_login where c_key = :c_key";
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute(array(":c_key" => $auto_login_key));
+		}
+
+		// 自動ログインを希望の場合はCookieとDBに情報を登録する。
+		if ($auto_login) {
+			// 自動ログインキーを生成
+			$auto_login_key = sha1(uniqid(mt_rand(), true));
+
+			// Cookie登録処理
+			setcookie('BLOG_SYSTEM', $auto_login_key, time()+3600*24*365, '/dev/blog-system-5884/web/');
+
+			// DB登録処理
+			$sql = "insert into client_auto_login
+					(client_id, c_key, expire, created_at, updated_at)
+					values
+					(:client_id, :c_key, :expire, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id'],
+				":c_key" => $auto_login_key,
+				":expire" => date('Y-m-d H:i:s', time()+3600*24*365)
+			);
+			$stmt->execute($params);
+		}
+
+		// HOME画面に遷移する。
+		header('Location:'.SITE_URL.'index.php');
+		exit;
+	}
+	unset($pdo);
+
+}
+?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="ja" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
@@ -81,12 +208,14 @@
 					<!-- begin login-content -->
 					<div class="login-content">
 						<form method="POST" class="margin-bottom-0">
-							<div class="form-group m-b-15">
-								<input id="mail_address" name="mail_address" type="text" class="form-control form-control-lg " placeholder="メールアドレス" value="" />
+							<div class="form-group m-b-15  <?php if ($err['mail_address'] != '') echo 'has-error'; ?>">
+								<input id="mail_address" name="mail_address" type="text" class="form-control form-control-lg " placeholder="メールアドレス" value="<?php if(isset($err['mail_address'])) echo h($mail_address); ?>" />
+								<span class="help-block"><?php  if(isset($err['mail_address'])) echo h($err['mail_address']); ?></span>
 								<div class="invalid-feedback"></div>
 							</div>
-							<div class="form-group m-b-15">
+							<div class="form-group m-b-15 <?php if ($err['password'] != '') echo 'has-error'; ?>">
 								<input id="password" name="password" type="password" class="form-control form-control-lg " placeholder="パスワード" value="" />
+								<span class="help-block"><?php  if(isset($err['password'])) echo h($err['password']); ?></span>
 								<div class="invalid-feedback"></div>
 							</div>
 							<div class="checkbox checkbox-css m-b-30">
@@ -101,8 +230,7 @@
 							<hr />
 							<p class="text-center text-grey-darker">
 								&copy;2019 SENSE SHARE All Rights Reserved.							</p>
-
-							<input type="hidden" name="FLUXDEMOTOKEN" value="eca05d458721f2145d064fbe37f1bd6ea0636a92" />
+							<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 						</form>
 					</div>
 					<!-- end login-content -->

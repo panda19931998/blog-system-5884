@@ -1,8 +1,7 @@
 <?php
+
 require_once(dirname(__FILE__).'/url_list.php');
-
 require_once(dirname(__FILE__).'/../functions/require.php');
-
 
 try {
   session_start();
@@ -15,7 +14,7 @@ try {
   include(dirname(__FILE__).'/models/client/signup.php');
   } else {
   // ログインチェック
-if (TRUE) {
+if (check_client_login()) {
 include(dirname(__FILE__).'/models/client/login.php');
 } else {
 
