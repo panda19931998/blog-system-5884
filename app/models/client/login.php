@@ -1,9 +1,8 @@
 <?php
 
-$err = NULL;
-
 // データベースに接続する（PDOを使う）
 $pdo = connectDb();
+
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     // 初めて画面にアクセスした時の処理
@@ -20,15 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$row = $stmt->fetch();
 
 		if ($row) {
-	        // 照合成功、自動ログイン
-	        $user = getUserbyUserId($row['client_id'], $pdo);
+			// 照合成功、自動ログイン
+			$user = getUserbyUserId($row['client_id'], $pdo);
 			// セッションハイジャック対策
 			session_regenerate_id(true);
-        	$_SESSION['USER'] = $user;
+			$_SESSION['USER'] = $user;
 
 			// HOME画面に遷移する。
 			header('Location:'.SITE_URL.'index.php');
-      unset($pdo);
+	  unset($pdo);
 			exit;
 		}
 	}
@@ -45,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$auto_login = $_POST['auto_login'];
 
     // 入力チェックを行う。
-	
+	$err = array();
 
 	// [メールアドレス]未入力チェック
 	if ($mail_address == '') {
@@ -218,14 +217,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 								<span class="help-block"><?php  if(isset($err['password'])) echo h($err['password']); ?></span>
 								<div class="invalid-feedback"></div>
 							</div>
-							<div class="checkbox checkbox-css m-b-30">
+							<div class="form-group checkbox-css m-b-30">
 								<input type="checkbox" id="auto_login" name="auto_login" value="1" />
 								<label for="auto_login">
 									ログイン情報を記憶する
 								</label>
 							</div>
-							<div class="login-buttons">
-								<button type="submit" class="btn btn-success btn-block btn-lg">ログイン</button>
+							<div class="form-group">
+								<input type="submit" value="ログイン" class="btn btn-primary btn-block">
 							</div>
 							<hr />
 							<p class="text-center text-grey-darker">

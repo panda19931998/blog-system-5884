@@ -36,6 +36,7 @@ function setToken(){
 function checkToken(){
   	if (empty($_SESSION['sstoken']) || ($_SESSION['sstoken'] != $_POST['token'])){
   		echo '<html><head><meta charset="utf-8"></head><body>不正なアクセスです。</body></html>';
+		 unset($_SESSION['sstoken']);
   		exit;
 	}
 }
@@ -47,6 +48,6 @@ function random($length = 12){
 }
 // ログインチェック
 function check_client_login(){
-	return $_SESSION['USER'] ? true : false;
+	return empty($_SESSION['USER']) ? true : false;
 }
 ?>
