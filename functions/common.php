@@ -48,6 +48,6 @@ function random($length = 12){
 }
 // ログインチェック
 function check_client_login(){
-	return empty($_SESSION['USER']) ? true : false;
+	return $_SESSION['USER'] ? true : false;
 }
 ?>
