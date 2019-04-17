@@ -1,8 +1,6 @@
 <?php
-
 // データベースに接続する（PDOを使う）
 $pdo = connectDb();
-
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     // 初めて画面にアクセスした時の処理
@@ -26,26 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$_SESSION['USER'] = $user;
 
 			// HOME画面に遷移する。
-			header('Location:'.SITE_URL.'index.php');
+			header('Location:'.SITE_URL);
 	  unset($pdo);
 			exit;
 		}
 	}
-
 	// CSRF対策
 	setToken();
 } else {
     // フォームからサブミットされた時の処理
 	checkToken();
-
     // 入力されたメールアドレス、パスワードを受け取り、変数に入れる。
 	$mail_address = $_POST['mail_address'];
 	$password = $_POST['password'];
-	$auto_login = $_POST['auto_login'];
-
+	if (isset($_POST["auto_login"])) {
+    $auto_login = $_POST['auto_login'];
+	}
     // 入力チェックを行う。
 	$err = array();
-
 	// [メールアドレス]未入力チェック
 	if ($mail_address == '') {
 		$err['mail_address'] = 'メールアドレスを入力して下さい。';
@@ -60,20 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			}
 		}
 	}
-
 	// [パスワード]未入力チェック
 	if ($password == '') {
 		$err['password'] = 'パスワードを入力して下さい。';
-  } else {
-    if ($mail_address && $password) {
-      // メールアドレスとパスワードが正しくない
-      $user = getUser($mail_address, $password, $pdo);
-      if (!$user) {
-        $err['password'] = 'パスワードが正しくありません。';
-      }
-    }
+	} else {
+    	if ($mail_address && $password) {
+    		// メールアドレスとパスワードが正しくない
+    		$user = getUser($mail_address, $password, $pdo);
+      		if (!$user) {
+        		$err['password'] = 'パスワードが正しくありません。';
+    		}
+    	}
 	}
-
   // もし$err配列に何もエラーメッセージが保存されていなかったら
 	if (empty($err)) {
 		// セッションハイジャック対策
@@ -116,13 +110,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			);
 			$stmt->execute($params);
 		}
-
 		// HOME画面に遷移する。
-		header('Location:'.SITE_URL.'index.php');
+		header('Location:'.SITE_URL.'/blog');
 		exit;
 	}
 	unset($pdo);
-
 }
 ?>
 <!DOCTYPE html>
@@ -153,9 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/pace/pace.min.js"></script>
 <!-- ================== END BASE JS ================== -->
 
-<link rel="icon" type="image/vnd.microsoft.icon" href="http://blog-system-5884.localhost/contents/img/favicon.ico">
-<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="http://blog-system-5884.localhost/contents/img/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="http://blog-system-5884.localhost/contents/img/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/img/favicon.ico">
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/img/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo CONTENTS_SERVER_URL ?>/img/apple-touch-icon-180x180.png">
 
 <!-- ================== BEGIN PAGE LEVEL CSS STYLE ================== -->
 <!-- ================== END PAGE LEVEL CSS STYLE ================== -->
