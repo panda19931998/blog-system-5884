@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 			// HOME画面に遷移する。
 			header('Location:'.SITE_URL);
-	  unset($pdo);
+			unset($pdo);
 			exit;
 		}
 	}
@@ -34,13 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 } else {
     // フォームからサブミットされた時の処理
 	checkToken();
-    // 入力されたメールアドレス、パスワードを受け取り、変数に入れる。
+    // 入力されたメールアドレス、パスワード、自動ログインチェックを受け取り、変数に入れる。
 	$mail_address = $_POST['mail_address'];
 	$password = $_POST['password'];
 	if (isset($_POST["auto_login"])) {
-    $auto_login = $_POST['auto_login'];
+    	$auto_login = $_POST['auto_login'];
 	}
-    // 入力チェックを行う。
+
+	// 入力チェックを行う。
 	$err = array();
 	// [メールアドレス]未入力チェック
 	if ($mail_address == '') {
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			}
 		}
 	}
+
 	// [パスワード]未入力チェック
 	if ($password == '') {
 		$err['password'] = 'パスワードを入力して下さい。';
@@ -68,35 +70,29 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     		}
     	}
 	}
-  // もし$err配列に何もエラーメッセージが保存されていなかったら
+
+	// もし$err配列に何もエラーメッセージが保存されていなかったら
 	if (empty($err)) {
 		// セッションハイジャック対策
 		session_regenerate_id(true);
-
 		// ログインに成功したのでセッションにユーザデータを保存する。
 		$_SESSION['USER'] = $user;
-
 		// 自動ログイン情報を一度クリアする。
 		if (isset($_COOKIE['BLOG_SYSTEM'])) {
 			$auto_login_key = $_COOKIE['BLOG_SYSTEM'];
-
 			// Cookie情報をクリア
 			setcookie('BLOG_SYSTEM', '', time()-86400, '/dev/blog-system-5884/web/');
-
 			// DB情報をクリア
 			$sql = "delete from client_auto_login where c_key = :c_key";
 			$stmt = $pdo->prepare($sql);
 			$stmt->execute(array(":c_key" => $auto_login_key));
 		}
-
 		// 自動ログインを希望の場合はCookieとDBに情報を登録する。
 		if ($auto_login) {
 			// 自動ログインキーを生成
 			$auto_login_key = sha1(uniqid(mt_rand(), true));
-
 			// Cookie登録処理
 			setcookie('BLOG_SYSTEM', $auto_login_key, time()+3600*24*365, '/dev/blog-system-5884/web/');
-
 			// DB登録処理
 			$sql = "insert into client_auto_login
 					(client_id, c_key, expire, created_at, updated_at)

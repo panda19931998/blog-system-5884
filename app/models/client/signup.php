@@ -1,104 +1,112 @@
 <?php
 
 $err = NULL;
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-		// 初めて画面にアクセスした時の処理
-		// CSRF対策
-		setToken();
+	// 初めて画面にアクセスした時の処理
+
+	// CSRF対策
+	setToken();
 } else {
-		// フォームからサブミットされた時の処理
-		checkToken();
-		// 入力されたニックネーム、メールアドレス、パスワードを受け取り、変数に入れる。
+	// フォームからサブミットされた時の処理
+	checkToken();
+	// 入力されたクライアントネーム、メールアドレス、パスワード、シークレットコード、自動ログインチェックを受け取り、変数に入れる。
     $client_name = $_POST['client_name'];
     $mail_address = $_POST['mail_address'];
     $password = $_POST['password'];
-		$password2 = $_POST['password2'];
-		$secret_code = $_POST['secret_code'];
+	$password2 = $_POST['password2'];
+	$secret_code = $_POST['secret_code'];
     $status = 1;
 	$agreement = $_POST['agreement'];
 	$client_code = random(12);
-    // データベースに接続する（PDOを使う）
+
+	// データベースに接続する（PDOを使う）
     $pdo = connectDb();
-	// 入力チェックを行う。
-    // [ニックネーム]未入力チェック
+// 入力チェックを行う。
+
+	// [ニックネーム]未入力チェック
     if ($client_name == '') {
-				$err['client_name'] = 'ニックネームを入力して下さい。';
-		} else {
-				// 文字数チェック
+		$err['client_name'] = 'ニックネームを入力して下さい。';
+	} else {
+		// 文字数チェック
     	if (strlen(mb_convert_encoding($client_name,'SJIS', 'UTF-8'))>30) {
-    			$err['client_name'] ='ニックネームは30バイト以内で入力してください';
+    		$err['client_name'] ='ニックネームは30バイト以内で入力してください';
     	}
     }
-    // [パスワード]未入力チェック
+
+	// [パスワード]未入力チェック
     if ($password == ''||$password2 == '') {
     	$err['password'] = 'パスワードを入力して下さい。';
     } else {
-    //再入力チェック
+    	//再入力チェック
     	if ($password != $password2) {
-						$err['password'] = 'パスワードが一致しません';
-				}
+			$err['password'] = 'パスワードが一致しません';
+		}
     }
-  		// [メールアドレス]未入力チェック
+
+	// [メールアドレス]未入力チェック
     if ($mail_address == '') {
     	$err['mail_address'] = 'メールアドレスを入力して下さい。';
     } else {
 		//形式チェック
     	if (!filter_var($mail_address, FILTER_VALIDATE_EMAIL)) {
-						$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
-				} else {
-    			//存在チェック
-    			if (checkEmail($mail_address, $pdo)) {
-								$err['mail_address']='このメールアドレスは既に登録されています。';
-						}
-				}
+			$err['mail_address'] = 'メールアドレスの形式が正しくないです。';
+		} else {
+    	//存在チェック
+    		if (checkEmail($mail_address, $pdo)) {
+				$err['mail_address']='このメールアドレスは既に登録されています。';
+			}
 		}
-		//招待コードチェック
+	}
+
+	//招待コードチェック
    	if ($secret_code == '') {
    		$err['secret_code'] = '招待コードを入力して下さい。';
    	} else {
 		if ($secret_code !== 'BLOG_SYSTEM') {
-						$err['secret_code'] = '招待コードが正しくないです';
-				}
+			$err['secret_code'] = '招待コードが正しくないです';
 		}
-		//同意チェック
+	}
+
+	//同意チェック
 	if ($agreement) {
-    // もし$err配列に何もエラーメッセージが保存されていなかったら
-    if (empty($err)) {
-    	// データベース（clientテーブル）に新規登録する。
+    	// もし$err配列に何もエラーメッセージが保存されていなかったら
+    	if (empty($err)) {
+    		// データベース（clientテーブル）に新規登録する。
 			$sql = "insert into client
-            (client_name, password, mail_address, client_code, created_at, updated_at)
-            values
-            (:client_name, :password, :mail_address, :client_code, now(), now())";
-    	$stmt = $pdo->prepare($sql);
-    	$stmt->bindValue(':client_name', $client_name);
-    	$stmt->bindValue(':password', $password);
-    	$stmt->bindValue(':mail_address', $mail_address);
-		$stmt->bindValue(':client_code', $client_code);
-		$flag = $stmt->execute();
-		$new_client_id = $pdo->lastInsertId('client_id_seq');
-		// データベース（blogテーブル）に新規登録する。
-		$sql = "insert into blog
-	 		(status,client_id, created_at, updated_at)
-	 		values
-	 		(:status,:client_id, now(), now())";
-		$stmt2 = $pdo->prepare($sql);
-    $stmt2->bindValue(':status', $status);
-		$stmt2->bindValue(':client_id', $new_client_id);
-		$flag = $stmt2->execute();
-		//メール送信
-		mb_send_mail(EMAIL, 'ユーザー登録完了',
-      		 '名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
-    	//自動ログイン
-    	$user = getUser($mail_address,$password,$pdo);
-		// セッションハイジャック対策
+            		(client_name, password, mail_address, client_code, created_at, updated_at)
+            		values
+            		(:client_name, :password, :mail_address, :client_code, now(), now())";
+    		$stmt = $pdo->prepare($sql);
+    		$stmt->bindValue(':client_name', $client_name);
+    		$stmt->bindValue(':password', $password);
+    		$stmt->bindValue(':mail_address', $mail_address);
+			$stmt->bindValue(':client_code', $client_code);
+			$flag = $stmt->execute();
+			$new_client_id = $pdo->lastInsertId('client_id_seq');
+			// データベース（blogテーブル）に新規登録する。
+			$sql = "insert into blog
+	 				(status,client_id, created_at, updated_at)
+	 				values
+	 				(:status,:client_id, now(), now())";
+			$stmt2 = $pdo->prepare($sql);
+    		$stmt2->bindValue(':status', $status);
+			$stmt2->bindValue(':client_id', $new_client_id);
+			$flag = $stmt2->execute();
+			//メール送信
+			mb_send_mail(EMAIL, 'ユーザー登録完了',
+      			'名前：'.$client_name.PHP_EOL.'メールアドレス：'.$mail_address);
+    		//自動ログイン
+    		$user = getUser($mail_address,$password,$pdo);
+			// セッションハイジャック対策
 			session_regenerate_id(true);
 			$_SESSION['USER'] = $user;
-		unset($pdo);
-      	exit;
-    }
+			unset($pdo);
+      		exit;
+    	}
 	} else {
-				$err['agreement'] = '同意チェックされていません';
-			}
+		$err['agreement'] = '同意チェックされていません';
+	}
 	unset($pdo);
 }
 ?>
