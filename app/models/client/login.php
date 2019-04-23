@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		if (isset($_COOKIE['BLOG_SYSTEM'])) {
 			$auto_login_key = $_COOKIE['BLOG_SYSTEM'];
 			// Cookie情報をクリア
-			setcookie('BLOG_SYSTEM', '', time()-86400, '/dev/blog-system-5884/web/');
+			setcookie('BLOG_SYSTEM', '', time()-86400, '/');
 			// DB情報をクリア
 			$sql = "delete from client_auto_login where c_key = :c_key";
 			$stmt = $pdo->prepare($sql);
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			// 自動ログインキーを生成
 			$auto_login_key = sha1(uniqid(mt_rand(), true));
 			// Cookie登録処理
-			setcookie('BLOG_SYSTEM', $auto_login_key, time()+3600*24*365, '/dev/blog-system-5884/web/');
+			setcookie('BLOG_SYSTEM', $auto_login_key, time()+3600*24*365, '/');
 			// DB登録処理
 			$sql = "insert into client_auto_login
 					(client_id, c_key, expire, created_at, updated_at)
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$stmt->execute($params);
 		}
 		// HOME画面に遷移する。
-		header('Location:'.SITE_URL.'/blog');
+		header('Location:'.SITE_URL.'/blog/');
 		exit;
 	}
 	unset($pdo);
@@ -141,9 +141,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/pace/pace.min.js"></script>
 <!-- ================== END BASE JS ================== -->
 
-<link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/img/favicon.ico">
-<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/img/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="<?php echo CONTENTS_SERVER_URL ?>/img/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/apple-touch-icon-180x180.png">
 
 <!-- ================== BEGIN PAGE LEVEL CSS STYLE ================== -->
 <!-- ================== END PAGE LEVEL CSS STYLE ================== -->
