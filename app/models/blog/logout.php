@@ -22,6 +22,6 @@ session_destroy();
 
 unset($pdo);
 
-header('Location:'.SITE_URL.'/login.php/');
+header('Location:'.SITE_URL);
 
 ?>
