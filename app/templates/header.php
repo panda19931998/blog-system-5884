@@ -24,7 +24,7 @@
 			<span class="d-none d-md-inline">ハルジオン</span> <b class="caret"></b>
 			</a>
 			<div class="dropdown-menu dropdown-menu-right">
-				<a href="http://blog-system-5884.localhost/blog/logout/" class="dropdown-item">ログアウト</a>
+				<a href="http://blog-system-5884.localhost/logout/" class="dropdown-item">ログアウト</a>
 			</div>
 		</li>
 	</ul>

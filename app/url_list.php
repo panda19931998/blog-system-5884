@@ -6,4 +6,4 @@ $url_list["/blog/entry/"] = "/models/blog/entry.php";
 $url_list["/blog/category/"] = "/models/blog/category.php";
 $url_list["/blog/category_entry/"] = "/models/blog/category_entry.php";
 $url_list["/blog/setting/"] = "/models/blog/setting.php";
-$url_list["/blog/logout/"] = "/models/blog/logout.php";
+$url_list["/logout/"] = "/models/client/logout.php";
