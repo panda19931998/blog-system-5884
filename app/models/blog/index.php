@@ -32,7 +32,7 @@
 <!-- end input-group -->
 			<!-- begin dropdown -->
 <div class="dropdown pull-left">
-<a href="javascript:;" class="btn btn-white btn-white-without-border dropdown-toggle" data-toggle="dropdown">
+<a href="#" class="btn btn-white btn-white-without-border dropdown-toggle" data-toggle="dropdown">
 	Filters by
 </a>
 <ul class="dropdown-menu" role="menu">
@@ -78,7 +78,7 @@
 
 								<td class="text-center">
 									<a href="/blog/entry/?code=272" class="btn btn-primary">編集</a>
-									<a href="javascript:;" class="btn btn-danger" data-id="272" data-click="delete-confirm">削除</a>
+									<a href="#" class="btn btn-danger" data-id="272" data-click="delete-confirm">削除</a>
 								</td>
 							</tr>
 															<tr id="item_273">
@@ -97,7 +97,7 @@
 
 								<td class="text-center">
 									<a href="/blog/entry/?code=273" class="btn btn-primary">編集</a>
-									<a href="javascript:;" class="btn btn-danger" data-id="273" data-click="delete-confirm">削除</a>
+									<a href="#" class="btn btn-danger" data-id="273" data-click="delete-confirm">削除</a>
 								</td>
 							</tr>
 															<tr id="item_271">
@@ -116,7 +116,7 @@
 
 								<td class="text-center">
 									<a href="/blog/entry/?code=271" class="btn btn-primary">編集</a>
-									<a href="javascript:;" class="btn btn-danger" data-id="271" data-click="delete-confirm">削除</a>
+									<a href="#" class="btn btn-danger" data-id="271" data-click="delete-confirm">削除</a>
 								</td>
 							</tr>
 														</tbody>
