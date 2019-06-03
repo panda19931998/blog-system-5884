@@ -33,10 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$blog_category_slug = $blog_category_master['blog_category_slug'];
 	$sort_order = $blog_category_master['sort_order'];
 
-
-
 } else {
-
+    checkToken();
 
 	$category_name = $_POST['category_name'];
 	$blog_category_slug = $_POST['blog_category_slug'];
