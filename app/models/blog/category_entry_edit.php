@@ -9,11 +9,34 @@ if (!isset($_SESSION['USER'])) {
 // セッションからユーザ情報を取得
 $user = $_SESSION['USER'];
 
+$pdo = connectDb();
+
+// パラメータで渡されたアイテムIDを取得
+$id = $_GET['id'];
+
+$err = array();
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
 	setToken();
+
+	$sql = "select * from blog_category_master where blog_category_code = :blog_category_code and client_id = :client_id limit 1";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":blog_category_code" => $id,
+		":client_id" => $user['id']
+	);
+	$stmt->execute($params);
+	$blog_category_master = $stmt->fetch();
+
+	$category_name = $blog_category_master['category_name'];
+	$blog_category_slug = $blog_category_master['blog_category_slug'];
+	$sort_order = $blog_category_master['sort_order'];
+
+
+
 } else {
-	checkToken();
+
 
 	$category_name = $_POST['category_name'];
 	$blog_category_slug = $_POST['blog_category_slug'];
@@ -51,39 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_category_code_sequence = $stmt->fetch();
 
-	//ブログカテゴリーコードのシーケンスがなかった場合
-	if ($blog_category_code_sequence['sequence'] == '') {
-		$sql = "insert into blog_category_code_sequence
-				(client_id, blog_id, sequence, created_at, updated_at)
-				values
-				(:client_id,:blog_id, :sequence, now(), now())";
-		$stmt = $pdo->prepare($sql);
-		$params = array(
-			":client_id" =>$user['id'],
-			":blog_id" => $blog_id,
-			":sequence" => 1
-		);
-		$stmt->execute($params);
-		$blog_category_code = 1;
-	} else {
-		$sql = "update blog_category_code_sequence
-				set
-				blog_id = :blog_id,
-				sequence = :sequence,
-				updated_at =now()
-				where
-				client_id = :client_id";
-		$stmt = $pdo->prepare($sql);
-		$params = array(
-			":client_id" => $user['id'],
-			":blog_id" => $blog_id,
-			":sequence" => $blog_category_code_sequence['sequence'] + 1
-		);
-		$stmt->execute($params);
-
-		$blog_category_code = $blog_category_code_sequence['sequence'] + 1;
-	}
-
 	// 表示順序が空
 	if ($sort_order == '') {
 		$err['sort_order'] = '表示順序を入力して下さい。';
@@ -116,18 +106,22 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	if (empty($err)) {
 		// 登録処理
-		$sql = "insert into blog_category_master
-				(blog_category_code, category_name, blog_category_slug, sort_order, client_id, blog_id, created_at, updated_at)
-				values
-				(:blog_category_code, :category_name, :blog_category_slug, :sort_order, :client_id, :blog_id, now(), now())";
+		$sql = "update blog_category_master
+				set
+				category_name=:category_name,
+				blog_category_slug=:blog_category_slug,
+				sort_order=:sort_order,
+				updated_at = now()
+				where
+				client_id = :client_id and
+				blog_category_code = :blog_category_code";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
-			":blog_category_code" =>$blog_category_code,
 			":category_name" => $category_name,
 			":blog_category_slug" => $blog_category_slug,
 			":sort_order" => $sort_order,
 			":client_id" => $user['id'],
-			":blog_id" => $blog_id
+			":blog_category_code" => $id
 		);
 		$stmt->execute($params);
 
@@ -160,21 +154,21 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($err['category_name'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">カテゴリー名</label>
 				<div class="col-md-10">
-					<input name="category_name" type="text" class="form-control " value="" />
+					<input name="category_name" type="text" class="form-control " value="<?php echo h($category_name); ?>" /><span class="help-block"><?php if ( isset($err['category_name'])) echo h($err['category_name']); ?></span> />
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
-			<div class="form-group row <?php if ($err['slug'] != '') echo 'has-error'; ?>">
+			<div class="form-group row <?php if ($err['blog_category_slug'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">スラッグ</label>
 				<div class="col-md-10">
-					<input name="blog_category_slug" type="text" class="form-control " value="" />
+					<input name="blog_category_slug" type="text" class="form-control " value="<?php echo h($blog_category_slug); ?>" /><span class="help-block"><?php if ( isset($err['blog_category_slug'])) echo h($err['blog_category_slug']); ?></span> />
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
 			<div class="form-group row <?php if ($err['sort_order'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">表示順序</label>
 				<div class="col-md-10">
-					<input name="sort_order" type="text" class="form-control " value="" />
+					<input name="sort_order" type="text" class="form-control " value="<?php echo h($sort_order); ?>" /><span class="help-block"><?php if ( isset($err['sort_order'])) echo h($err['sort_order']); ?></span> />
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
@@ -198,6 +192,5 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 			</div>
 			<!-- end #content -->
-
 
 <?php include(TEMPLATE_PATH."/template_bottom.php"); ?>
