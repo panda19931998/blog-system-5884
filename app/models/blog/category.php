@@ -1,22 +1,16 @@
-<?php include(TEMPLATE_PATH."/template_head.php"); ?>
-
 <?php
-
-$user = $_SESSION['USER'];
-
-$pdo = connectDb();
 
 $blog_category_masters = array();
 
-$sql = "select * from blog_category_master where client_id = :client_id ";
+$sql = "select * from blog_category_master where blog_id = :blog_id ";
 $stmt = $pdo->prepare($sql);
-$stmt->execute(array(":client_id" => $user['id']));
-foreach ($stmt->fetchAll() as $row) {
-	array_push($blog_category_masters, $row);
-}
+$stmt->execute(array(":blog_id" =>$blog_id ));
+$blog_category_masters = $stmt->fetchAll();
 
 unset($pdo);
 ?>
+
+<?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
 <<!-- begin #content -->
 			<div id="content" class="content">
@@ -75,7 +69,7 @@ unset($pdo);
 										<td class="text-center">2</td>
 
 										<td class="text-center">
-											<a href="/blog/category_entry_edit/?id=<?php echo h($blog_category_master['blog_category_code']);?>" class="btn btn-primary">編集</a>
+											<a href="/blog/category_entry/?id=<?php echo h($blog_category_master['blog_category_code']);?>" class="btn btn-primary">編集</a>
 											<a href="javascript:;" class="btn btn-danger" data-id="<?php echo h($blog_category_master['blog_category_code']);?>" data-click="delete-confirm">削除</a>
 										</td>
 									</tr>
