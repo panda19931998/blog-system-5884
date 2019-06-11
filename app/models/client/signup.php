@@ -107,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	} else {
 		$err['agreement'] = '同意チェックされていません';
 	}
-	unset($pdo);
 }
 ?>
 <!DOCTYPE html>
@@ -136,6 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	<!-- ================== BEGIN BASE JS ================== -->
 	<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/pace/pace.min.js"></script>
 	<!-- ================== END BASE JS ================== -->
+
+	<link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/apple-touch-icon-180x180.png">
+
 </head>
 <body class="pace-top bg-white">
 	<!-- begin #page-loader -->

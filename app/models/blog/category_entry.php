@@ -170,29 +170,28 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$complete_msg = "登録されました。\n";
 		}
 	}
-	unset($pdo);
 }
 ?>
 
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 <!-- begin #content -->
-			<div id="content" class="content">
+<div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-		<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
-			<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/category/">ブログカテゴリー</a></li>
-			<li class="breadcrumb-item active">ブログカテゴリー登録</li>
-	</ol>
+	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
+	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/category/">ブログカテゴリー</a></li>
+	<li class="breadcrumb-item active">ブログカテゴリー登録</li>
+</ol>
 <!-- end breadcrumb -->
 
-				<!-- begin page-header -->
-				<h1 class="page-header">ブログカテゴリー登録</h1>
-				<!-- end page-header -->
-				<?php if (isset($complete_msg)): ?>
-				<div class="alert alert-success">
-				<?php echo nl2br(h($complete_msg)); ?>
-				</div>
-				<?php endif; ?>
+<!-- begin page-header -->
+<h1 class="page-header">ブログカテゴリー登録</h1>
+<!-- end page-header -->
+<?php if (isset($complete_msg)): ?>
+<div class="alert alert-success">
+<?php echo nl2br(h($complete_msg)); ?>
+</div>
+<?php endif; ?>
 
 <form method="POST" class="form-horizontal form-bordered" id="mainform" enctype="multipart/form-data">
 	<!-- begin panel -->
@@ -239,8 +238,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 </form>
 
-			</div>
-			<!-- end #content -->
+</div>
+<!-- end #content -->
 
 
 <?php include(TEMPLATE_PATH."/template_bottom.php"); ?>

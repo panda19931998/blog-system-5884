@@ -4,6 +4,8 @@ require_once(dirname(__FILE__).'/../functions/require.php');
 try {
 	session_start();
 
+	$pdo = connectDb();
+
 	$request_path = $_REQUEST['path'];
 	// サインアップページの場合はログインチェック無し
 	if ($request_path == '/signup/' || $request_path == '/signup.php') {
@@ -15,8 +17,6 @@ try {
 		} else {
 			// セッションからユーザ情報を取得
 			$user = $_SESSION['USER'];
-
-			$pdo = connectDb();
 
 			// データベース（blogテーブル）からblog_idを取得する。
 			$sql = "select * from blog where client_id = :client_id limit 1";
@@ -34,6 +34,7 @@ try {
 			}
 		}
 	}
+	unset($pdo);
 } catch (Exception $e) {
 	exit;
 }

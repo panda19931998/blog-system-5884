@@ -13,17 +13,17 @@ unset($pdo);
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
 <<!-- begin #content -->
-			<div id="content" class="content">
-				<!-- begin breadcrumb -->
+<div id="content" class="content">
+<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-		<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
-			<li class="breadcrumb-item active">ブログカテゴリー</li>
-	</ol>
+	<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
+	<li class="breadcrumb-item active">ブログカテゴリー</li>
+</ol>
 <!-- end breadcrumb -->
 
-				<!-- begin page-header -->
-				<h1 class="page-header">ブログカテゴリー</h1>
-				<!-- end page-header -->
+<!-- begin page-header -->
+<h1 class="page-header">ブログカテゴリー</h1>
+<!-- end page-header -->
 
 <form method="GET" id="mainform">
 
@@ -50,42 +50,42 @@ unset($pdo);
 				<div class="panel" style="clear:both">
 					<div class="panel-body panel-form">
 						<table class="table table-bordered table-valign-middle m-b-0">
-								<?php if (!$blog_category_masters): ?>
-								<div class="alert" id="message">カテゴリーが登録されていません。</div>
-								<?php endif; ?>
-								<thead>
-									<tr class="bg-inverse">
-										<th class="text-center text-white">カテゴリー名</th>
-										<th class="width-300 text-center text-white">スラッグ</th>
-										<th class="width-80 text-center text-white">記事数</th>
-										<th class="width-150 text-center text-white"></th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php foreach ($blog_category_masters as $blog_category_master): ?>
-																	<tr id="<?php echo h($blog_category_master['blog_category_code']);?>">
-										<td><?php echo $blog_category_master['category_name'];?></td>
-										<td><?php echo $blog_category_master['blog_category_slug'];?></td>
-										<td class="text-center">2</td>
+							<?php if (!$blog_category_masters): ?>
+							<div class="alert" id="message">カテゴリーが登録されていません。</div>
+							<?php endif; ?>
+							<thead>
+								<tr class="bg-inverse">
+									<th class="text-center text-white">カテゴリー名</th>
+									<th class="width-300 text-center text-white">スラッグ</th>
+									<th class="width-80 text-center text-white">記事数</th>
+									<th class="width-150 text-center text-white"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ($blog_category_masters as $blog_category_master): ?>
+								<tr id="<?php echo h($blog_category_master['blog_category_code']);?>">
+									<td><?php echo $blog_category_master['category_name'];?></td>
+									<td><?php echo $blog_category_master['blog_category_slug'];?></td>
+									<td class="text-center">2</td>
 
-										<td class="text-center">
-											<a href="/blog/category_entry/?id=<?php echo h($blog_category_master['blog_category_code']);?>" class="btn btn-primary">編集</a>
-											<a href="javascript:;" class="btn btn-danger" data-id="<?php echo h($blog_category_master['blog_category_code']);?>" data-click="delete-confirm">削除</a>
-										</td>
-									</tr>
-									<?php endforeach; ?>
-								</tbody>
+									<td class="text-center">
+										<a href="/blog/category_entry/?id=<?php echo h($blog_category_master['blog_category_code']);?>" class="btn btn-primary">編集</a>
+										<a href="javascript:;" class="btn btn-danger" data-id="<?php echo h($blog_category_master['blog_category_code']);?>" data-click="delete-confirm">削除</a>
+									</td>
+								</tr>
+								<?php endforeach; ?>
+							</tbody>
 						</table>
 					</div>
 				</div>
 				<!-- end panel -->
-							</div>
+			</div>
 			<!-- end result-container -->
 		</div>
 		<!-- end col-12 -->
 	</div>
 	<!-- end row -->
 </form>
-			</div>
-			<!-- end #content -->
+</div>
+<!-- end #content -->
 <?php include(TEMPLATE_PATH."/template_bottom.php"); ?>
