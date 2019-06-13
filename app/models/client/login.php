@@ -1,6 +1,4 @@
 <?php
-// データベースに接続する（PDOを使う）
-$pdo = connectDb();
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     // 初めて画面にアクセスした時の処理
@@ -25,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 			// HOME画面に遷移する。
 			header('Location:'.SITE_URL);
-			unset($pdo);
 			exit;
 		}
 	}
@@ -110,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		header('Location:'.SITE_URL.'/blog/');
 		exit;
 	}
-	unset($pdo);
 }
 ?>
 <!DOCTYPE html>

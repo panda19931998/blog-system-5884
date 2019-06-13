@@ -36,5 +36,6 @@ try {
 	}
 	unset($pdo);
 } catch (Exception $e) {
+	unset($pdo);
 	exit;
 }

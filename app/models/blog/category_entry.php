@@ -29,17 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$blog_category_slug = $_POST['blog_category_slug'];
 	$sort_order = $_POST['sort_order'];
 
-	$pdo = connectDb();
-	// データベース（blogテーブル）からblog_idを取得する。
-	$sql = "select * from blog where client_id = :client_id limit 1";
-	$stmt = $pdo->prepare($sql);
-	$params = array(
-		":client_id" => $user['id']
-	);
-	$stmt->execute($params);
-	$blog = $stmt->fetch();
-	$blog_id =$blog['id'];
-
 	$err = array();
 	$complete_msg = "";
 	//client_id,blog_idを確認
@@ -103,9 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}
 
 	//スラッグの重複を確認
-	$sql = "select * from blog_category_master where blog_category_slug = :blog_category_slug  limit 1";
+	$sql = "select * from blog_category_master where blog_id =:blog_id and blog_category_slug = :blog_category_slug  limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
+			":blog_id" => $blog_id,
 			":blog_category_slug" => $blog_category_slug
 		);
 		$stmt->execute($params);
