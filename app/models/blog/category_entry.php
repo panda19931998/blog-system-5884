@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	//スラッグが空
 	if ($blog_category_slug == '') {
-		$blog_category_slug = $blog_category_code;
+		$blog_category_slug = '';
 	} else {
 		// 文字数チェック
 		if (strlen(mb_convert_encoding($blog_category_slug, 'SJIS', 'UTF-8')) > 50) {
@@ -191,21 +191,21 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($err['category_name'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">カテゴリー名</label>
 				<div class="col-md-10">
-					<input name="category_name" type="text" class="form-control " value="<?php if(isset($id) && isset($category_name)) echo h($category_name); ?>" /><span class="help-block"><?php if ( isset($err['category_name'])) echo h($err['category_name']); ?></span>
+					<input name="category_name" type="text" class="form-control " value="<?php if(isset($category_name)) echo h($category_name); ?>" /><span class="help-block"><?php if ( isset($err['category_name'])) echo h($err['category_name']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
 			<div class="form-group row <?php if ($err['blog_category_slug'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">スラッグ</label>
 				<div class="col-md-10">
-					<input name="blog_category_slug" type="text" class="form-control " value="<?php if(isset($id) && isset($blog_category_slug)) echo h($blog_category_slug); ?>" /><span class="help-block"><?php if ( isset($err['blog_category_slug'])) echo h($err['blog_category_slug']); ?></span>
+					<input name="blog_category_slug" type="text" class="form-control " value="<?php if(isset($blog_category_slug)) echo h($blog_category_slug); ?>" /><span class="help-block"><?php if ( isset($err['blog_category_slug'])) echo h($err['blog_category_slug']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
 			<div class="form-group row <?php if ($err['sort_order'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">表示順序</label>
 				<div class="col-md-10">
-					<input name="sort_order" type="text" class="form-control " value="<?php if (isset($id) && isset($sort_order)) echo h($sort_order); ?>" /><span class="help-block"><?php if ( isset($err['sort_order'])) echo h($err['sort_order']); ?></span>
+					<input name="sort_order" type="text" class="form-control " value="<?php if (isset($sort_order)) echo h($sort_order); ?>" /><span class="help-block"><?php if ( isset($err['sort_order'])) echo h($err['sort_order']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
