@@ -70,7 +70,7 @@ unset($pdo);
 
 									<td class="text-center">
 										<a href="/blog/category_entry/?id=<?php echo h($blog_category_master['blog_category_code']);?>" class="btn btn-primary">編集</a>
-										<a href="javascript:;" class="btn btn-danger" data-id="<?php echo h($blog_category_master['blog_category_code']);?>" data-click="delete-confirm">削除</a>
+										<a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?');if (ok) location.href='/blog/delete/?id=<?php echo h($blog_category_master['blog_category_code']);?>'; return false;">削除</a>
 									</td>
 								</tr>
 								<?php endforeach; ?>
