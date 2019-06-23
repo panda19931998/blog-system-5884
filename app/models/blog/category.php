@@ -48,10 +48,10 @@ unset($pdo);
 
 				<!-- begin panel -->
 				<div class="panel" style="clear:both">
+					<?php if (!$blog_category_masters): ?>
+					<div class="alert" id="message">カテゴリーが登録されていません。</div>
+					<?php else: ?>
 					<div class="panel-body panel-form">
-						<?php if (!$blog_category_masters): ?>
-						<div class="alert" id="message">カテゴリーが登録されていません。</div>
-						<?php endif; ?>	
 						<table class="table table-bordered table-valign-middle m-b-0">
 							<thead>
 								<tr class="bg-inverse">
@@ -77,6 +77,7 @@ unset($pdo);
 							</tbody>
 						</table>
 					</div>
+					<?php endif; ?>
 				</div>
 				<!-- end panel -->
 			</div>
