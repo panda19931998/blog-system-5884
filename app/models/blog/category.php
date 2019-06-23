@@ -49,10 +49,10 @@ unset($pdo);
 				<!-- begin panel -->
 				<div class="panel" style="clear:both">
 					<div class="panel-body panel-form">
+						<?php if (!$blog_category_masters): ?>
+						<div class="alert" id="message">カテゴリーが登録されていません。</div>
+						<?php endif; ?>	
 						<table class="table table-bordered table-valign-middle m-b-0">
-							<?php if (!$blog_category_masters): ?>
-							<div class="alert" id="message">カテゴリーが登録されていません。</div>
-							<?php endif; ?>
 							<thead>
 								<tr class="bg-inverse">
 									<th class="text-center text-white">カテゴリー名</th>
