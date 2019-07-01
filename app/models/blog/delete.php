@@ -1,8 +1,8 @@
 <?php
 
-if(isset($_GET['id'])) {
+$id = $_GET['id'];
 
-	$id = $_GET['id'];
+if(isset($id)) {
 
 	//blog_category_master_idの取得
 	$sql = "select * from blog_category_master where blog_category_code = :blog_category_code and client_id = :client_id and blog_id =:blog_id limit 1";
