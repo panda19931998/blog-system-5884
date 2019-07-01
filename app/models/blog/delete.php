@@ -27,6 +27,6 @@ if(isset($_GET['id'])) {
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array(":blog_category_master_id" => $blog_category_master['id']));
 	}
-// category.phpに画面遷移する。
+// category.phpに画面遷移する
 header('Location: '.SITE_URL.'/blog/category/');
 }
