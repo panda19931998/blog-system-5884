@@ -6,7 +6,7 @@ if (isset($_GET['search_keyword'])) {
 	$search_keyword = h($_GET['search_keyword']);
 	$search_value = $search_keyword;
 
-	$sql = "SELECT * FROM blog_category_master where category_name LIKE '%$search_keyword%' order by id";
+	$sql = "SELECT * FROM blog_category_master where blog_id = :blog_id and category_name LIKE '%$search_keyword%' order by id";
 	foreach ($pdo->query($sql) as $row) {
     	array_push($blog_category_masters,$row);
 	}
@@ -19,6 +19,16 @@ if (isset($_GET['search_keyword'])) {
 	$stmt->execute(array(":blog_id" =>$blog_id ));
 	$blog_category_masters = $stmt->fetchAll();
 }
+
+foreach ($blog_category_masters as $blog_category_master):
+	$sql = "SELECT count(*) as num FROM blog_category where blog_id =:blog_id and blog_category_master_id = :blog_category_master_id ";
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute(array(":blog_category_master_id" => $blog_category_master['blog_category_code'],
+						"blog_id" => $blog_id
+						));
+	$row[$blog_category_master['blog_category_code']] = $stmt->fetch();
+endforeach;
+
 unset($pdo);
 ?>
 
@@ -78,6 +88,7 @@ unset($pdo);
 								<tr id="<?php echo h($blog_category_master['blog_category_code']);?>">
 									<td><?php echo $blog_category_master['category_name'];?></td>
 									<td><?php echo $blog_category_master['blog_category_slug'];?></td>
+									<td><?php echo $row[$blog_category_master['blog_category_code']]['num'];?></td>
 									<td class="text-center">2</td>
 
 									<td class="text-center">
