@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     	if (empty($err)) {
     		// データベース（clientテーブル）に新規登録する。
 			$sql = "insert into client
-            		(client_name, password, mail_address, client_code, statsu, created_at, updated_at)
+            		(client_name, password, mail_address, client_code, status, created_at, updated_at)
             		values
             		(:client_name, :password, :mail_address, :client_code, :status, now(), now())";
     		$stmt = $pdo->prepare($sql);

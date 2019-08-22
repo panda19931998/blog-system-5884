@@ -6,12 +6,13 @@ if (isset($_GET['search_keyword'])) {
 	$search_keyword = h($_GET['search_keyword']);
 	$search_value = $search_keyword;
 
-	$sql = "SELECT * FROM blog_category_master where blog_id = :blog_id and category_name LIKE '%$search_keyword%' order by id";
-	foreach ($pdo->query($sql) as $row) {
-    	array_push($blog_category_masters,$row);
-	}
+	$sql = "SELECT * FROM blog_category_master where category_name LIKE '%$search_keyword%' order by id and blog_id = :blog_id ";
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute(array(":blog_id" =>$blog_id ));
+	$blog_category_masters = $stmt->fetchAll();
+	
 }else {
-	$search = '';
+	$search_keyword = '';
 	$search_value = '';
 
 	$sql = "select * from blog_category_master where blog_id = :blog_id ";
@@ -58,7 +59,7 @@ unset($pdo);
 
 				<!-- begin input-group -->
 <div class="input-group input-group-lg m-b-20">
-	<input type="text" id="search_keyword" name="search_keyword" class="form-control input-white" placeholder="検索キーワードを入力してください。" value="<?php echo $search_value ?>" />
+	<input type="text" id="search_keyword" name="search_keyword" class="form-control input-white" placeholder="検索キーワードを入力してください。" value="<?php if (isset($search_value))echo $search_value ;?>" />
 	<div class="input-group-append">
 		<button type="submit" class="btn btn-primary" value ="検索"><i class="fa fa-search fa-fw"></i></button>
 	</div>
