@@ -177,11 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <!-- begin page-header -->
 <h1 class="page-header">ブログカテゴリー登録</h1>
 <!-- end page-header -->
-<?php if (isset($complete_msg)): ?>
-<div class="alert alert-success">
-<?php echo nl2br(h($complete_msg)); ?>
-</div>
-<?php endif; ?>
+
 
 <form method="POST" class="form-horizontal form-bordered" id="mainform" enctype="multipart/form-data">
 	<!-- begin panel -->
