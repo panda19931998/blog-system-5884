@@ -1,11 +1,11 @@
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 <!-- begin #content -->
-			<div id="content" class="content">
+<div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-		<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
-			<li class="breadcrumb-item active">ブログ基本設定</li>
-	</ol>
+	<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
+	<li class="breadcrumb-item active">ブログ基本設定</li>
+</ol>
 <!-- end breadcrumb -->
 
 				<!-- begin page-header -->

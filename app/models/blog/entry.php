@@ -1,22 +1,21 @@
 
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
-
 <!-- end #sidebar -->
 
-			<!-- begin #content -->
-			<div id="content" class="content">
+<!-- begin #content -->
+<div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-		<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
-			<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/">記事一覧</a></li>
-			<li class="breadcrumb-item active">ブログ記事作成</li>
-	</ol>
+	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
+	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/">記事一覧</a></li>
+	<li class="breadcrumb-item active">ブログ記事作成</li>
+</ol>
 <!-- end breadcrumb -->
 
-				<!-- begin page-header -->
-				<h1 class="page-header">ブログ記事作成</h1>
-				<!-- end page-header -->
+<!-- begin page-header -->
+<h1 class="page-header">ブログ記事作成</h1>
+<!-- end page-header -->
 
 <form method="POST" class="form-horizontal form-bordered" id="mainform" enctype="multipart/form-data">
 
@@ -41,7 +40,7 @@
 					<a href="javascript:;" class="m-l-10" data-click="preview"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">プレビュー</button></a>
 					<button type="submit" class="btn btn-primary p-l-40 p-r-40">登録</button>
 				</span>
-							</div>
+			</div>
 			<!-- end wrapper -->
 
 			<!-- begin scrollbar -->
@@ -66,8 +65,7 @@
 		<div class="vertical-box-column bg-silver width-300 border-left">
 			<!-- begin wrapper -->
 			<div class="wrapper bg-silver text-center border-bottom">
-				<div class="image-preview m-b-4">
-									</div>
+				<div class="image-preview m-b-4"></div>
 
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
@@ -100,42 +98,49 @@
 
 				<div class="nav-title m-t-10"><b>CATEGORIES</b></div>
 				<ul id="category_area" class="nav nav-inbox">
-																																<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_40" name="category_id[]" value="40"  />
-								<label for="category_40">
-									プログラマーを知る								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_41" name="category_id[]" value="41"  />
-								<label for="category_41">
-									プログラミングを学ぶメリット								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_42" name="category_id[]" value="42"  />
-								<label for="category_42">
-									プログラマーになる方法								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_43" name="category_id[]" value="43"  />
-								<label for="category_43">
-									TIPS								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_44" name="category_id[]" value="44"  />
-								<label for="category_44">
-									おすすめツール／書籍								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_45" name="category_id[]" value="45"  />
-								<label for="category_45">
-									プログラマーの日常								</label>
-							</li>
-																											<li class="checkbox checkbox-css m-l-15 m-b-5">
-								<input type="checkbox" id="category_46" name="category_id[]" value="46"  />
-								<label for="category_46">
-									おすすめ記事								</label>
-							</li>
-															</ul>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_40" name="category_id[]" value="40"  />
+					<label for="category_40">
+					プログラマーを知る
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_41" name="category_id[]" value="41"  />
+					<label for="category_41">
+					プログラミングを学ぶメリット
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_42" name="category_id[]" value="42"  />
+					<label for="category_42">
+					プログラマーになる方法
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_43" name="category_id[]" value="43"  />
+					<label for="category_43">
+					TIPS
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_44" name="category_id[]" value="44"  />
+					<label for="category_44">
+						おすすめツール／書籍
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_45" name="category_id[]" value="45"  />
+					<label for="category_45">
+					プログラマーの日常
+					</label>
+				</li>
+				<li class="checkbox checkbox-css m-l-15 m-b-5">
+					<input type="checkbox" id="category_46" name="category_id[]" value="46"  />
+					<label for="category_46">
+					おすすめ記事
+					</label>
+				</li>
+				</ul>
 
 				<div class="m-t-20 m-l-10 m-r-10 m-b-10">
 					<div class="input-group">
@@ -156,17 +161,18 @@
 	<input type="hidden" name="FLUXDEMOTOKEN" value="fb101adcbf182caee4e77515ddcb8acc39818d47" />
 </form>
 
-			</div>
-			<!-- end #content -->
+</div>
+<!-- end #content -->
 
 			<!-- begin #footer -->
 <div id="footer" class="footer text-right">
-	&copy;2019 SENSE SHARE All Rights Reserved.</div>
+	&copy;2019 SENSE SHARE All Rights Reserved.
+</div>
 <!-- end #footer -->
 
 			<!-- begin scroll to top btn -->
 <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
 <!-- end scroll to top btn -->
-		</div>
+</div>
 		<!-- end page container -->
-	<?php include(TEMPLATE_PATH."/template_bottom.php"); ?>
+<?php include(TEMPLATE_PATH."/template_bottom.php"); ?>

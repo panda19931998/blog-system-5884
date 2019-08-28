@@ -61,4 +61,15 @@ function random($length = 12) {
 function check_client_login() {
 	return !isset($_SESSION['USER']) ? true : false;
 }
+
+// ユーザIDからuserを検索する
+function getUserbyUserId($client_id, $pdo) {
+    $sql = "select * from client where client_id = :client_id  limit 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array(":clinet_id" => $client_id));
+    $user = $stmt->fetch();
+
+    return $user ? $user : false;
+}
+
 ?>

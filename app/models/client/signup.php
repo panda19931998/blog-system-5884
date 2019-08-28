@@ -74,14 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     	if (empty($err)) {
     		// データベース（clientテーブル）に新規登録する。
 			$sql = "insert into client
-            		(client_name, password, mail_address, client_code, created_at, updated_at)
+            		(client_name, password, mail_address, client_code, status, created_at, updated_at)
             		values
-            		(:client_name, :password, :mail_address, :client_code, now(), now())";
+            		(:client_name, :password, :mail_address, :client_code, :status, now(), now())";
     		$stmt = $pdo->prepare($sql);
     		$stmt->bindValue(':client_name', $client_name);
     		$stmt->bindValue(':password', $password);
     		$stmt->bindValue(':mail_address', $mail_address);
 			$stmt->bindValue(':client_code', $client_code);
+			$stmt->bindValue(':status', $status);
 			$flag = $stmt->execute();
 			$new_client_id = $pdo->lastInsertId('client_id_seq');
 			// データベース（blogテーブル）に新規登録する。
@@ -107,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	} else {
 		$err['agreement'] = '同意チェックされていません';
 	}
-	unset($pdo);
 }
 ?>
 <!DOCTYPE html>
@@ -136,6 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	<!-- ================== BEGIN BASE JS ================== -->
 	<script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/pace/pace.min.js"></script>
 	<!-- ================== END BASE JS ================== -->
+
+	<link rel="icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo CONTENTS_SERVER_URL ?>/assets/img/apple-touch-icon-180x180.png">
+
 </head>
 <body class="pace-top bg-white">
 	<!-- begin #page-loader -->

@@ -12,7 +12,7 @@
 	<!-- begin header-nav -->
 	<ul class="navbar-nav navbar-right">
 		<li>
-			<a href="http://blog-system-5884.localhost/blog/" target="_blank" title="公開ブログ">
+			<a href="/blog/" target="_blank" title="公開ブログ">
 				<i class="fa fa-clone"></i>
 			</a>
 		</li>
@@ -24,7 +24,7 @@
 			<span class="d-none d-md-inline">ハルジオン</span> <b class="caret"></b>
 			</a>
 			<div class="dropdown-menu dropdown-menu-right">
-				<a href="http://blog-system-5884.localhost/logout/" class="dropdown-item">ログアウト</a>
+				<a href="/logout/" class="dropdown-item">ログアウト</a>
 			</div>
 		</li>
 	</ul>

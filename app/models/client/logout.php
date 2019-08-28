@@ -1,7 +1,5 @@
 <?php
 
-$pdo = connectDb();
-
 if (isset($_COOKIE['BLOG_SYSTEM'])) {
 	$auto_login_key = $_COOKIE['BLOG_SYSTEM'];
 
@@ -19,8 +17,6 @@ if (isset($_COOKIE[session_name()])) {
 }
 
 session_destroy();
-
-unset($pdo);
 
 header('Location:'.SITE_URL);
 
