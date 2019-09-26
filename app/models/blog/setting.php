@@ -17,6 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 } else {
 	checkToken();
 
+	$sql = "select * from  blog where  client_id =:client_id limit 1";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":client_id" => $user['id']
+	);
+	$stmt->execute($params);
+	$blog2 = $stmt->fetch();
+
 	$blog['blog_title'] = $_POST['blog_title'];
 	$blog['blog_description'] = $_POST['blog_description'];
 	$blog['blog_keywords'] = $_POST['blog_keywords'];
@@ -30,20 +38,44 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	// ファイルアップロード
 	$file_upload_array_header = file_upload('blog_header_image', $header_err);
-	$blog['blog_header_image'] = $file_upload_array_header['file'];
-	$blog['blog_header_image_ext'] = $file_upload_array_header['ext'];
+
+	if($file_upload_array_header['file'] == ''){
+		$blog['blog_header_image']=$blog2['blog_header_image'];
+		$blog['blog_header_image_ext']=$blog2['blog_header_image_ext'];
+	} else {
+		$blog['blog_header_image'] = $file_upload_array_header['file'];
+		$blog['blog_header_image_ext'] = $file_upload_array_header['ext'];
+	}
 
 	$file_upload_array_favicon = file_upload('blog_favicon_image', $favicon_err);
-	$blog['blog_favicon_image'] = $file_upload_array_favicon['file'];
-	$blog['blog_favicon_image_ext'] = $file_upload_array_favicon['ext'];
+
+	if($file_upload_array_favicon['file'] ==''){
+		$blog['blog_favicon_image'] = $blog2['blog_favicon_image'];
+		$blog['blog_favicon_image_ext'] = $blog2['blog_favicon_image_ext'];
+	} else {
+		$blog['blog_favicon_image'] = $file_upload_array_favicon['file'];
+		$blog['blog_favicon_image_ext'] = $file_upload_array_favicon['ext'];
+	}
 
 	$file_upload_array_favicon180 = file_upload('blog_favicon180_image', $favicon180_err);
-	$blog['blog_favicon180_image'] = $file_upload_array_favicon180['file'];
-	$blog['blog_favicon180_image_ext'] = $file_upload_array_favicon180['ext'];
+
+	if($file_upload_array_favicon180['file'] ==''){
+		$blog['blog_favicon180_image'] = $blog2['blog_favicon180_image'];
+		$blog['blog_favicon180_image_ext'] = $blog2['blog_favicon180_image_ext'];
+	} else {
+		$blog['blog_favicon180_image'] = $file_upload_array_favicon180['file'];
+		$blog['blog_favicon180_image_ext'] = $file_upload_array_favicon180['ext'];
+	}
 
 	$file_upload_array_default = file_upload('blog_default_eye_catch_image', $default_err);
-	$blog['blog_default_eye_catch_image'] = $file_upload_array_default['file'];
-	$blog['blog_default_eye_catch_image_ext'] = $file_upload_array_default['ext'];
+
+	if($file_upload_array_default['file'] ==''){
+		$blog['blog_default_eye_catch_image'] = $blog2['blog_default_eye_catch_image'];
+		$blog['blog_default_eye_catch_image_ext'] = $blog2['blog_default_eye_catch_image_ext'];
+	} else {
+		$blog['blog_default_eye_catch_image'] = $file_upload_array_default['file'];
+		$blog['blog_default_eye_catch_image_ext'] = $file_upload_array_default['ext'];
+	}
 
 	// タイトル名が空
 	if ($blog['blog_title'] == '') {
@@ -90,42 +122,44 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 	}
 
-	$sql = "update blog
-			set
-			blog_title =:blog_title,
-			blog_description =:blog_description,
-			blog_keywords =:blog_keywords,
-			blog_author_name =:blog_author_name,
-			blog_header_image = :blog_header_image,
-			blog_header_image_ext = :blog_header_image_ext,
-			blog_favicon_image = :blog_favicon_image,
-			blog_favicon_image_ext = :blog_favicon_image_ext,
-			blog_favicon180_image = :blog_favicon180_image,
-			blog_favicon180_image_ext = :blog_favicon180_image_ext,
-			blog_default_eye_catch_image = :blog_default_eye_catch_image,
-			blog_default_eye_catch_image_ext = :blog_default_eye_catch_image_ext,
-			analytics_ua_code = :analytics_ua_code,
-			updated_at = now()
-			where
-			client_id=:client_id " ;
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" =>$user['id'],
-				":blog_title" =>$blog['blog_title'],
-				":blog_description" =>$blog['blog_description'],
-				":blog_keywords" =>$blog['blog_keywords'],
-				":blog_author_name" =>$blog['blog_author_name'],
-				":blog_header_image" => $blog['blog_header_image'],
-				":blog_header_image_ext" => $blog['blog_header_image_ext'],
-				":blog_favicon_image" => $blog['blog_favicon_image'],
-				":blog_favicon_image_ext" => $blog['blog_favicon_image_ext'],
-				":blog_favicon180_image" => $blog['blog_favicon180_image'],
-				":blog_favicon180_image_ext" => $blog['blog_favicon180_image_ext'],
-				":blog_default_eye_catch_image" => $blog['blog_default_eye_catch_image'],
-				":blog_default_eye_catch_image_ext" => $blog['blog_default_eye_catch_image_ext'],
-				":analytics_ua_code" => $blog['analytics_ua_code']
-			);
-			$stmt->execute($params);
+	if (empty($err) && empty($header_err) && empty($favicon_err) && empty($favicon180_err) && empty($default_err)) {
+		$sql = "update blog
+				set
+				blog_title =:blog_title,
+				blog_description =:blog_description,
+				blog_keywords =:blog_keywords,
+				blog_author_name =:blog_author_name,
+				blog_header_image = :blog_header_image,
+				blog_header_image_ext = :blog_header_image_ext,
+				blog_favicon_image = :blog_favicon_image,
+				blog_favicon_image_ext = :blog_favicon_image_ext,
+				blog_favicon180_image = :blog_favicon180_image,
+				blog_favicon180_image_ext = :blog_favicon180_image_ext,
+				blog_default_eye_catch_image = :blog_default_eye_catch_image,
+				blog_default_eye_catch_image_ext = :blog_default_eye_catch_image_ext,
+				analytics_ua_code = :analytics_ua_code,
+				updated_at = now()
+				where
+				client_id=:client_id " ;
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" =>$user['id'],
+					":blog_title" =>$blog['blog_title'],
+					":blog_description" =>$blog['blog_description'],
+					":blog_keywords" =>$blog['blog_keywords'],
+					":blog_author_name" =>$blog['blog_author_name'],
+					":blog_header_image" => $blog['blog_header_image'],
+					":blog_header_image_ext" => $blog['blog_header_image_ext'],
+					":blog_favicon_image" => $blog['blog_favicon_image'],
+					":blog_favicon_image_ext" => $blog['blog_favicon_image_ext'],
+					":blog_favicon180_image" => $blog['blog_favicon180_image'],
+					":blog_favicon180_image_ext" => $blog['blog_favicon180_image_ext'],
+					":blog_default_eye_catch_image" => $blog['blog_default_eye_catch_image'],
+					":blog_default_eye_catch_image_ext" => $blog['blog_default_eye_catch_image_ext'],
+					":analytics_ua_code" => $blog['analytics_ua_code']
+				);
+				$stmt->execute($params);
+	}
 }
 ?>
 
@@ -183,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($err['analytics_ua_code'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">Google Analyticsコード</label>
 				<div class="col-md-10">
-					<input name="analytics_ua_code" type="text" class="form-control " value=<?php echo $blog['analytics_ua_code']; ?>" /><span class="help-block"><?php if ( isset($err['analytics_ua_code'])) echo h($err['analytics_ua_code']); ?></span>
+					<input name="analytics_ua_code" type="text" class="form-control " value="<?php echo $blog['analytics_ua_code']; ?>" /><span class="help-block"><?php if ( isset($err['analytics_ua_code'])) echo h($err['analytics_ua_code']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
