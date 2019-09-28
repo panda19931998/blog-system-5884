@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				</div>
 			</div>
 
-			<div class="form-group row <?php if ($header_err != '') echo 'has-error'; ?>">
+			<div class="form-group row <?php if ($header_err['blog_header_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">ヘッダーイメージ（1200px*260px）</label>
 				<div class="col-md-10">
 					<input name="blog_header_image" type="file" class="form-control " value="<?php echo $blog['blog_header_image']; ?>" /><span class="help-block"><?php if ( isset($header_err['blog_header_image'])) echo h($header_err['blog_header_image']); ?></span>
