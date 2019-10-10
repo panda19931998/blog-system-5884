@@ -1,6 +1,7 @@
 <?php
 
 $blog = array();
+$blog2 = array();
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
@@ -13,7 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	);
 	$stmt->execute($params);
 	$blog = $stmt->fetch();
-
+	$blog_header_image =$blog['blog_header_image'];
+	$blog_header_image_ext=$blog['blog_header_image_ext'];
 } else {
 	checkToken();
 
@@ -39,12 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// ファイルアップロード
 	$file_upload_array_header = file_upload('blog_header_image', $header_err);
 
-	if($file_upload_array_header['file'] == ''){
-		$blog['blog_header_image']=$blog2['blog_header_image'];
-		$blog['blog_header_image_ext']=$blog2['blog_header_image_ext'];
-	} else {
+	if($file_upload_array_header['file'] !=''){
 		$blog['blog_header_image'] = $file_upload_array_header['file'];
 		$blog['blog_header_image_ext'] = $file_upload_array_header['ext'];
+
+	} else {
+		$blog['blog_header_image']=$blog2['blog_header_image'];
+		$blog['blog_header_image_ext']=$blog2['blog_header_image_ext'];
 	}
 
 	$file_upload_array_favicon = file_upload('blog_favicon_image', $favicon_err);
@@ -225,7 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($header_err['blog_header_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">ヘッダーイメージ（1200px*260px）</label>
 				<div class="col-md-10">
-					<input name="blog_header_image" type="file" class="form-control " value="<?php echo $blog['blog_header_image']; ?>" /><span class="help-block"><?php if ( isset($header_err['blog_header_image'])) echo h($header_err['blog_header_image']); ?></span>
+					<img src="<?php echo get_base64_header_string($blog['blog_header_image_ext']) ?><?php echo base64_encode($blog['blog_header_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<input name="blog_header_image" type="file" class="form-control " value="" alt="" class="width-full m-b-10 img-responsive" /><span class="help-block"><?php if ( isset($header_err['blog_header_image'])) echo h($header_err['blog_header_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>

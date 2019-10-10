@@ -131,4 +131,19 @@ function file_upload($id, $err) {
 
 	return $return_array;
 }
+
+function get_base64_header_string($file_extension) {
+	switch (mb_strtolower($file_extension)) {
+		case 'png':
+		case 'ico':
+		case 3:
+		return 'data:image/png;base64,';
+		break;
+		case 'jpg':
+		case 'jpeg':
+		case 2:
+		return 'data:image/jpg;base64,';
+		break;
+	}
+}
 ?>
