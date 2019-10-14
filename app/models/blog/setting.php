@@ -14,8 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	);
 	$stmt->execute($params);
 	$blog = $stmt->fetch();
-	$blog_header_image =$blog['blog_header_image'];
-	$blog_header_image_ext=$blog['blog_header_image_ext'];
+
 } else {
 	checkToken();
 
@@ -41,13 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// ファイルアップロード
 	$file_upload_array_header = file_upload('blog_header_image', $header_err);
 
-	if($file_upload_array_header['file'] !=''){
-		$blog['blog_header_image'] = $file_upload_array_header['file'];
-		$blog['blog_header_image_ext'] = $file_upload_array_header['ext'];
-
-	} else {
+	if($file_upload_array_header['file'] ==''){
 		$blog['blog_header_image']=$blog2['blog_header_image'];
 		$blog['blog_header_image_ext']=$blog2['blog_header_image_ext'];
+	} else {
+		$blog['blog_header_image'] = $file_upload_array_header['file'];
+		$blog['blog_header_image_ext'] = $file_upload_array_header['ext'];
 	}
 
 	$file_upload_array_favicon = file_upload('blog_favicon_image', $favicon_err);
@@ -145,24 +143,30 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				where
 				client_id=:client_id " ;
 				$stmt = $pdo->prepare($sql);
-				$params = array(
-					":client_id" =>$user['id'],
-					":blog_title" =>$blog['blog_title'],
-					":blog_description" =>$blog['blog_description'],
-					":blog_keywords" =>$blog['blog_keywords'],
-					":blog_author_name" =>$blog['blog_author_name'],
-					":blog_header_image" => $blog['blog_header_image'],
-					":blog_header_image_ext" => $blog['blog_header_image_ext'],
-					":blog_favicon_image" => $blog['blog_favicon_image'],
-					":blog_favicon_image_ext" => $blog['blog_favicon_image_ext'],
-					":blog_favicon180_image" => $blog['blog_favicon180_image'],
-					":blog_favicon180_image_ext" => $blog['blog_favicon180_image_ext'],
-					":blog_default_eye_catch_image" => $blog['blog_default_eye_catch_image'],
-					":blog_default_eye_catch_image_ext" => $blog['blog_default_eye_catch_image_ext'],
-					":analytics_ua_code" => $blog['analytics_ua_code']
-				);
-				$stmt->execute($params);
+				$stmt->bindValue(':client_id', (int)$user['id'], PDO::PARAM_INT);
+				$stmt->bindValue(':blog_title', $blog['blog_title'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_description', $blog['blog_description'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_keywords', $blog['blog_keywords'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_author_name', $blog['blog_author_name'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_header_image', $blog['blog_header_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':blog_header_image_ext', $blog['blog_header_image_ext'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_favicon_image', $blog['blog_favicon_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':blog_favicon_image_ext', $blog['blog_favicon_image_ext'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_favicon180_image', $blog['blog_favicon180_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':blog_favicon180_image_ext', $blog['blog_favicon180_image_ext'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_default_eye_catch_image', $blog['blog_default_eye_catch_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':blog_default_eye_catch_image_ext', $blog['blog_default_eye_catch_image_ext'], PDO::PARAM_STR);
+				$stmt->bindValue(':analytics_ua_code', $blog['analytics_ua_code'], PDO::PARAM_STR);
+				$stmt->execute();
 	}
+
+	$sql = "select * from  blog where  client_id =:client_id limit 1";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":client_id" => $user['id']
+	);
+	$stmt->execute($params);
+	$blog = $stmt->fetch();
 }
 ?>
 
@@ -237,7 +241,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($favicon_err['blog_favicon_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">favicon.ico</label>
 				<div class="col-md-10">
-					<input name="blog_favicon_image" type="file" class="form-control " value="<?php echo $blog['blog_favicon_image']; ?>" /><span class="help-block"><?php if ( isset($favicon_err['blog_favicon_image'])) echo h($favicon_err['blog_favicon_image']); ?></span>
+					<img src="<?php echo get_base64_header_string($blog['blog_favicon_image_ext']) ?><?php echo base64_encode($blog['blog_favicon_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<input name="blog_favicon_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($favicon_err['blog_favicon_image'])) echo h($favicon_err['blog_favicon_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
@@ -245,7 +250,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($favicon180_err['blog_favicon180_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">apple-touch-icon-180x180.png</label>
 				<div class="col-md-10">
-					<input name="blog_favicon180_image" type="file" class="form-control " value="<?php echo $blog['blog_favicon180_image']; ?>" /><span class="help-block"><?php if ( isset($favicon180_err['blog_favicon180_image'])) echo h($favicon180_err['blog_favicon180_image']); ?></span>
+					<img src="<?php echo get_base64_header_string($blog['blog_favicon180_image_ext']) ?><?php echo base64_encode($blog['blog_favicon180_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<input name="blog_favicon180_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($favicon180_err['blog_favicon180_image'])) echo h($favicon180_err['blog_favicon180_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
@@ -253,7 +259,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($default_err['blog_default_eye_catch_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">デフォルトアイキャッチ画像（1200px*630px）</label>
 				<div class="col-md-10">
-					<input name="blog_default_eye_catch_image" type="file" class="form-control " value="<?php echo $blog['blog_default_eye_catch_image']; ?>" /><span class="help-block"><?php if ( isset($default_err['blog_default_eye_catch_image'])) echo h($default_err['blog_default_eye_catch_image']); ?></span>
+					<img src="<?php echo get_base64_header_string($blog['blog_default_eye_catch_image_ext']) ?><?php echo base64_encode($blog['blog_default_eye_catch_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<input name="blog_default_eye_catch_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($default_err['blog_default_eye_catch_image'])) echo h($default_err['blog_default_eye_catch_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 			</div>
