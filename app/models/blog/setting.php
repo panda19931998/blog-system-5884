@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($favicon_err['blog_favicon_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">favicon.ico</label>
 				<div class="col-md-10">
-					<img src="<?php echo get_base64_header_string($blog['blog_favicon_image_ext']) ?><?php echo base64_encode($blog['blog_favicon_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<img src="<?php echo get_base64_header_string($blog['blog_favicon_image_ext']) ?><?php echo base64_encode($blog['blog_favicon_image']);?>" alt="" class="m-b-10" width="40px">
 					<input name="blog_favicon_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($favicon_err['blog_favicon_image'])) echo h($favicon_err['blog_favicon_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($favicon180_err['blog_favicon180_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">apple-touch-icon-180x180.png</label>
 				<div class="col-md-10">
-					<img src="<?php echo get_base64_header_string($blog['blog_favicon180_image_ext']) ?><?php echo base64_encode($blog['blog_favicon180_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<img src="<?php echo get_base64_header_string($blog['blog_favicon180_image_ext']) ?><?php echo base64_encode($blog['blog_favicon180_image']);?>" alt="" class="m-b-10" width="40px">
 					<input name="blog_favicon180_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($favicon180_err['blog_favicon180_image'])) echo h($favicon180_err['blog_favicon180_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
@@ -259,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="form-group row <?php if ($default_err['blog_default_eye_catch_image'] != '') echo 'has-error'; ?>">
 				<label class="col-md-2 col-form-label">デフォルトアイキャッチ画像（1200px*630px）</label>
 				<div class="col-md-10">
-					<img src="<?php echo get_base64_header_string($blog['blog_default_eye_catch_image_ext']) ?><?php echo base64_encode($blog['blog_default_eye_catch_image']);?>" alt="" class="width-full m-b-10 img-responsive">
+					<img src="<?php echo get_base64_header_string($blog['blog_default_eye_catch_image_ext']) ?><?php echo base64_encode($blog['blog_default_eye_catch_image']);?>" alt="" class="m-b-10"  width="300px">
 					<input name="blog_default_eye_catch_image" type="file" class="form-control " value="" /><span class="help-block"><?php if ( isset($default_err['blog_default_eye_catch_image'])) echo h($default_err['blog_default_eye_catch_image']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
