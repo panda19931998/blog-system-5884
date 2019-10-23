@@ -1,11 +1,17 @@
+<?php
+// パンくずリスト設定
+$breadcrumb_list = array();
+$breadcrumb_list[0]['title'] = 'HOME';
+$breadcrumb_list[0]['url'] = SITE_URL.'/blog/';
+ ?>
+
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 			<!-- begin panel -->
 			<!-- begin #content -->
 <div id="content" class="content">
 		<!-- begin breadcrumb -->
 	<ol class="breadcrumb pull-right">
-		<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
-		<li class="breadcrumb-item active">記事一覧</li>
+		<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
 	</ol>
 <!-- end breadcrumb -->
 

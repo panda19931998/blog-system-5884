@@ -1,5 +1,13 @@
+<?php if ($breadcrumb_list): ?>
+<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/">HOME</a></li>
-
-	<li class="breadcrumb-item active">記事一覧</li>
+<?php foreach ($breadcrumb_list as $breadcrumb): ?>
+<?php if (!$breadcrumb['url']): ?>
+<li class="breadcrumb-item active"><?php echo $breadcrumb['title'] ?></li>
+<?php else: ?>
+<li class="breadcrumb-item"><a href="<?php echo h($breadcrumb['url']) ?>"><?php echo $breadcrumb['title'] ?></a></li>
+<?php endif; ?>
+<?php endforeach; ?>
 </ol>
+<!-- end breadcrumb -->
+<?php endif; ?>
