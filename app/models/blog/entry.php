@@ -3,9 +3,9 @@
 // パンくずリスト設定
 $breadcrumb_list = array();
 $breadcrumb_list[0]['title'] = 'HOME';
-$breadcrumb_list[0]['url'] = SITE_URL.'/blog/';
+$breadcrumb_list[0]['url'] = SITE_URL;
 $breadcrumb_list[1]['title'] = 'ブログ記事作成';
-$breadcrumb_list[1]['url'] = 'http://blog-system-5884.localhost/blog/entry/';
+$breadcrumb_list[1]['url'] = '';
 
 ?>
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
@@ -172,9 +172,7 @@ $breadcrumb_list[1]['url'] = 'http://blog-system-5884.localhost/blog/entry/';
 <!-- end #content -->
 
 			<!-- begin #footer -->
-<div id="footer" class="footer text-right">
-	&copy;2019 SENSE SHARE All Rights Reserved.
-</div>
+
 <!-- end #footer -->
 
 			<!-- begin scroll to top btn -->

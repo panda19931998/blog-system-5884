@@ -3,9 +3,9 @@
 // パンくずリスト設定
 $breadcrumb_list = array();
 $breadcrumb_list[0]['title'] = 'HOME';
-$breadcrumb_list[0]['url'] = SITE_URL.'/blog/';
-$breadcrumb_list[1]['title'] = ブログカテゴリー;
-$breadcrumb_list[1]['url'] = 'http://blog-system-5884.localhost/blog/category/';
+$breadcrumb_list[0]['url'] = SITE_URL;
+$breadcrumb_list[1]['title'] = 'ブログカテゴリー';
+$breadcrumb_list[1]['url'] = '';
 
 $blog_category_masters = array();
 

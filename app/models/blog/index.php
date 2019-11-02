@@ -2,7 +2,7 @@
 // パンくずリスト設定
 $breadcrumb_list = array();
 $breadcrumb_list[0]['title'] = 'HOME';
-$breadcrumb_list[0]['url'] = SITE_URL.'/blog/';
+$breadcrumb_list[0]['url'] = SITE_URL;
  ?>
 
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
