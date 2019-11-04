@@ -1,7 +1,7 @@
 <div id="header" class="header navbar-inverse navbar-fixed-top">
 	<!-- begin navbar-header -->
 	<div class="navbar-header">
-		<a href="index.html" class="navbar-brand"><span class="navbar-logo"></span> <b>BLOG SYSTEM</b><span class="f-s-12">-Blog System Demonstration（Alpha1.0026）</span></a>
+		<a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>BLOG SYSTEM</b><span class="f-s-12">-Blog System Demonstration（Alpha1.0026）</span></a>
 		<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
