@@ -1,4 +1,10 @@
 <?php
+// パンくずリスト設定
+$breadcrumb_list = array();
+$breadcrumb_list[0]['title'] = 'HOME';
+$breadcrumb_list[0]['url'] = SITE_URL;
+$breadcrumb_list[1]['title'] = 'ブログ基本設定';
+$breadcrumb_list[1]['url'] = '';
 
 $blog = array();
 $blog2 = array();
@@ -175,8 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-	<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
-	<li class="breadcrumb-item active">ブログ基本設定</li>
+	<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
 </ol>
 <!-- end breadcrumb -->
 

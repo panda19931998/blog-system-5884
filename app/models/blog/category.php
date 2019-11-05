@@ -1,5 +1,12 @@
 <?php
 
+// パンくずリスト設定
+$breadcrumb_list = array();
+$breadcrumb_list[0]['title'] = 'HOME';
+$breadcrumb_list[0]['url'] = SITE_URL;
+$breadcrumb_list[1]['title'] = 'ブログカテゴリー';
+$breadcrumb_list[1]['url'] = '';
+
 $blog_category_masters = array();
 
 if (isset($_GET['search_keyword'])) {
@@ -34,8 +41,7 @@ unset($pdo);
 <div id="content" class="content">
 <!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-	<li class="breadcrumb-item"><a href="https://demo.flu-x.net">HOME</a></li>
-	<li class="breadcrumb-item active">ブログカテゴリー</li>
+	<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
 </ol>
 <!-- end breadcrumb -->
 
