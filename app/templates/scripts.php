@@ -1,8 +1,3 @@
-<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-<?php if ($page_base_body_tag_template): ?>
-<?php include(TEMPLATE_PATH."/page_level/".$page_base_body_tag_template); ?>
-<?php endif; ?>
-<!-- ================== END PAGE LEVEL JS ================== -->
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/jquery/jquery-3.3.1.min.js"></script>
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -16,7 +11,11 @@
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/theme/default.min.js"></script>
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/apps.min.js"></script>
 <!-- ================== END BASE JS ================== -->
-
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<?php if ($page_base_body_tag_template): ?>
+<?php include(TEMPLATE_PATH."/page_level/".$page_base_body_tag_template); ?>
+<?php endif; ?>
+<!-- ================== END PAGE LEVEL JS ================== -->
 <script>
 	$(document).ready(function() {
 		App.init();
