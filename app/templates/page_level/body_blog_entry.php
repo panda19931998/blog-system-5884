@@ -1,6 +1,8 @@
 <!-- WISYWIG -->
 <script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/summernote/summernote.min.js"></script>
 <script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/summernote/lang/summernote-ja-JP.min.js"></script>
+<!-- ON/OFFトグル -->
+<script src="//gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	// WISYWIG
 	$('.summernote').summernote({
