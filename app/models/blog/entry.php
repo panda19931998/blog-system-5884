@@ -4,8 +4,246 @@ $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
-?>
+if(isset($_GET['id'])) {
+	$id = $_GET['id'];
+}
 
+$blog_entry = array();
+$blog_entry2 = array();
+
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+	// CSRF対策
+	setToken();
+
+	if(isset($id)){
+		$sql = "select * from blog_entry where blog_entry_code = :blog_entry_code and client_id = :client_id limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_entry_code" => $id,
+			":client_id" => $user['id']
+		);
+		$stmt->execute($params);
+		$blog_entry = $stmt->fetch();
+
+		$title = $blog_entry['title'];
+		$slug = $blog_entry['slug'];
+		$contents = $blog_entry['contents'];
+		$posting_date = $blog_entry['posting_date'];
+		$seo_description = $blog_entry['seo_description'];
+		$seo_keywords = $blog_entry['seo_keywords'];
+		$status = $blog_entry['status'];
+	}
+} else {
+	checkToken();
+
+	$sql = "select * from blog_entry where client_id = :client_id limit 1";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":client_id" => $user['id']
+	);
+	$stmt->execute($params);
+	$blog_entry2 = $stmt->fetch();
+
+	$title = $_POST['title'];
+	$contents = $_POST['contents'];
+	$posting_date = $_POST['posting_date'];
+	$seo_description = $_POST['seo_description'];
+	$seo_keywords = $_POST['seo_keywords'];
+
+	if(isset($_POST['status'])){
+		$status = 1;
+	} else {
+		$status = 0;
+	};
+	$slug = $_POST['slug'];
+
+	$err = array();
+	$complete_msg = "";
+	//client_id,blog_idを確認
+	$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":client_id" => $user['id']
+		);
+		$stmt->execute($params);
+		$blog_entry_code_sequence = $stmt->fetch();
+	if(!isset($id)){
+		//ブログカテゴリーコードのシーケンスがなかった場合
+		if ($blog_entry_code_sequence['sequence'] == '') {
+			$sql = "insert into blog_entry_code_sequence
+					(client_id, blog_id, sequence, created_at, updated_at)
+					values
+					(:client_id,:blog_id, :sequence, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" =>$user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => 1
+			);
+			$stmt->execute($params);
+			$blog_entry_code = 1;
+		} else {
+			$sql = "update blog_entry_code_sequence
+					set
+					blog_id = :blog_id,
+					sequence = :sequence,
+					updated_at =now()
+					where
+					client_id = :client_id";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => $blog_entry_code_sequence['sequence'] + 1
+			);
+			$stmt->execute($params);
+			$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
+		}
+	}
+
+	$default_err = array();
+
+	$file_upload_array_default = file_upload('eye_catch_image', $default_err);
+
+	if($file_upload_array_default['file'] ==''){
+		$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
+		$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
+	} else {
+		$blog_entry['eye_catch_image'] = $file_upload_array_default['file'];
+		$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
+	}
+
+	// タイトル名が空
+	if ($title == '') {
+		$err['title'] = 'タイトル名を入力して下さい。';
+	} else {
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 200) {
+			$err['title'] = 'タイトル名は200バイト以内で入力して下さい。';
+		}
+	}
+
+	//スラッグの重複を確認
+	$sql = "select * from blog_entry where blog_id =:blog_id and slug = :slug  limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":slug" => $slug
+		);
+		$stmt->execute($params);
+		$blog_entry_slug = $stmt->fetch();
+		$slug2 = $blog_entry_slug['slug'];
+
+	//スラッグが空
+	if ($slug == '') {
+		$slug = '';
+	} else {
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($slug, 'SJIS', 'UTF-8')) > 50) {
+			$err['blog_category_slug'] = 'スラッグは50バイト以内で入力して下さい。';
+		} else {
+			// スラッグが重複
+			if(!isset($id)){
+				if ($slug2 !='') {
+					$err['slug'] = '別のスラッグを入力してください。';
+				}
+			}
+		}
+	}
+
+	// 記事が空
+	if ($contents == '') {
+		$err['contents'] = '記事を入力して下さい。';
+	} else {
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($contents, 'SJIS', 'UTF-8')) > 500) {
+			$err['contents'] = '記事は500バイト以内で入力して下さい。';
+		}
+	}
+
+	// SEO説明文が空
+	if ($seo_description == '') {
+		$err['seo_description'] = 'SEO説明文を入力して下さい。';
+	} else {
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 500) {
+			$err['seo_description'] = 'SEO説明文は500バイト以内で入力して下さい。';
+		}
+	}
+
+	// SEOキーワードが空
+	if ($seo_keywords == '') {
+		$err['seo_keywords'] = 'SEOキーワードを入力して下さい。';
+	} else {
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 200) {
+			$err['seo_keywords'] = 'SEOキーワードは200バイト以内力して下さい。';
+		}
+	}
+
+	if (empty($err)) {
+		if(!isset($id)) {
+			// 登録処理
+			$sql = "insert into blog_entry
+					(blog_entry_code, title, contents, posting_date, seo_description, seo_keywords, status, slug, client_id, blog_id, eye_catch_image, eye_catch_image_ext, created_at, updated_at)
+					values
+					(:blog_entry_code, :title, :contents, :posting_date, :seo_description, :seo_keywords, :status, :slug, :client_id, :blog_id, :eye_catch_image, :eye_catch_image_ext, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":blog_entry_code" =>$blog_entry_code,
+				":title" => $title,
+				":contents" => $contents,
+				":posting_date" => $posting_date,
+				":seo_description" => $seo_description,
+				":seo_keywords" => $seo_keywords,
+				":status" => $status,
+				":slug" => $slug,
+				":client_id" => $user['id'],
+				":blog_id" => $blog_id,
+				":eye_catch_image" => $blog_entry['eye_catch_image'],
+				":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext']
+			);
+			$stmt->execute($params);
+
+			$complete_msg = "登録されました。\n";
+		} else {
+			$sql = "update blog_entry
+					set
+					title=:title,
+					contents=:contents,
+					posting_date=:posting_date,
+					seo_description=:seo_description,
+					seo_keywords=:seo_keywords,
+					status=:status,
+					slug=:slug,
+					eye_catch_image=:eye_catch_image,
+					eye_catch_image_ext=:eye_catch_image_ext,
+					updated_at = now()
+					where
+					client_id = :client_id and
+					blog_entry_code = :blog_entry_code";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":title" => $title,
+				":contents" => $contents,
+				":posting_date" => $posting_date,
+				":seo_description" => $seo_description,
+				":seo_keywords" => $seo_keywords,
+				":status" => $status,
+				":slug" => $slug,
+				":eye_catch_image" => $blog_entry['eye_catch_image'],
+				":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext'],
+				":client_id" => $user['id'],
+				":blog_entry_code" => $id
+			);
+			$stmt->execute($params);
+
+			$complete_msg = "登録されました。\n";
+		}
+	}
+}
+?>
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
 <!-- end #sidebar -->
@@ -35,7 +273,7 @@ $page_base_body_tag_template = "body_blog_entry.php";
 						<div class="input-group-addon">
 							<span class="f-s-11">投稿日時</span>
 						</div>
-						<input type="text" name="posting_date" class="form-control " placeholder="投稿日時" value="2019/02/23 23:03" />
+						<input type="text" name="posting_date" class="form-control " placeholder="投稿日時" value="<?php if(isset($posting_date)) echo h($posting_date); ?>" /><span class="help-block"><?php if ( isset($err['posting_date'])) echo h($err['posting_date']); ?></span>
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
@@ -44,7 +282,7 @@ $page_base_body_tag_template = "body_blog_entry.php";
 
 				<span class="pull-right">
 					<input type="checkbox" id="status" name="status" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="公開" data-off="下書き"  />
-					<a href="javascript:;" class="m-l-10" data-click="preview"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">プレビュー</button></a>
+					<a href="#" class="m-l-10" data-click="preview"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">プレビュー</button></a>
 					<button type="submit" class="btn btn-primary p-l-40 p-r-40">登録</button>
 				</span>
 			</div>
@@ -54,14 +292,14 @@ $page_base_body_tag_template = "body_blog_entry.php";
 			<div data-scrollbar="true" data-height="100%" class="p-15">
 				<!-- begin email subject -->
 				<div class="email-subject">
-					<input type="text" name="title" class="form-control form-control-lg " placeholder="記事タイトル（22-32文字）" value="" />
+					<input type="text" name="title" class="form-control form-control-lg " placeholder="記事タイトル（22-32文字）" value="<?php if(isset($title)) echo h($title); ?>" /><span class="help-block"><?php if ( isset($err['title'])) echo h($err['title']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 				<!-- end email subject -->
 
 				<!-- begin email content -->
 				<div class="email-content p-t-15">
-					<textarea class="summernote form-control " name="contents"></textarea>
+					<textarea class="summernote form-control " name="contents" value="<?php if(isset($contents)) echo h($contents); ?>"></textarea><span class="help-block"><?php if ( isset($err['contents'])) echo h($err['contents']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 				<!-- end email content -->
@@ -77,7 +315,8 @@ $page_base_body_tag_template = "body_blog_entry.php";
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<input type="file" name="eye_catch_image" style="display:none">
+						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
+
 					</span>
 				</label>
 			</div>
@@ -87,19 +326,19 @@ $page_base_body_tag_template = "body_blog_entry.php";
 			<div class="wrapper p-0">
 				<div class="nav-title"><b>SLUG</b></div>
 				<div class="m-l-10 m-r-10">
-					<input type="text" class="form-control " name="slug" placeholder="" value="" />
+					<input type="text" class="form-control " name="slug" placeholder="" value="<?php if(isset($slug)) echo h($slug); ?>" /><span class="help-block"><?php if ( isset($err['slug'])) echo h($err['slug']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
 				<div class="nav-title m-t-10"><b>SEO DESCRIPTION</b><div id="seo_description_text_count" class="text_count pull-right"></div></div>
 				<div class="m-l-10 m-r-10">
-					<textarea class="textarea form-control " name="seo_description" id="seo_description" placeholder="SEOディスクリプション（80-120文字）" rows="6"></textarea>
+					<textarea class="textarea form-control " name="seo_description" id="seo_description" placeholder="SEOディスクリプション（80-120文字）" rows="6" value="<?php if(isset($seo_description)) echo h($seo_description); ?>"></textarea><span class="help-block"><?php if ( isset($err['seo_description'])) echo h($err['seo_description']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
 				<div class="nav-title m-t-10"><b>SEO KEYWORDS</b></div>
 				<div class="m-l-10 m-r-10">
-					<input type="text" class="form-control " name="seo_keywords" placeholder="SEOキーワード（カンマ区切りで複数指定可）" value="" />
+					<input type="text" class="form-control " name="seo_keywords" placeholder="SEOキーワード（カンマ区切りで複数指定可）" value="<?php if(isset($seo_keywords)) echo h($seo_keywords); ?>" /><span class="help-block"><?php if ( isset($err['seo_keywords'])) echo h($err['seo_keywords']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
@@ -166,15 +405,14 @@ $page_base_body_tag_template = "body_blog_entry.php";
 	<input type="hidden" name="mode" value="save" />
 	<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
 	<input type="hidden" name="FLUXDEMOTOKEN" value="fb101adcbf182caee4e77515ddcb8acc39818d47" />
+	<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 </form>
 
 </div>
 <!-- end #content -->
 
 			<!-- begin #footer -->
-<div id="footer" class="footer text-right">
-	&copy;2019 SENSE SHARE All Rights Reserved.
-</div>
+
 <!-- end #footer -->
 
 			<!-- begin scroll to top btn -->
