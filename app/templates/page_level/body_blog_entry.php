@@ -37,3 +37,18 @@
 
 	});
 </script>
+
+<script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-sweetalert/sweetalert.min.js"></script>
+
+<?php if ($err): ?>
+	<script>
+		swal(
+			{
+			text: "入力エラーがあります。",
+			icon: "error",
+			button: false,
+			timer: 1500,
+		}
+	);
+	</script>
+<?php endif; ?>

@@ -50,11 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$seo_description = $_POST['seo_description'];
 	$seo_keywords = $_POST['seo_keywords'];
 
-	if(isset($_POST['status'])){
+	if($_POST['status'] ){
 		$status = 1;
 	} else {
-		$status = 0;
+		$status = 2;
 	};
+
 	$slug = $_POST['slug'];
 
 	$err = array();
@@ -291,14 +292,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<!-- begin scrollbar -->
 			<div data-scrollbar="true" data-height="100%" class="p-15">
 				<!-- begin email subject -->
-				<div class="email-subject">
+				<div class="email-subject <?php if ($err['title'] != '') echo 'has-error'; ?>">
 					<input type="text" name="title" class="form-control form-control-lg " placeholder="記事タイトル（22-32文字）" value="<?php if(isset($title)) echo h($title); ?>" /><span class="help-block"><?php if ( isset($err['title'])) echo h($err['title']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 				<!-- end email subject -->
 
 				<!-- begin email content -->
-				<div class="email-content p-t-15">
+				<div class="email-content p-t-15 <?php if ($err['contents'] != '') echo 'has-error'; ?>">
 					<textarea class="summernote form-control " name="contents" value="<?php if(isset($contents)) echo h($contents); ?>"></textarea><span class="help-block"><?php if ( isset($err['contents'])) echo h($err['contents']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
@@ -309,8 +310,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		<div class="vertical-box-column bg-silver width-300 border-left">
 			<!-- begin wrapper -->
-			<div class="wrapper bg-silver text-center border-bottom">
-				<div class="image-preview m-b-4"></div>
+			<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
+				<div class="image-preview m-b-4 " </div>
 
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
@@ -325,19 +326,19 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<!-- begin wrapper -->
 			<div class="wrapper p-0">
 				<div class="nav-title"><b>SLUG</b></div>
-				<div class="m-l-10 m-r-10">
+				<div class="m-l-10 m-r-10 <?php if ($err['slug'] != '') echo 'has-error'; ?>" >
 					<input type="text" class="form-control " name="slug" placeholder="" value="<?php if(isset($slug)) echo h($slug); ?>" /><span class="help-block"><?php if ( isset($err['slug'])) echo h($err['slug']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
 				<div class="nav-title m-t-10"><b>SEO DESCRIPTION</b><div id="seo_description_text_count" class="text_count pull-right"></div></div>
-				<div class="m-l-10 m-r-10">
+				<div class="m-l-10 m-r-10 <?php if ($err['seo_description'] != '') echo 'has-error'; ?>" >
 					<textarea class="textarea form-control " name="seo_description" id="seo_description" placeholder="SEOディスクリプション（80-120文字）" rows="6" value="<?php if(isset($seo_description)) echo h($seo_description); ?>"></textarea><span class="help-block"><?php if ( isset($err['seo_description'])) echo h($err['seo_description']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
 				<div class="nav-title m-t-10"><b>SEO KEYWORDS</b></div>
-				<div class="m-l-10 m-r-10">
+				<div class="m-l-10 m-r-10 <?php if ($err['seo_keywords'] != '') echo 'has-error'; ?>" >
 					<input type="text" class="form-control " name="seo_keywords" placeholder="SEOキーワード（カンマ区切りで複数指定可）" value="<?php if(isset($seo_keywords)) echo h($seo_keywords); ?>" /><span class="help-block"><?php if ( isset($err['seo_keywords'])) echo h($err['seo_keywords']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
