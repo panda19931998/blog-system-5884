@@ -52,3 +52,14 @@
 	);
 	</script>
 <?php endif; ?>
+
+<!-- DATETIMEピッカー -->
+<script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-daterangepicker/moment.js"></script>
+<script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+<script>
+	// DATETIMEピッカー
+	$('#datetimepicker1').datetimepicker({
+		format : 'YYYY/MM/DD HH:mm'
+	});
+</script>

@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				<!-- begin email content -->
 				<div class="email-content p-t-15 <?php if ($err['contents'] != '') echo 'has-error'; ?>">
-					<textarea class="summernote form-control " name="contents" value="<?php if(isset($contents)) echo h($contents); ?>"></textarea><span class="help-block"><?php if ( isset($err['contents'])) echo h($err['contents']); ?></span>
+					<textarea class="summernote form-control " name="contents" ><?php if(isset($contents)) echo h($contents); ?></textarea><span class="help-block"><?php if ( isset($err['contents'])) echo h($err['contents']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 				<!-- end email content -->
@@ -333,7 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				<div class="nav-title m-t-10"><b>SEO DESCRIPTION</b><div id="seo_description_text_count" class="text_count pull-right"></div></div>
 				<div class="m-l-10 m-r-10 <?php if ($err['seo_description'] != '') echo 'has-error'; ?>" >
-					<textarea class="textarea form-control " name="seo_description" id="seo_description" placeholder="SEOディスクリプション（80-120文字）" rows="6" value="<?php if(isset($seo_description)) echo h($seo_description); ?>"></textarea><span class="help-block"><?php if ( isset($err['seo_description'])) echo h($err['seo_description']); ?></span>
+					<textarea class="textarea form-control " name="seo_description" id="seo_description" placeholder="SEOディスクリプション（80-120文字）" rows="6" ><?php if(isset($seo_description)) echo h($seo_description); ?></textarea><span class="help-block"><?php if ( isset($err['seo_description'])) echo h($err['seo_description']); ?></span>
 					<div class="invalid-feedback"></div>
 				</div>
 
@@ -343,8 +343,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					<div class="invalid-feedback"></div>
 				</div>
 
-				<div class="nav-title m-t-10"><b>CATEGORIES</b></div>
-				<ul id="category_area" class="nav nav-inbox">
+				<div class="nav-title m-t-10 " ><b>CATEGORIES</b></div>
+				<ul id="category_area" class="nav nav-inbox " style="text-align:left">
 				<li class="checkbox checkbox-css m-l-15 m-b-5">
 					<input type="checkbox" id="category_40" name="category_id[]" value="40"  />
 					<label for="category_40">
