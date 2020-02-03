@@ -58,8 +58,10 @@
 <script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 
 <script>
+$(document).ready(function() {
 	// DATETIMEピッカー
 	$('#datetimepicker1').datetimepicker({
-		format : 'YYYY/MM/DD HH:mm'
+		format : 'YYYY/MM/DD HH:mm',
 	});
+});
 </script>

@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$title = $blog_entry['title'];
 		$slug = $blog_entry['slug'];
 		$contents = $blog_entry['contents'];
-		$posting_date = $blog_entry['posting_date'];
+		$posting_date =   $blog_entry['posting_date'];
 		$seo_description = $blog_entry['seo_description'];
 		$seo_keywords = $blog_entry['seo_keywords'];
 		$status = $blog_entry['status'];
@@ -274,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						<div class="input-group-addon">
 							<span class="f-s-11">投稿日時</span>
 						</div>
-						<input type="text" name="posting_date" class="form-control " placeholder="投稿日時" value="<?php if(isset($posting_date)) echo h($posting_date); ?>" /><span class="help-block"><?php if ( isset($err['posting_date'])) echo h($err['posting_date']); ?></span>
+						<input type="text" name="posting_date" class="form-control " placeholder="投稿日時" value=" <?php if (isset($posting_date)) { echo $posting_date;} else { echo date("Y/m/d H:i:s");} ?>"<span class="help-block"><?php if ( isset($err['posting_date'])) echo h($err['posting_date']); ?></span>
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
