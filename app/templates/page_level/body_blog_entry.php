@@ -53,6 +53,19 @@
 	</script>
 <?php endif; ?>
 
+<?php if ($complete_msg): ?>
+	<script>
+		swal(
+			{
+			text: "登録が正常完了しました。",
+			icon: "success",
+			button: false,
+			timer: 1500,
+		}
+	);
+	</script>
+<?php endif; ?>
+
 <!-- DATETIMEピッカー -->
 <script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-daterangepicker/moment.js"></script>
 <script src="<?php echo h(CONTENTS_SERVER_URL) ?>/assets/plugins/bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>

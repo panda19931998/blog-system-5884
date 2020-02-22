@@ -282,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				</span>
 
 				<span class="pull-right">
-					<input type="checkbox" id="status" name="status" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="公開" data-off="下書き"  />
+					<input type="checkbox" id="status" name="status" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="公開" data-off="下書き" <?php if ($status == 1)  echo 'checked' ; ?> />
 					<a href="#" class="m-l-10" data-click="preview"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">プレビュー</button></a>
 					<button type="submit" class="btn btn-primary p-l-40 p-r-40">登録</button>
 				</span>
