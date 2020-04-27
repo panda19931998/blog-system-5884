@@ -10,6 +10,21 @@ if(isset($_GET['id'])) {
 
 $blog_entry = array();
 $blog_entry2 = array();
+$blog_category_masters = array();
+$category_id = array();
+
+$sql = "select * from blog_category_master where blog_id = :blog_id and client_id = :client_id ";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $user['id']
+);
+$stmt->execute($params);
+
+foreach ($stmt->fetchAll() as $row) {
+	array_push($blog_category_masters, $row);
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
@@ -33,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$seo_keywords = $blog_entry['seo_keywords'];
 		$status = $blog_entry['status'];
 	}
+
 } else {
 	checkToken();
 
@@ -49,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$posting_date = $_POST['posting_date'];
 	$seo_description = $_POST['seo_description'];
 	$seo_keywords = $_POST['seo_keywords'];
+
+	$category_id = $_POST["category_id"];
+
 
 	if($_POST['status'] ){
 		$status = 1;
@@ -69,39 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		);
 		$stmt->execute($params);
 		$blog_entry_code_sequence = $stmt->fetch();
-	if(!isset($id)){
-		//ブログカテゴリーコードのシーケンスがなかった場合
-		if ($blog_entry_code_sequence['sequence'] == '') {
-			$sql = "insert into blog_entry_code_sequence
-					(client_id, blog_id, sequence, created_at, updated_at)
-					values
-					(:client_id,:blog_id, :sequence, now(), now())";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" =>$user['id'],
-				":blog_id" => $blog_id,
-				":sequence" => 1
-			);
-			$stmt->execute($params);
-			$blog_entry_code = 1;
-		} else {
-			$sql = "update blog_entry_code_sequence
-					set
-					blog_id = :blog_id,
-					sequence = :sequence,
-					updated_at =now()
-					where
-					client_id = :client_id";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" => $user['id'],
-				":blog_id" => $blog_id,
-				":sequence" => $blog_entry_code_sequence['sequence'] + 1
-			);
-			$stmt->execute($params);
-			$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
-		}
-	}
 
 	$default_err = array();
 
@@ -183,6 +169,57 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 	}
 
+	if(!isset($category_id)){
+		$err['category_id'] = 'カテゴリーを選択して下さい。';
+	}
+
+	if(isset($category_id)) {
+
+		//client_id,blog_idを確認
+		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":blog_id" => $blog_id,
+				":client_id" => $user['id']
+			);
+			$stmt->execute($params);
+			$blog_entry_code_sequence = $stmt->fetch();
+
+		if(!isset($id)){
+			//ブログカテゴリーコードのシーケンスがなかった場合
+			if ($blog_entry_code_sequence['sequence'] == '') {
+				$sql = "insert into blog_entry_code_sequence
+						(client_id, blog_id, sequence, created_at, updated_at)
+						values
+						(:client_id,:blog_id, :sequence, now(), now())";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" =>$user['id'],
+					":blog_id" => $blog_id,
+					":sequence" => 1
+				);
+				$stmt->execute($params);
+				$blog_entry_code = 1;
+			} else {
+				$sql = "update blog_entry_code_sequence
+						set
+						blog_id = :blog_id,
+						sequence = :sequence,
+						updated_at =now()
+						where
+						client_id = :client_id";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" => $user['id'],
+					":blog_id" => $blog_id,
+					":sequence" => $blog_entry_code_sequence['sequence'] + 1
+				);
+				$stmt->execute($params);
+
+				$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
+			}
+		}
+	}
 	if (empty($err)) {
 		if(!isset($id)) {
 			// 登録処理
@@ -207,6 +244,21 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			);
 			$stmt->execute($params);
 
+			foreach((array)$category_id as $val){
+				$sql = "insert into blog_category
+						(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
+						values
+						(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":status" => $status,
+					":client_id" => $user['id'],
+					":blog_id" => $blog_id,
+					":blog_entry_id" => $blog_entry_code,
+					":blog_category_master_id" => $val
+				);
+				$stmt->execute($params);
+			}
 			$complete_msg = "登録されました。\n";
 		} else {
 			$sql = "update blog_entry
@@ -239,6 +291,29 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				":blog_entry_code" => $id
 			);
 			$stmt->execute($params);
+
+			foreach((array)$category_id as $val){
+				$sql = "update blog_category
+						set
+						status = :status,
+						client_id =:client,
+						blog_id =:blog_id,
+						blog_entry_id =:blog_entry_id,
+						blog_category_master_id =:blog_category_master_id,
+						updated_at = now()
+						where
+						client_id = :client_id and
+						blog_id = :blog_id";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":status" => $status,
+					":client_id" => $user['id'],
+					":blog_id" => $blog_id,
+					":blog_entry_id" =>$blog_entry_code,
+					":blog_category_master_id" =>$val,
+				);
+				$stmt->execute($params);
+			}
 
 			$complete_msg = "登録されました。\n";
 		}
@@ -344,51 +419,17 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				</div>
 
 				<div class="nav-title m-t-10 " ><b>CATEGORIES</b></div>
-				<ul id="category_area" class="nav nav-inbox " style="text-align:left">
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_40" name="category_id[]" value="40"  />
-					<label for="category_40">
-					プログラマーを知る
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_41" name="category_id[]" value="41"  />
-					<label for="category_41">
-					プログラミングを学ぶメリット
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_42" name="category_id[]" value="42"  />
-					<label for="category_42">
-					プログラマーになる方法
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_43" name="category_id[]" value="43"  />
-					<label for="category_43">
-					TIPS
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_44" name="category_id[]" value="44"  />
-					<label for="category_44">
-						おすすめツール／書籍
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_45" name="category_id[]" value="45"  />
-					<label for="category_45">
-					プログラマーの日常
-					</label>
-				</li>
-				<li class="checkbox checkbox-css m-l-15 m-b-5">
-					<input type="checkbox" id="category_46" name="category_id[]" value="46"  />
-					<label for="category_46">
-					おすすめ記事
-					</label>
-				</li>
-				</ul>
-
+				<ul id="category_area" class="nav nav-inbox <?php if ($err['category_id'] != '') echo 'has-error'; ?>" style="text-align:left">
+				<span class="help-block "><?php if ( isset($err['category_id'])) echo h($err['category_id']); ?></span>
+				<?php foreach ($blog_category_masters as $val): ?>
+					<li class="checkbox checkbox-css m-l-15 m-b-5">
+						<input type="checkbox" id="category_<?php echo h($val['blog_category_code']); ?>" name="category_id[]" value="<?php echo h($val['blog_category_code']); ?>"  />
+						<label for="category_<?php echo h($val['blog_category_code']); ?>">
+							<?php echo h($val['category_name']); ?>
+						</label>
+					</li>
+				<?php endforeach; ?>
+ 				</ul>
 				<div class="m-t-20 m-l-10 m-r-10 m-b-10">
 					<div class="input-group">
 						<input type="text" class="form-control" id="new_category_name" name="new_category_name" placeholder="新規カテゴリー">
