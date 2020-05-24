@@ -25,7 +25,6 @@ foreach ($stmt->fetchAll() as $row) {
 	array_push($blog_category_masters, $row);
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
 	setToken();
@@ -68,6 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	$category_id = $_POST["category_id"];
 
+	foreach((array) $blog_category_masters as $val){
+		$checked["category_id"][$val['blog_category_code']]=" ";
+	}
+
+	if(isset($_POST["category_id"])){
+	 	foreach((array) $_POST["category_id"] as $val){
+			$checked["category_id"][$val]=" checked";
+		}
+	}
 
 	if($_POST['status'] ){
 		$status = 1;
@@ -169,10 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 	}
 
-	if(!isset($category_id)){
-		$err['category_id'] = 'カテゴリーを選択して下さい。';
-	}
-
 	if(isset($category_id)) {
 
 		//client_id,blog_idを確認
@@ -254,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":status" => $status,
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":blog_entry_id" => $blog_entry_code,
+					":blog_entry_id" => $blog_entry['id'],
 					":blog_category_master_id" => $val
 				);
 				$stmt->execute($params);
@@ -309,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":status" => $status,
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":blog_entry_id" =>$blog_entry_code,
+					":blog_entry_id" =>$blog_entry['id'],
 					":blog_category_master_id" =>$val,
 				);
 				$stmt->execute($params);
@@ -423,7 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<span class="help-block "><?php if ( isset($err['category_id'])) echo h($err['category_id']); ?></span>
 				<?php foreach ($blog_category_masters as $val): ?>
 					<li class="checkbox checkbox-css m-l-15 m-b-5">
-						<input type="checkbox" id="category_<?php echo h($val['blog_category_code']); ?>" name="category_id[]" value="<?php echo h($val['blog_category_code']); ?>"  />
+						<input type="checkbox" id="category_<?php echo h($val['blog_category_code']); ?>" name="category_id[]" value="<?php echo h($val['blog_category_code']); ?>" <?php echo $checked["category_id"][$val['blog_category_code']]; ?>/> 
 						<label for="category_<?php echo h($val['blog_category_code']); ?>">
 							<?php echo h($val['category_name']); ?>
 						</label>
