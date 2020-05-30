@@ -177,8 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 	}
 
-	if(isset($category_id)) {
-
 		//client_id,blog_idを確認
 		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 			$stmt = $pdo->prepare($sql);
@@ -223,8 +221,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
 			}
 		}
-	}
+
 	if (empty($err)) {
+
 		if(!isset($id)) {
 			// 登録処理
 			$sql = "insert into blog_entry
@@ -248,6 +247,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			);
 			$stmt->execute($params);
 
+
+			$sql = "select * from blog_entry order by id desc limit 1";
+				$stmt = $pdo->prepare($sql);
+				$stmt->execute();
+				$blog_entry3 = $stmt->fetch();
+
 			foreach((array)$category_id as $val){
 				$sql = "insert into blog_category
 						(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
@@ -258,11 +263,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":status" => $status,
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":blog_entry_id" => $blog_entry['id'],
+					":blog_entry_id" => $blog_entry3['id'],
 					":blog_category_master_id" => $val
 				);
 				$stmt->execute($params);
 			}
+
 			$complete_msg = "登録されました。\n";
 		} else {
 			$sql = "update blog_entry
@@ -296,6 +302,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			);
 			$stmt->execute($params);
 
+			$sql = "select * from blog_entry where client_id = :client_id and blog_entry_code = :blog_entry_code limit 1";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" => $user['id'],
+					":blog_entry_code" => $id
+				);
+				$stmt->execute($params);
+				$blog_entry3 = $stmt->fetch();
+
+
 			foreach((array)$category_id as $val){
 				$sql = "update blog_category
 						set
@@ -313,11 +329,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":status" => $status,
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":blog_entry_id" =>$blog_entry['id'],
+					":blog_entry_id" =>$blog_entry3['id'],
 					":blog_category_master_id" =>$val,
 				);
 				$stmt->execute($params);
 			}
+
 
 			$complete_msg = "登録されました。\n";
 		}
@@ -427,7 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<span class="help-block "><?php if ( isset($err['category_id'])) echo h($err['category_id']); ?></span>
 				<?php foreach ($blog_category_masters as $val): ?>
 					<li class="checkbox checkbox-css m-l-15 m-b-5">
-						<input type="checkbox" id="category_<?php echo h($val['blog_category_code']); ?>" name="category_id[]" value="<?php echo h($val['blog_category_code']); ?>" <?php echo $checked["category_id"][$val['blog_category_code']]; ?>/> 
+						<input type="checkbox" id="category_<?php echo h($val['blog_category_code']); ?>" name="category_id[]" value="<?php echo h($val['blog_category_code']); ?>" <?php echo $checked["category_id"][$val['blog_category_code']]; ?>/>
 						<label for="category_<?php echo h($val['blog_category_code']); ?>">
 							<?php echo h($val['category_name']); ?>
 						</label>
