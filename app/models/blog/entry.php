@@ -12,6 +12,7 @@ $blog_entry = array();
 $blog_entry2 = array();
 $blog_category_masters = array();
 $category_id = array();
+$blog_category_master = array();
 
 $sql = "select * from blog_category_master where blog_id = :blog_id and client_id = :client_id ";
 $stmt = $pdo->prepare($sql);
@@ -254,6 +255,19 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$blog_entry3 = $stmt->fetch();
 
 			foreach((array)$category_id as $val){
+				$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":blog_id" => $blog_id,
+						":client_id" => $user['id'],
+						":blog_category_code" => $val
+					);
+					$stmt->execute($params);
+
+					$blog_category_master[$val] = $stmt->fetch();
+
+
+
 				$sql = "insert into blog_category
 						(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
 						values
@@ -264,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
 					":blog_entry_id" => $blog_entry3['id'],
-					":blog_category_master_id" => $val
+					":blog_category_master_id" => $blog_category_master[$val]['id']
 				);
 				$stmt->execute($params);
 			}
@@ -313,6 +327,18 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 
 			foreach((array)$category_id as $val){
+
+				$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":blog_id" => $blog_id,
+						":client_id" => $user['id'],
+						":blog_category_code" => $val
+					);
+					$stmt->execute($params);
+
+					$blog_category_master[$val] = $stmt->fetch();
+
 				$sql = "update blog_category
 						set
 						status = :status,
@@ -330,7 +356,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
 					":blog_entry_id" =>$blog_entry3['id'],
-					":blog_category_master_id" =>$val,
+					":blog_category_master_id" =>$blog_category_master[$val]['id'],
 				);
 				$stmt->execute($params);
 			}
