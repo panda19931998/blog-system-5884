@@ -66,7 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$seo_description = $_POST['seo_description'];
 	$seo_keywords = $_POST['seo_keywords'];
 
-	$category_id = $_POST["category_id"];
+	$category_id = $_POST['category_id'];
+	$new_category_name = $_POST['new_category_name'];
+
 
 	foreach((array) $blog_category_masters as $val){
 		$checked["category_id"][$val['blog_category_code']]=" ";
@@ -163,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$err['seo_description'] = 'SEO説明文を入力して下さい。';
 	} else {
 		// 文字数チェック
-		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 500) {
+		if (strlen(mb_convert_encoding($seo_description, 'SJIS', 'UTF-8')) > 500) {
 			$err['seo_description'] = 'SEO説明文は500バイト以内で入力して下さい。';
 		}
 	}
@@ -173,25 +175,78 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$err['seo_keywords'] = 'SEOキーワードを入力して下さい。';
 	} else {
 		// 文字数チェック
-		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 200) {
-			$err['seo_keywords'] = 'SEOキーワードは200バイト以内力して下さい。';
+		if (strlen(mb_convert_encoding($seo_keywords, 'SJIS', 'UTF-8')) > 200) {
+			$err['seo_keywords'] = 'SEOキーワードは200バイト以内で入力して下さい。';
 		}
 	}
 
-		//client_id,blog_idを確認
-		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+	//client_id,blog_idを確認
+	$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":client_id" => $user['id']
+		);
+		$stmt->execute($params);
+		$blog_entry_code_sequence = $stmt->fetch();
+
+	if(!isset($id)){
+		//ブログカテゴリーコードのシーケンスがなかった場合
+		if ($blog_entry_code_sequence['sequence'] == '') {
+			$sql = "insert into blog_entry_code_sequence
+					(client_id, blog_id, sequence, created_at, updated_at)
+					values
+					(:client_id,:blog_id, :sequence, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" =>$user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => 1
+			);
+			$stmt->execute($params);
+			$blog_entry_code = 1;
+		} else {
+			$sql = "update blog_entry_code_sequence
+					set
+					blog_id = :blog_id,
+					sequence = :sequence,
+					updated_at =now()
+					where
+					client_id = :client_id";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => $blog_entry_code_sequence['sequence'] + 1
+			);
+			$stmt->execute($params);
+
+			$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
+		}
+	}
+
+	if(isset($new_category_name)){
+
+		// 文字数チェック
+		if (strlen(mb_convert_encoding($new_category_name, 'SJIS', 'UTF-8')) > 200) {
+				$err['new_category_name'] = 'カテゴリーは200バイト以内で入力して下さい。';
+		}
+
+		if (empty($err['new_category_name'])) {
+			// カテゴリー登録処理
+			$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
 				":blog_id" => $blog_id,
 				":client_id" => $user['id']
 			);
 			$stmt->execute($params);
-			$blog_entry_code_sequence = $stmt->fetch();
+			$blog_category_code_sequence = $stmt->fetch();
 
-		if(!isset($id)){
+
 			//ブログカテゴリーコードのシーケンスがなかった場合
-			if ($blog_entry_code_sequence['sequence'] == '') {
-				$sql = "insert into blog_entry_code_sequence
+			if ($blog_category_code_sequence['sequence'] == '') {
+				$sql = "insert into blog_category_code_sequence
 						(client_id, blog_id, sequence, created_at, updated_at)
 						values
 						(:client_id,:blog_id, :sequence, now(), now())";
@@ -202,9 +257,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":sequence" => 1
 				);
 				$stmt->execute($params);
-				$blog_entry_code = 1;
+				$blog_category_code = 1;
 			} else {
-				$sql = "update blog_entry_code_sequence
+				$sql = "update blog_category_code_sequence
 						set
 						blog_id = :blog_id,
 						sequence = :sequence,
@@ -215,13 +270,31 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$params = array(
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":sequence" => $blog_entry_code_sequence['sequence'] + 1
+					":sequence" => $blog_category_code_sequence['sequence'] + 1
 				);
 				$stmt->execute($params);
 
-				$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
+				$blog_category_code = $blog_category_code_sequence['sequence'] + 1;
 			}
+
+			$sql = "insert into blog_category_master
+				(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
+				values
+				(:client_id, :blog_id, :blog_category_code, :category_name, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id'],
+				":blog_id" => $blog_id,
+				":blog_category_code" => $blog_category_code,
+				":category_name" => $new_category_name
+			);
+			$stmt->execute($params);
+
+			$data['status'] = $status;
+			$data['blog_category_code'] = $blog_category_code;
+			echo $data;
 		}
+	}
 
 	if (empty($err)) {
 
@@ -283,7 +356,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 			}
 
+
+
 			$complete_msg = "登録されました。\n";
+
 		} else {
 			$sql = "update blog_entry
 					set
