@@ -50,48 +50,53 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}
 
 } else {
-	checkToken();
+	if(!isset($_POST['new_category_name'])){
 
-	$sql = "select * from blog_entry where client_id = :client_id limit 1";
-	$stmt = $pdo->prepare($sql);
-	$params = array(
-		":client_id" => $user['id']
-	);
-	$stmt->execute($params);
-	$blog_entry2 = $stmt->fetch();
+		checkToken();
 
-	$title = $_POST['title'];
-	$contents = $_POST['contents'];
-	$posting_date = $_POST['posting_date'];
-	$seo_description = $_POST['seo_description'];
-	$seo_keywords = $_POST['seo_keywords'];
-
-	$category_id = $_POST['category_id'];
-	$new_category_name = $_POST['new_category_name'];
+		$err = array();
+		$complete_msg = "";
 
 
-	foreach((array) $blog_category_masters as $val){
-		$checked["category_id"][$val['blog_category_code']]=" ";
-	}
+		$sql = "select * from blog_entry where client_id = :client_id limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":client_id" => $user['id']
+		);
+		$stmt->execute($params);
+		$blog_entry2 = $stmt->fetch();
 
-	if(isset($_POST["category_id"])){
-	 	foreach((array) $_POST["category_id"] as $val){
-			$checked["category_id"][$val]=" checked";
+		$title = $_POST['title'];
+		$contents = $_POST['contents'];
+		$posting_date = $_POST['posting_date'];
+		$seo_description = $_POST['seo_description'];
+		$seo_keywords = $_POST['seo_keywords'];
+		$slug = $_POST['slug'];
+
+		$category_id = $_POST['category_id'];
+
+		if(isset($_POST['status'])){
+			$status = 1;
+		} else {
+			$status = 2;
+		};
+
+
+
+		foreach((array) $blog_category_masters as $val){
+			$checked["category_id"][$val['blog_category_code']]=" ";
 		}
-	}
 
-	if($_POST['status'] ){
-		$status = 1;
-	} else {
-		$status = 2;
-	};
+		if(isset($_POST["category_id"])){
+			foreach((array) $_POST["category_id"] as $val){
+				$checked["category_id"][$val]=" checked";
+			}
+		}
 
-	$slug = $_POST['slug'];
 
-	$err = array();
-	$complete_msg = "";
-	//client_id,blog_idを確認
-	$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+
+		//client_id,blog_idを確認
+		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -100,30 +105,30 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_entry_code_sequence = $stmt->fetch();
 
-	$default_err = array();
+		$default_err = array();
 
-	$file_upload_array_default = file_upload('eye_catch_image', $default_err);
+		$file_upload_array_default = file_upload('eye_catch_image', $default_err);
 
-	if($file_upload_array_default['file'] ==''){
-		$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
-		$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
-	} else {
-		$blog_entry['eye_catch_image'] = $file_upload_array_default['file'];
-		$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
-	}
-
-	// タイトル名が空
-	if ($title == '') {
-		$err['title'] = 'タイトル名を入力して下さい。';
-	} else {
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 200) {
-			$err['title'] = 'タイトル名は200バイト以内で入力して下さい。';
+		if($file_upload_array_default['file'] ==''){
+			$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
+			$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
+		} else {
+			$blog_entry['eye_catch_image'] = $file_upload_array_default['file'];
+			$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
 		}
-	}
 
-	//スラッグの重複を確認
-	$sql = "select * from blog_entry where blog_id =:blog_id and slug = :slug  limit 1";
+		// タイトル名が空
+		if ($title == '') {
+			$err['title'] = 'タイトル名を入力して下さい。';
+		} else {
+			// 文字数チェック
+			if (strlen(mb_convert_encoding($title, 'SJIS', 'UTF-8')) > 200) {
+				$err['title'] = 'タイトル名は200バイト以内で入力して下さい。';
+			}
+		}
+
+		//スラッグの重複を確認
+		$sql = "select * from blog_entry where blog_id =:blog_id and slug = :slug  limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -133,55 +138,55 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$blog_entry_slug = $stmt->fetch();
 		$slug2 = $blog_entry_slug['slug'];
 
-	//スラッグが空
-	if ($slug == '') {
-		$slug = '';
-	} else {
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($slug, 'SJIS', 'UTF-8')) > 50) {
-			$err['blog_category_slug'] = 'スラッグは50バイト以内で入力して下さい。';
+		//スラッグが空
+		if ($slug == '') {
+			$slug = '';
 		} else {
-			// スラッグが重複
-			if(!isset($id)){
-				if ($slug2 !='') {
-					$err['slug'] = '別のスラッグを入力してください。';
+			// 文字数チェック
+			if (strlen(mb_convert_encoding($slug, 'SJIS', 'UTF-8')) > 50) {
+				$err['blog_category_slug'] = 'スラッグは50バイト以内で入力して下さい。';
+			} else {
+				// スラッグが重複
+				if(!isset($id)){
+					if ($slug2 !='') {
+						$err['slug'] = '別のスラッグを入力してください。';
+					}
 				}
 			}
 		}
-	}
 
-	// 記事が空
-	if ($contents == '') {
-		$err['contents'] = '記事を入力して下さい。';
-	} else {
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($contents, 'SJIS', 'UTF-8')) > 500) {
-			$err['contents'] = '記事は500バイト以内で入力して下さい。';
+		// 記事が空
+		if ($contents == '') {
+			$err['contents'] = '記事を入力して下さい。';
+		} else {
+			// 文字数チェック
+			if (strlen(mb_convert_encoding($contents, 'SJIS', 'UTF-8')) > 500) {
+				$err['contents'] = '記事は500バイト以内で入力して下さい。';
+			}
 		}
-	}
 
-	// SEO説明文が空
-	if ($seo_description == '') {
-		$err['seo_description'] = 'SEO説明文を入力して下さい。';
-	} else {
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($seo_description, 'SJIS', 'UTF-8')) > 500) {
-			$err['seo_description'] = 'SEO説明文は500バイト以内で入力して下さい。';
+		// SEO説明文が空
+		if ($seo_description == '') {
+			$err['seo_description'] = 'SEO説明文を入力して下さい。';
+		} else {
+			// 文字数チェック
+			if (strlen(mb_convert_encoding($seo_description, 'SJIS', 'UTF-8')) > 500) {
+				$err['seo_description'] = 'SEO説明文は500バイト以内で入力して下さい。';
+			}
 		}
-	}
 
-	// SEOキーワードが空
-	if ($seo_keywords == '') {
-		$err['seo_keywords'] = 'SEOキーワードを入力して下さい。';
-	} else {
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($seo_keywords, 'SJIS', 'UTF-8')) > 200) {
-			$err['seo_keywords'] = 'SEOキーワードは200バイト以内で入力して下さい。';
+		// SEOキーワードが空
+		if ($seo_keywords == '') {
+			$err['seo_keywords'] = 'SEOキーワードを入力して下さい。';
+		} else {
+			// 文字数チェック
+			if (strlen(mb_convert_encoding($seo_keywords, 'SJIS', 'UTF-8')) > 200) {
+				$err['seo_keywords'] = 'SEOキーワードは200バイト以内で入力して下さい。';
+			}
 		}
-	}
 
-	//client_id,blog_idを確認
-	$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		//client_id,blog_idを確認
+		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -190,66 +195,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_entry_code_sequence = $stmt->fetch();
 
-	if(!isset($id)){
-		//ブログカテゴリーコードのシーケンスがなかった場合
-		if ($blog_entry_code_sequence['sequence'] == '') {
-			$sql = "insert into blog_entry_code_sequence
-					(client_id, blog_id, sequence, created_at, updated_at)
-					values
-					(:client_id,:blog_id, :sequence, now(), now())";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" =>$user['id'],
-				":blog_id" => $blog_id,
-				":sequence" => 1
-			);
-			$stmt->execute($params);
-			$blog_entry_code = 1;
-		} else {
-			$sql = "update blog_entry_code_sequence
-					set
-					blog_id = :blog_id,
-					sequence = :sequence,
-					updated_at =now()
-					where
-					client_id = :client_id";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" => $user['id'],
-				":blog_id" => $blog_id,
-				":sequence" => $blog_entry_code_sequence['sequence'] + 1
-			);
-			$stmt->execute($params);
-
-			$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
-		}
-	}
-
-	if(isset($new_category_name)){
-
-		// 文字数チェック
-		if (strlen(mb_convert_encoding($new_category_name, 'SJIS', 'UTF-8')) > 200) {
-				$err['new_category_name'] = 'カテゴリーは200バイト以内で入力して下さい。';
-		}
-
-		if (empty($err['new_category_name'])) {
-			// カテゴリー登録処理
-			$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":blog_id" => $blog_id,
-				":client_id" => $user['id']
-			);
-			$stmt->execute($params);
-			$blog_category_code_sequence = $stmt->fetch();
-
-
+		if(!isset($id)){
 			//ブログカテゴリーコードのシーケンスがなかった場合
-			if ($blog_category_code_sequence['sequence'] == '') {
-				$sql = "insert into blog_category_code_sequence
-						(client_id, blog_id, sequence, created_at, updated_at)
-						values
-						(:client_id,:blog_id, :sequence, now(), now())";
+			if ($blog_entry_code_sequence['sequence'] == '') {
+				$sql = "insert into blog_entry_code_sequence
+				(client_id, blog_id, sequence, created_at, updated_at)
+				values
+				(:client_id,:blog_id, :sequence, now(), now())";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":client_id" =>$user['id'],
@@ -257,78 +209,59 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":sequence" => 1
 				);
 				$stmt->execute($params);
-				$blog_category_code = 1;
+				$blog_entry_code = 1;
 			} else {
-				$sql = "update blog_category_code_sequence
-						set
-						blog_id = :blog_id,
-						sequence = :sequence,
-						updated_at =now()
-						where
-						client_id = :client_id";
+				$sql = "update blog_entry_code_sequence
+				set
+				blog_id = :blog_id,
+				sequence = :sequence,
+				updated_at =now()
+				where
+				client_id = :client_id";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":client_id" => $user['id'],
 					":blog_id" => $blog_id,
-					":sequence" => $blog_category_code_sequence['sequence'] + 1
+					":sequence" => $blog_entry_code_sequence['sequence'] + 1
 				);
 				$stmt->execute($params);
 
-				$blog_category_code = $blog_category_code_sequence['sequence'] + 1;
+				$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
 			}
-
-			$sql = "insert into blog_category_master
-				(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
-				values
-				(:client_id, :blog_id, :blog_category_code, :category_name, now(), now())";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":client_id" => $user['id'],
-				":blog_id" => $blog_id,
-				":blog_category_code" => $blog_category_code,
-				":category_name" => $new_category_name
-			);
-			$stmt->execute($params);
-
-			$data['status'] = $status;
-			$data['blog_category_code'] = $blog_category_code;
-			echo $data;
 		}
-	}
 
-	if (empty($err)) {
+		if (empty($err)) {
 
-		if(!isset($id)) {
-			// 登録処理
-			$sql = "insert into blog_entry
-					(blog_entry_code, title, contents, posting_date, seo_description, seo_keywords, status, slug, client_id, blog_id, eye_catch_image, eye_catch_image_ext, created_at, updated_at)
-					values
-					(:blog_entry_code, :title, :contents, :posting_date, :seo_description, :seo_keywords, :status, :slug, :client_id, :blog_id, :eye_catch_image, :eye_catch_image_ext, now(), now())";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":blog_entry_code" =>$blog_entry_code,
-				":title" => $title,
-				":contents" => $contents,
-				":posting_date" => $posting_date,
-				":seo_description" => $seo_description,
-				":seo_keywords" => $seo_keywords,
-				":status" => $status,
-				":slug" => $slug,
-				":client_id" => $user['id'],
-				":blog_id" => $blog_id,
-				":eye_catch_image" => $blog_entry['eye_catch_image'],
-				":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext']
-			);
-			$stmt->execute($params);
+			if(!isset($id)) {
+				// 登録処理
+				$sql = "insert into blog_entry
+				(blog_entry_code, title, contents, posting_date, seo_description, seo_keywords, status, slug, client_id, blog_id, eye_catch_image, eye_catch_image_ext, created_at, updated_at)
+				values
+				(:blog_entry_code, :title, :contents, :posting_date, :seo_description, :seo_keywords, :status, :slug, :client_id, :blog_id, :eye_catch_image, :eye_catch_image_ext, now(), now())";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":blog_entry_code" =>$blog_entry_code,
+					":title" => $title,
+					":contents" => $contents,
+					":posting_date" => $posting_date,
+					":seo_description" => $seo_description,
+					":seo_keywords" => $seo_keywords,
+					":status" => $status,
+					":slug" => $slug,
+					":client_id" => $user['id'],
+					":blog_id" => $blog_id,
+					":eye_catch_image" => $blog_entry['eye_catch_image'],
+					":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext']
+				);
+				$stmt->execute($params);
 
-
-			$sql = "select * from blog_entry order by id desc limit 1";
+				$sql = "select * from blog_entry order by id desc limit 1";
 				$stmt = $pdo->prepare($sql);
 				$stmt->execute();
 				$blog_entry3 = $stmt->fetch();
 
-			foreach((array)$category_id as $val){
-				$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+				foreach((array)$category_id as $val){
+					$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
 						":blog_id" => $blog_id,
@@ -339,60 +272,56 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 					$blog_category_master[$val] = $stmt->fetch();
 
+					$sql = "insert into blog_category
+					(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
+					values
+					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":status" => $status,
+						":client_id" => $user['id'],
+						":blog_id" => $blog_id,
+						":blog_entry_id" => $blog_entry3['id'],
+						":blog_category_master_id" => $blog_category_master[$val]['id']
+					);
+					$stmt->execute($params);
+				}
 
+				$complete_msg = "登録されました。\n";
 
-				$sql = "insert into blog_category
-						(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
-						values
-						(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
+			} else {
+				$sql = "update blog_entry
+				set
+				title=:title,
+				contents=:contents,
+				posting_date=:posting_date,
+				seo_description=:seo_description,
+				seo_keywords=:seo_keywords,
+				status=:status,
+				slug=:slug,
+				eye_catch_image=:eye_catch_image,
+				eye_catch_image_ext=:eye_catch_image_ext,
+				updated_at = now()
+				where
+				client_id = :client_id and
+				blog_entry_code = :blog_entry_code";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
+					":title" => $title,
+					":contents" => $contents,
+					":posting_date" => $posting_date,
+					":seo_description" => $seo_description,
+					":seo_keywords" => $seo_keywords,
 					":status" => $status,
+					":slug" => $slug,
+					":eye_catch_image" => $blog_entry['eye_catch_image'],
+					":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext'],
 					":client_id" => $user['id'],
-					":blog_id" => $blog_id,
-					":blog_entry_id" => $blog_entry3['id'],
-					":blog_category_master_id" => $blog_category_master[$val]['id']
+					":blog_entry_code" => $id
 				);
 				$stmt->execute($params);
-			}
 
-
-
-			$complete_msg = "登録されました。\n";
-
-		} else {
-			$sql = "update blog_entry
-					set
-					title=:title,
-					contents=:contents,
-					posting_date=:posting_date,
-					seo_description=:seo_description,
-					seo_keywords=:seo_keywords,
-					status=:status,
-					slug=:slug,
-					eye_catch_image=:eye_catch_image,
-					eye_catch_image_ext=:eye_catch_image_ext,
-					updated_at = now()
-					where
-					client_id = :client_id and
-					blog_entry_code = :blog_entry_code";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":title" => $title,
-				":contents" => $contents,
-				":posting_date" => $posting_date,
-				":seo_description" => $seo_description,
-				":seo_keywords" => $seo_keywords,
-				":status" => $status,
-				":slug" => $slug,
-				":eye_catch_image" => $blog_entry['eye_catch_image'],
-				":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext'],
-				":client_id" => $user['id'],
-				":blog_entry_code" => $id
-			);
-			$stmt->execute($params);
-
-			$sql = "select * from blog_entry where client_id = :client_id and blog_entry_code = :blog_entry_code limit 1";
+				$sql = "select * from blog_entry where client_id = :client_id and blog_entry_code = :blog_entry_code limit 1";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":client_id" => $user['id'],
@@ -401,10 +330,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 				$blog_entry3 = $stmt->fetch();
 
+				foreach((array)$category_id as $val){
 
-			foreach((array)$category_id as $val){
-
-				$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+					$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
 						":blog_id" => $blog_id,
@@ -415,32 +343,128 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 					$blog_category_master[$val] = $stmt->fetch();
 
-				$sql = "update blog_category
-						set
-						status = :status,
-						client_id =:client,
-						blog_id =:blog_id,
-						blog_entry_id =:blog_entry_id,
-						blog_category_master_id =:blog_category_master_id,
-						updated_at = now()
-						where
-						client_id = :client_id and
-						blog_id = :blog_id";
-				$stmt = $pdo->prepare($sql);
-				$params = array(
-					":status" => $status,
-					":client_id" => $user['id'],
-					":blog_id" => $blog_id,
-					":blog_entry_id" =>$blog_entry3['id'],
-					":blog_category_master_id" =>$blog_category_master[$val]['id'],
-				);
-				$stmt->execute($params);
+					$sql = "update blog_category
+					set
+					status = :status,
+					client_id =:client,
+					blog_id =:blog_id,
+					blog_entry_id =:blog_entry_id,
+					blog_category_master_id =:blog_category_master_id,
+					updated_at = now()
+					where
+					client_id = :client_id and
+					blog_id = :blog_id";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":status" => $status,
+						":client_id" => $user['id'],
+						":blog_id" => $blog_id,
+						":blog_entry_id" =>$blog_entry3['id'],
+						":blog_category_master_id" =>$blog_category_master[$val]['id'],
+					);
+					$stmt->execute($params);
+				}
+
+				$complete_msg = "登録されました。\n";
 			}
-
-
-			$complete_msg = "登録されました。\n";
 		}
+
+	}else{
+
+		foreach((array) $blog_category_masters as $val){
+			$checked["category_id"][$val['blog_category_code']]=" ";
+		}
+
+		if(isset($_POST["category_id"])){
+			foreach((array) $_POST["category_id"] as $val){
+				$checked["category_id"][$val]=" checked";
+			}
+		}
+
+		$title = $_POST['title'];
+		$contents = $_POST['contents'];
+		$posting_date = $_POST['posting_date'];
+		$seo_description = $_POST['seo_description'];
+		$seo_keywords = $_POST['seo_keywords'];
+		$slug = $_POST['slug'];
+
+		$category_id = $_POST['category_id'];
+
+		if(isset($_POST['status'])){
+			$status = 1;
+		} else {
+			$status = 2;
+		};
+
+
+		//JSからのデータを受け取る
+
+		$new_category_name = $_POST['category_name'];
+
+		// カテゴリー登録処理
+		$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":client_id" => $user['id']
+		);
+		$stmt->execute($params);
+		$blog_category_code_sequence = $stmt->fetch();
+
+
+		//ブログカテゴリーコードのシーケンスがなかった場合
+		if ($blog_category_code_sequence['sequence'] == '') {
+			$sql = "insert into blog_category_code_sequence
+			(client_id, blog_id, sequence, created_at, updated_at)
+			values
+			(:client_id,:blog_id, :sequence, now(), now())";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" =>$user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => 1
+			);
+			$stmt->execute($params);
+			$blog_category_code = 1;
+		} else {
+			$sql = "update blog_category_code_sequence
+			set
+			blog_id = :blog_id,
+			sequence = :sequence,
+			updated_at =now()
+			where
+			client_id = :client_id";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id'],
+				":blog_id" => $blog_id,
+				":sequence" => $blog_category_code_sequence['sequence'] + 1
+			);
+			$stmt->execute($params);
+
+			$blog_category_code = $blog_category_code_sequence['sequence'] + 1;
+		}
+
+		$sql = "insert into blog_category_master
+		(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
+		values
+		(:client_id, :blog_id, :blog_category_code, :category_name, now(), now())";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":client_id" => $user['id'],
+			":blog_id" => $blog_id,
+			":blog_category_code" => $blog_category_code,
+			":category_name" => $new_category_name
+		);
+		$stmt->execute($params);
+
+		$data['status'] = $status;
+		$data['blog_category_code'] = $blog_category_code;
+
+		echo $data;
+
 	}
+
 }
 ?>
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>

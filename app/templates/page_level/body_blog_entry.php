@@ -86,25 +86,26 @@ function create_category() {
 	var inputVal = $("#new_category_name").val();
 
 	if (inputVal != "") {
-		// フォームデータを取得し、追加で送るデータを登録する
-		var formData = new FormData();
-		formData.append('new_category_name', inputVal);
+			// フォームデータを取得し、追加で送るデータを登録する
+			var formData = new FormData();
 
-		$.ajax({
-			type: "POST",
-			url: "/blog/entry/",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(data) {
-				var check_status = data.status;
-				if (check_status == 1) {
-					var category_id = data.blog_category_code;
-					$("#category_area").append('<li class="checkbox checkbox-css m-l-15 m-b-5"><input type="checkbox" id="category_'+category_id+'" name="category_id[]" value="'+category_id+'" checked /><label for="category_'+category_id+'">'+inputVal+'</label></li>');
-					$("#new_category_name").val('');
+			formData.append('category_name', inputVal);
+
+			$.ajax({
+				type: "POST",
+				url: "/blog/entry/",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					var check_status = data.status;
+					if (check_status == 1) {
+						var category_id = data.blog_category_code;
+						$("#category_area").append('<li class="checkbox checkbox-css m-l-15 m-b-5"><input type="checkbox" id="category_'+category_id+'" name="category_id[]" value="'+category_id+'" checked /><label for="category_'+category_id+'">'+inputVal+'</label></li>');
+						$("#new_category_name").val('');
+					}
 				}
-			}
-		});
+			});
 	}
 }
 
