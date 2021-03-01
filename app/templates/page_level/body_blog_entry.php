@@ -85,6 +85,7 @@ $(document).ready(function() {
 function create_category() {
 	var inputVal = $("#new_category_name").val();
 
+
 	if (inputVal != "") {
 			// フォームデータを取得し、追加で送るデータを登録する
 			var formData = new FormData();
@@ -97,6 +98,7 @@ function create_category() {
 				data: formData,
 				processData: false,
 				contentType: false,
+				dataType : "json"
 				success: function(data) {
 					var check_status = data.status;
 					if (check_status == 1) {
@@ -105,6 +107,7 @@ function create_category() {
 						$("#new_category_name").val('');
 					}
 				}
+
 			});
 	}
 }

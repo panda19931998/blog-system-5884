@@ -50,7 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}
 
 } else {
-	if(!isset($_POST['new_category_name'])){
+
+	$new_category_name = $_POST['category_name'];
+
+
+	if(!isset($new_category_name)){
 
 		checkToken();
 
@@ -76,11 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$category_id = $_POST['category_id'];
 
 		if(isset($_POST['status'])){
-			$status = 1;
-		} else {
-			$status = 2;
-		};
-
+				$status = 1;
+			} else {
+				$status = 2;
+			};
 
 
 		foreach((array) $blog_category_masters as $val){
@@ -388,18 +391,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$seo_keywords = $_POST['seo_keywords'];
 		$slug = $_POST['slug'];
 
+
 		$category_id = $_POST['category_id'];
 
-		if(isset($_POST['status'])){
-			$status = 1;
-		} else {
-			$status = 2;
-		};
 
-
-		//JSからのデータを受け取る
-
-		$new_category_name = $_POST['category_name'];
 
 		// カテゴリー登録処理
 		$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
@@ -458,10 +453,20 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		);
 		$stmt->execute($params);
 
-		$data['status'] = $status;
-		$data['blog_category_code'] = $blog_category_code;
 
-		echo $data;
+		if(isset($_POST['status'])){
+				$status = 1;
+			} else {
+				$status = 2;
+			};
+
+
+		$data = array("status" => $status, "blog_category_code" => $blog_category_code );
+
+	    header("Content-type: application/json; charset=UTF-8");
+
+	    echo json_encode($data);
+
 
 	}
 
