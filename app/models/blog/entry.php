@@ -459,14 +459,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			} else {
 				$status = 2;
 			};
+				
 
 
-		$data = array("status" => $status, "blog_category_code" => $blog_category_code );
+		$data['status'] = $status;
+		$data['blog_category_code'] = $blog_category_code ;
 
-	    header("Content-type: application/json; charset=UTF-8");
+		header("Content-Type: text/javascript; charset=utf-8");
 
-	    echo json_encode($data);
-
+		echo $data;
 
 	}
 

@@ -98,11 +98,10 @@ function create_category() {
 				data: formData,
 				processData: false,
 				contentType: false,
-				dataType : "json"
 				success: function(data) {
-					var check_status = data.status;
+					var check_status = data['status'];
 					if (check_status == 1) {
-						var category_id = data.blog_category_code;
+						var category_id = data['blog_category_code'];
 						$("#category_area").append('<li class="checkbox checkbox-css m-l-15 m-b-5"><input type="checkbox" id="category_'+category_id+'" name="category_id[]" value="'+category_id+'" checked /><label for="category_'+category_id+'">'+inputVal+'</label></li>');
 						$("#new_category_name").val('');
 					}
