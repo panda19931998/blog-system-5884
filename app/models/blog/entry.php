@@ -374,28 +374,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	}else{
 
-		foreach((array) $blog_category_masters as $val){
-			$checked["category_id"][$val['blog_category_code']]=" ";
-		}
-
-		if(isset($_POST["category_id"])){
-			foreach((array) $_POST["category_id"] as $val){
-				$checked["category_id"][$val]=" checked";
-			}
-		}
-
-		$title = $_POST['title'];
-		$contents = $_POST['contents'];
-		$posting_date = $_POST['posting_date'];
-		$seo_description = $_POST['seo_description'];
-		$seo_keywords = $_POST['seo_keywords'];
-		$slug = $_POST['slug'];
-
-
-		$category_id = $_POST['category_id'];
-
-
-
 		// カテゴリー登録処理
 		$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
@@ -452,14 +430,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			":category_name" => $new_category_name
 		);
 		$stmt->execute($params);
-
+	error_log($new_category_name.PHP_EOL, 3, "C:/Dropbox/develop/blog-system-5884/log.txt");
 
 		if(isset($_POST['status'])){
 				$status = 1;
 			} else {
 				$status = 2;
 			};
-				
+
 
 
 		$data['status'] = $status;
