@@ -430,22 +430,24 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			":category_name" => $new_category_name
 		);
 		$stmt->execute($params);
-	error_log($new_category_name.PHP_EOL, 3, "C:/Dropbox/develop/blog-system-5884/log.txt");
 
-		if(isset($_POST['status'])){
+		$sth = $pdo -> query($sql);
+		$count = $stmt-> rowCount();
+
+		if($count = 1){
 				$status = 1;
 			} else {
 				$status = 2;
 			};
 
-
+	error_log($new_category_name.PHP_EOL, 3, "C:/Dropbox/develop/blog-system-5884/log.txt");
 
 		$data['status'] = $status;
 		$data['blog_category_code'] = $blog_category_code ;
 
-		header("Content-Type: text/javascript; charset=utf-8");
-
-		echo $data;
+		header("Content-type: application/json; charset=UTF-8");
+		echo json_encode($data);
+		exit;
 
 	}
 
