@@ -4,6 +4,7 @@ $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
+//id取得
 if(isset($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -14,6 +15,7 @@ $blog_category_masters = array();
 $category_id = array();
 $blog_category_master = array();
 
+//ブログの登録しているカテゴリーを取得の準備
 $sql = "select * from blog_category_master where blog_id = :blog_id and client_id = :client_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
@@ -26,11 +28,13 @@ foreach ($stmt->fetchAll() as $row) {
 	array_push($blog_category_masters, $row);
 }
 
+  // 初めて画面にアクセスした時の処理
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
 	setToken();
 
 	if(isset($id)){
+		//登録している記事の各項目をデータベースから取得
 		$sql = "select * from blog_entry where blog_entry_code = :blog_entry_code and client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
@@ -50,10 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}
 
 } else {
-
+	 // フォームからサブミットされた時の処理
 	$new_category_name = $_POST['category_name'];
-
-
+	//カテゴリー名を取得していないときの処理
 	if(!isset($new_category_name)){
 
 		checkToken();
@@ -61,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$err = array();
 		$complete_msg = "";
 
-
+		//登録した記事の各項目を取得
 		$sql = "select * from blog_entry where client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
@@ -85,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$status = 2;
 			};
 
-
+		//カテゴリーのチェックを登録したものにあらかじめチェックを入れる
 		foreach((array) $blog_category_masters as $val){
 			$checked["category_id"][$val['blog_category_code']]=" ";
 		}
@@ -214,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 				$blog_entry_code = 1;
 			} else {
+			//シーケンスがあった場合
 				$sql = "update blog_entry_code_sequence
 				set
 				blog_id = :blog_id,
@@ -258,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				);
 				$stmt->execute($params);
 
+				//カテゴリー登録処理
 				$sql = "select * from blog_entry order by id desc limit 1";
 				$stmt = $pdo->prepare($sql);
 				$stmt->execute();
@@ -293,6 +298,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$complete_msg = "登録されました。\n";
 
 			} else {
+
+				//登録した各項目を更新
 				$sql = "update blog_entry
 				set
 				title=:title,
@@ -324,6 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				);
 				$stmt->execute($params);
 
+				//カテゴリーを更新
 				$sql = "select * from blog_entry where client_id = :client_id and blog_entry_code = :blog_entry_code limit 1";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
@@ -373,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 
 	}else{
-
+	//新しいカテゴリー名を取得しているときの処理
 		// カテゴリー登録処理
 		$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
 		$stmt = $pdo->prepare($sql);
@@ -400,6 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$stmt->execute($params);
 			$blog_category_code = 1;
 		} else {
+		//ブログカテゴリーコードのシーケンスがあった場合
 			$sql = "update blog_category_code_sequence
 			set
 			blog_id = :blog_id,
@@ -418,6 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_category_code = $blog_category_code_sequence['sequence'] + 1;
 		}
 
+		//新しいブログカテゴリー登録処理
 		$sql = "insert into blog_category_master
 		(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
 		values
@@ -431,6 +441,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		);
 		$stmt->execute($params);
 
+		//登録処理の確認
 		$sth = $pdo -> query($sql);
 		$count = $stmt-> rowCount();
 
@@ -440,11 +451,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$status = 2;
 			};
 
-	error_log($new_category_name.PHP_EOL, 3, "C:/Dropbox/develop/blog-system-5884/log.txt");
-
 		$data['status'] = $status;
 		$data['blog_category_code'] = $blog_category_code ;
 
+		//body_blog_entryにデータを送る
 		header("Content-type: application/json; charset=UTF-8");
 		echo json_encode($data);
 		exit;
