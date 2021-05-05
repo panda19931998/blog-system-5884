@@ -16,17 +16,14 @@ $category_id = array();
 $blog_category_master = array();
 
 //ブログの登録しているカテゴリーを取得の準備
-$sql = "select * from blog_category_master where blog_id = :blog_id and client_id = :client_id ";
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
 	":client_id" => $user['id']
 );
 $stmt->execute($params);
-
-foreach ($stmt->fetchAll() as $row) {
-	array_push($blog_category_masters, $row);
-}
+$blog_category_masters = $stmt->fetchAll();
 
   // 初めて画面にアクセスした時の処理
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -35,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	if(isset($id)){
 		//登録している記事の各項目をデータベースから取得
-		$sql = "select * from blog_entry where blog_entry_code = :blog_entry_code and client_id = :client_id limit 1";
+		$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_entry_code" => $id,
@@ -65,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$complete_msg = "";
 
 		//登録した記事の各項目を取得
-		$sql = "select * from blog_entry where client_id = :client_id limit 1";
+		$sql = "SELECT * FROM blog_entry WHERE client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":client_id" => $user['id']
@@ -102,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 
 		//client_id,blog_idを確認
-		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$sql = "SELECT * FROM blog_entry_code_sequence WHERE blog_id = :blog_id AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -134,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 
 		//スラッグの重複を確認
-		$sql = "select * from blog_entry where blog_id =:blog_id and slug = :slug  limit 1";
+		$sql = "SELECT * FROM blog_entry WHERE blog_id =:blog_id AND slug = :slug  LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -192,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 
 		//client_id,blog_idを確認
-		$sql = "select * from blog_entry_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$sql = "SELECT * FROM blog_entry_code_sequence WHERE blog_id = :blog_id AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -204,9 +201,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		if(!isset($id)){
 			//ブログカテゴリーコードのシーケンスがなかった場合
 			if ($blog_entry_code_sequence['sequence'] == '') {
-				$sql = "insert into blog_entry_code_sequence
+				$sql = "INSERT INTO blog_entry_code_sequence
 				(client_id, blog_id, sequence, created_at, updated_at)
-				values
+				VALUES
 				(:client_id,:blog_id, :sequence, now(), now())";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
@@ -218,12 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$blog_entry_code = 1;
 			} else {
 			//シーケンスがあった場合
-				$sql = "update blog_entry_code_sequence
-				set
+				$sql = "UPDATE blog_entry_code_sequence
+				SET
 				blog_id = :blog_id,
 				sequence = :sequence,
 				updated_at =now()
-				where
+				WHERE
 				client_id = :client_id";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
@@ -241,9 +238,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 			if(!isset($id)) {
 				// 登録処理
-				$sql = "insert into blog_entry
+				$sql = "INSERT INTO blog_entry
 				(blog_entry_code, title, contents, posting_date, seo_description, seo_keywords, status, slug, client_id, blog_id, eye_catch_image, eye_catch_image_ext, created_at, updated_at)
-				values
+				VALUES
 				(:blog_entry_code, :title, :contents, :posting_date, :seo_description, :seo_keywords, :status, :slug, :client_id, :blog_id, :eye_catch_image, :eye_catch_image_ext, now(), now())";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
@@ -263,13 +260,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 
 				//カテゴリー登録処理
-				$sql = "select * from blog_entry order by id desc limit 1";
+				$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
 				$stmt = $pdo->prepare($sql);
 				$stmt->execute();
 				$blog_entry3 = $stmt->fetch();
 
 				foreach((array)$category_id as $val){
-					$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+					$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
 						":blog_id" => $blog_id,
@@ -280,9 +277,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 					$blog_category_master[$val] = $stmt->fetch();
 
-					$sql = "insert into blog_category
+					$sql = "INSERT INTO blog_category
 					(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
-					values
+					VALUES
 					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
@@ -300,8 +297,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			} else {
 
 				//登録した各項目を更新
-				$sql = "update blog_entry
-				set
+				$sql = "UPDATE blog_entry
+				SET
 				title=:title,
 				contents=:contents,
 				posting_date=:posting_date,
@@ -312,8 +309,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				eye_catch_image=:eye_catch_image,
 				eye_catch_image_ext=:eye_catch_image_ext,
 				updated_at = now()
-				where
-				client_id = :client_id and
+				WHERE
+				client_id = :client_id AND
 				blog_entry_code = :blog_entry_code";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
@@ -332,7 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 
 				//カテゴリーを更新
-				$sql = "select * from blog_entry where client_id = :client_id and blog_entry_code = :blog_entry_code limit 1";
+				$sql = "SELECT * FROM blog_entry WHERE client_id = :client_id AND blog_entry_code = :blog_entry_code LIMIT 1";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":client_id" => $user['id'],
@@ -343,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				foreach((array)$category_id as $val){
 
-					$sql = "select * from blog_category_master where blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
+					$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id AND client_id =:client_id AND blog_category_code =:blog_category_code LIMIT 1";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
 						":blog_id" => $blog_id,
@@ -354,16 +351,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 					$blog_category_master[$val] = $stmt->fetch();
 
-					$sql = "update blog_category
-					set
+					$sql = "UPDATE blog_category
+					SET
 					status = :status,
 					client_id =:client,
 					blog_id =:blog_id,
 					blog_entry_id =:blog_entry_id,
 					blog_category_master_id =:blog_category_master_id,
 					updated_at = now()
-					where
-					client_id = :client_id and
+					WHERE
+					client_id = :client_id AND
 					blog_id = :blog_id";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
@@ -383,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}else{
 	//新しいカテゴリー名を取得しているときの処理
 		// カテゴリー登録処理
-		$sql = "select * from blog_category_code_sequence where blog_id = :blog_id and client_id = :client_id limit 1";
+		$sql = "SELECT * FROM blog_category_code_sequence WHERE blog_id = :blog_id AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":blog_id" => $blog_id,
@@ -395,9 +392,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		//ブログカテゴリーコードのシーケンスがなかった場合
 		if ($blog_category_code_sequence['sequence'] == '') {
-			$sql = "insert into blog_category_code_sequence
+			$sql = "INSERT INTO blog_category_code_sequence
 			(client_id, blog_id, sequence, created_at, updated_at)
-			values
+			VALUES
 			(:client_id,:blog_id, :sequence, now(), now())";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
@@ -409,12 +406,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_category_code = 1;
 		} else {
 		//ブログカテゴリーコードのシーケンスがあった場合
-			$sql = "update blog_category_code_sequence
-			set
+			$sql = "UPDATE blog_category_code_sequence
+			SET
 			blog_id = :blog_id,
 			sequence = :sequence,
 			updated_at =now()
-			where
+			WHERE
 			client_id = :client_id";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
@@ -428,9 +425,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 
 		//新しいブログカテゴリー登録処理
-		$sql = "insert into blog_category_master
+		$sql = "INSERT INTO blog_category_master
 		(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
-		values
+		VALUES
 		(:client_id, :blog_id, :blog_category_code, :category_name, now(), now())";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
