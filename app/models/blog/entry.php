@@ -110,7 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		$default_err = array();
 
-		$file_upload_array_default = file_upload('eye_catch_image', $default_err);
+
+
+	$file_upload_array_default = file_upload('eye_catch_image', $default_err);
+
 
 		if($file_upload_array_default['file'] ==''){
 			$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
@@ -120,6 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
 		}
 
+error_log($default_err,3,"./error.log");
+error_log($file_upload_array_default['file'],3,"./error.log");
+error_log($file_upload_array_default['size'],3,"./error.log");
+error_log($blog_entry['eye_catch_image'],3,"./error.log");
+error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 		// タイトル名が空
 		if ($title == '') {
 			$err['title'] = 'タイトル名を入力して下さい。';
@@ -243,21 +251,22 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				VALUES
 				(:blog_entry_code, :title, :contents, :posting_date, :seo_description, :seo_keywords, :status, :slug, :client_id, :blog_id, :eye_catch_image, :eye_catch_image_ext, now(), now())";
 				$stmt = $pdo->prepare($sql);
-				$params = array(
-					":blog_entry_code" =>$blog_entry_code,
-					":title" => $title,
-					":contents" => $contents,
-					":posting_date" => $posting_date,
-					":seo_description" => $seo_description,
-					":seo_keywords" => $seo_keywords,
-					":status" => $status,
-					":slug" => $slug,
-					":client_id" => $user['id'],
-					":blog_id" => $blog_id,
-					":eye_catch_image" => $blog_entry['eye_catch_image'],
-					":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext']
-				);
-				$stmt->execute($params);
+
+				$stmt->bindValue(':blog_entry_code', $blog_entry_code, PDO::PARAM_STR);
+				$stmt->bindValue(':title', $title, PDO::PARAM_STR);
+				$stmt->bindValue(':contents', $contents, PDO::PARAM_STR);
+				$stmt->bindValue(':posting_date', $posting_date, PDO::PARAM_STR);
+				$stmt->bindValue(':seo_description', $seo_description, PDO::PARAM_STR);
+				$stmt->bindValue(':seo_keywords', $seo_keywords, PDO::PARAM_STR);
+				$stmt->bindValue(':status', $status, PDO::PARAM_STR);
+				$stmt->bindValue(':slug', $slug, PDO::PARAM_STR);
+				$stmt->bindValue(':client_id', (int)$user['id'], PDO::PARAM_INT);
+				$stmt->bindValue(':blog_id', (int)$blog_id, PDO::PARAM_INT);
+				$stmt->bindValue(':eye_catch_image', $blog_entry['eye_catch_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':eye_catch_image_ext', $blog_entry['eye_catch_image_ext'], PDO::PARAM_STR);
+				$stmt->execute();
+
+
 
 				//カテゴリー登録処理
 				$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
@@ -531,7 +540,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
+						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" ><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
 
 					</span>
 				</label>
