@@ -535,7 +535,8 @@ error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 		<div class="vertical-box-column bg-silver width-300 border-left">
 			<!-- begin wrapper -->
 			<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
-				<div class="image-preview m-b-4 " </div>
+
+				<div class="image-preview m-b-4"></div>
 
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
