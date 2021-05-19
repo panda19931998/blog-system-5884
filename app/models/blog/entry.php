@@ -541,7 +541,7 @@ error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" ><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
+						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
 
 					</span>
 				</label>
