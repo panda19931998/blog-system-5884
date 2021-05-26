@@ -123,11 +123,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
 		}
 
-error_log($default_err,3,"./error.log");
-error_log($file_upload_array_default['file'],3,"./error.log");
-error_log($file_upload_array_default['size'],3,"./error.log");
-error_log($blog_entry['eye_catch_image'],3,"./error.log");
-error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
+
+		 error_log($file_upload_array_default['file'],3,"./error.log");
+		 error_log($file_upload_array_default['size'],3,"./error.log");
+		 error_log($blog_entry['eye_catch_image'],3,"./error.log");
+		 error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
+
+
 		// タイトル名が空
 		if ($title == '') {
 			$err['title'] = 'タイトル名を入力して下さい。';
@@ -538,11 +540,14 @@ error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 
 				<div class="image-preview m-b-4"></div>
 
+
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<input type="file" name="eye_catch_image" value="<?php if(isset($blog_entry['eye_catch_image'])) echo h($blog_entry['eye_catch_image']); ?>" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
-
+						<?php if (isset($blog_entry) && $blog_entry['eye_catch_image']): ?>
+						<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+						<?php endif; ?>
+						<input type="file" name="eye_catch_image" value="" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
 					</span>
 				</label>
 			</div>
