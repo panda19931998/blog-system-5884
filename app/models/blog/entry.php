@@ -388,6 +388,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			}
 		}
 
+		//登録している記事の各項目をデータベースから取得
+		$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute();
+		$blog_entry = $stmt->fetch();
+
 	}else{
 	//新しいカテゴリー名を取得しているときの処理
 		// カテゴリー登録処理
@@ -539,14 +545,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
 
 				<div class="image-preview m-b-4"></div>
-
-
+				<?php if (isset($blog_entry) && $blog_entry['eye_catch_image']): ?>
+				<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+				<?php endif; ?>
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<?php if (isset($blog_entry) && $blog_entry['eye_catch_image']): ?>
-						<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
-						<?php endif; ?>
 						<input type="file" name="eye_catch_image" value="" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
 					</span>
 				</label>
