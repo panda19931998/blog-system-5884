@@ -124,10 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		}
 
 
-		 error_log($file_upload_array_default['file'],3,"./error.log");
-		 error_log($file_upload_array_default['size'],3,"./error.log");
-		 error_log($blog_entry['eye_catch_image'],3,"./error.log");
-		 error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
+		//error_log($file_upload_array_default['file'],3,"./error.log");
+		//error_log($file_upload_array_default['size'],3,"./error.log");
+		//error_log($blog_entry['eye_catch_image'],3,"./error.log");
+		//error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 
 
 		// タイトル名が空
