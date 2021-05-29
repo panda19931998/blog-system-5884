@@ -1,5 +1,14 @@
 <?php
 
+// パンくずリスト設定
+$breadcrumb_list = array();
+$breadcrumb_list[0]['title'] = 'HOME';
+$breadcrumb_list[0]['url'] = SITE_URL;
+$breadcrumb_list[1]['title'] = 'ブログカテゴリー';
+$breadcrumb_list[1]['url'] = '/blog/category/';
+$breadcrumb_list[2]['title'] = 'ブログカテゴリー登録';
+$breadcrumb_list[2]['url'] = '';
+
 if(isset($_GET['id'])) {
 $id = $_GET['id'];
 }
@@ -168,9 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
-	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/category/">ブログカテゴリー</a></li>
-	<li class="breadcrumb-item active">ブログカテゴリー登録</li>
+	<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
 </ol>
 <!-- end breadcrumb -->
 

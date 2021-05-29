@@ -1,5 +1,4 @@
 <?php
-
 $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
@@ -476,6 +475,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	}
 
 }
+
+// パンくずリスト設定
+$breadcrumb_list = array();
+$breadcrumb_list[0]['title'] = 'HOME';
+$breadcrumb_list[0]['url'] = SITE_URL;
+$breadcrumb_list[1]['title'] = 'ブログ記事作成';
+$breadcrumb_list[1]['url'] = '';
+
 ?>
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
@@ -485,9 +492,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 <div id="content" class="content">
 				<!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
-	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/">HOME</a></li>
-	<li class="breadcrumb-item"><a href="http://blog-system-5884.localhost/blog/">記事一覧</a></li>
-	<li class="breadcrumb-item active">ブログ記事作成</li>
+	<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
 </ol>
 <!-- end breadcrumb -->
 
