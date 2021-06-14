@@ -1,9 +1,31 @@
 <?php
+
 // パンくずリスト設定
 $breadcrumb_list = array();
 $breadcrumb_list[0]['title'] = 'HOME';
 $breadcrumb_list[0]['url'] = SITE_URL;
- ?>
+$breadcrumb_list[1]['title'] = '記事一覧';
+$breadcrumb_list[1]['url'] = '';
+
+$blog_entrys = array();
+
+if (isset($_GET['search_keyword'])) {
+	$search_keyword = h($_GET['search_keyword']);
+	$search_value = $search_keyword;
+
+} else {
+	$search_keyword = '';
+	$search_value = '';
+}
+
+$sql = "SELECT * FROM blog_entry WHERE (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND blog_id = :blog_id ";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(array(":blog_id" =>$blog_id ));
+$blog_entrys = $stmt->fetchAll();
+
+unset($pdo);
+
+?>
 
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
 			<!-- begin panel -->
@@ -54,79 +76,42 @@ $breadcrumb_list[0]['url'] = SITE_URL;
 
 			<!-- begin panel -->
 				<div class="panel" style="clear:both">
+
+
+					<?php if (!$blog_entrys): ?>
+					<div class="alert" id="message">記事が登録されていません。</div>
+					<?php else: ?>
 					<div class="panel-body panel-form">
 						<table class="table table-bordered table-valign-middle m-b-0">
 							<thead>
 								<tr class="bg-inverse">
 									<th class="width-70 text-center text-white"></th>
-									<th class="width-70 text-center text-white">記事ID</th>
-									<th class="text-center text-white">タイトル</th>
-									<th class="width-300 text-center text-white">パス</th>
-									<th class="width-80 text-center text-white">閲覧数</th>
-									<th class="width-150 text-center text-white"></th>
+									<th class="text-center text-white">記事ＩＤ</th>
+									<th class="width-300 text-center text-white">タイトル</th>
+									<th class="width-80 text-center text-white">パス</th>
+									<th class="width-150 text-center text-white">閲覧数</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr id="item_272">
+								<?php foreach ($blog_entrys as $blog_entry): ?>
+								<tr id="<?php echo h($blog_entry['blog_entry_code']);?>">
 									<td class="text-center">
-										<span class="label label-success">公開中</span>
+										<span class="label label-success"><?php if($blog_entry['status'] = 1) echo "公開中" ?></span>
 									</td>
+									<td><?php echo $blog_entry['id'];?></td>
+									<td><?php echo $blog_entry['title'];?></td>
+									<td><a href="/blog/demo/<?php echo $blog_entry['slug'];?>.html" class="btn btn-primary"><?php echo $blog_entry['slug'];?>.html</a></td>
+									<td><center><?php echo $blog_entry['view_count'];?></center></td>
 									<td class="text-center">
-										2
-									</td>
-									<td>
-										僕がいつもプログラムをどんな方法（流れ）で作成しているのか？<br>
-										<small><i class="fa fa-clock"></i> 2019.02.05&nbsp;&nbsp;<i class="fa fa-sync-alt"></i> 2019.02.04</small>
-									</td>
-									<td><a href="https://b.flu-x.net/demo/workflow.html" target="_blank">/workflow.html</a></td>
-									<td class="text-center">50</td>
-
-									<td class="text-center">
-										<a href="/blog/entry/?code=272" class="btn btn-primary">編集</a>
-										<a href="#" class="btn btn-danger" data-id="272" data-click="delete-confirm">削除</a>
+										<a href="/blog/entry/?id=<?php echo h($blog_entry['blog_entry_code']);?>" class="btn btn-primary">編集</a>
+										<a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?');if (ok) location.href='/blog/delete/?id=<?php echo h($blog_entry['blog_entry_code']);?>'; return false;">削除</a>
 									</td>
 								</tr>
-								<tr id="item_273">
-									<td class="text-center">
-										<span class="label label-success">公開中</span>
-									</td>
-									<td class="text-center">
-										3
-									</td>
-									<td>
-										初心者がプログラミングを学ぶには、何から勉強すれば良いか？<br>
-										<small><i class="fa fa-clock"></i> 2018.06.01&nbsp;&nbsp;<i class="fa fa-sync-alt"></i> 2019.02.04</small>
-									</td>
-									<td><a href="https://b.flu-x.net/demo/how-to-web-programmer.html" target="_blank">/how-to-web-programmer.html</a></td>
-									<td class="text-center">99</td>
-
-									<td class="text-center">
-										<a href="/blog/entry/?code=273" class="btn btn-primary">編集</a>
-										<a href="#" class="btn btn-danger" data-id="273" data-click="delete-confirm">削除</a>
-									</td>
-								</tr>
-								<tr id="item_271">
-									<td class="text-center">
-										<span class="label label-success">公開中</span>
-									</td>
-									<td class="text-center">
-										1
-									</td>
-									<td>
-										Webプログラマーの仕事内容(業務内容)ってどんなことをするの？<br>
-										<small><i class="fa fa-clock"></i> 2018.06.01&nbsp;&nbsp;<i class="fa fa-sync-alt"></i> 2018.06.01</small>
-									</td>
-									<td><a href="https://b.flu-x.net/demo/web-programmer-work.html" target="_blank">/web-programmer-work.html</a></td>
-									<td class="text-center">32</td>
-
-									<td class="text-center">
-										<a href="/blog/entry/?code=271" class="btn btn-primary">編集</a>
-										<a href="#" class="btn btn-danger" data-id="271" data-click="delete-confirm">削除</a>
-									</td>
-								</tr>
+								<?php endforeach; ?>
 							</tbody>
 						</table>
 					</div>
+					<?php endif; ?>
 				</div>
 			<!-- end panel -->
 			</div>
