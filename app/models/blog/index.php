@@ -24,7 +24,6 @@ $stmt->execute(array(":blog_id" =>$blog_id ));
 $blog_entrys = $stmt->fetchAll();
 
 unset($pdo);
-
 ?>
 
 <?php include(TEMPLATE_PATH."/template_head.php"); ?>
