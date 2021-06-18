@@ -9,4 +9,5 @@ $url_list["/blog/setting/"] = "/models/blog/setting.php";
 $url_list["/logout/"] = "/models/client/logout.php";
 $url_list["/signup/"] = "/models/client/signup.php";
 $url_list["/blog/delete/"] = "/models/blog/delete.php";
+$url_list["/blog/delete2/"] = "/models/blog/delete2.php";
 $url_list["/"] = "/models/blog/index.php";

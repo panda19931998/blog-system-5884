@@ -85,9 +85,9 @@ unset($pdo);
 							<thead>
 								<tr class="bg-inverse">
 									<th class="width-70 text-center text-white"></th>
-									<th class="text-center text-white">記事ＩＤ</th>
-									<th class="width-300 text-center text-white">タイトル</th>
-									<th class="width-80 text-center text-white">パス</th>
+									<th class="width-100 text-center text-white">記事ＩＤ</th>
+									<th class="width-300  text-white">タイトル</th>
+									<th class="width-80  text-white">パス</th>
 									<th class="width-150 text-center text-white">閲覧数</th>
 								</tr>
 							</thead>
@@ -95,7 +95,11 @@ unset($pdo);
 								<?php foreach ($blog_entrys as $blog_entry): ?>
 								<tr id="<?php echo h($blog_entry['blog_entry_code']);?>">
 									<td class="text-center">
-										<span class="label label-success"><?php if($blog_entry['status'] = 1) echo "公開中" ?></span>
+										<?php if ($blog_entry['status'] == 1) :?>
+										<span class="label label-success">公開中</span>
+										<?PHP elseif ($blog_entry['status'] == 2):?>
+										<span class="label label-danger">下書き</span>
+										<?PHP endif; ?>
 									</td>
 									<td><?php echo $blog_entry['id'];?></td>
 									<td><?php echo $blog_entry['title'];?></td>
@@ -103,7 +107,7 @@ unset($pdo);
 									<td><center><?php echo $blog_entry['view_count'];?></center></td>
 									<td class="text-center">
 										<a href="/blog/entry/?id=<?php echo h($blog_entry['blog_entry_code']);?>" class="btn btn-primary">編集</a>
-										<a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?');if (ok) location.href='/blog/delete/?id=<?php echo h($blog_entry['blog_entry_code']);?>'; return false;">削除</a>
+										<a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?');if (ok) location.href='/blog/delete2/?id=<?php echo h($blog_entry['blog_entry_code']);?>'; return false;">削除</a>
 									</td>
 								</tr>
 								<?php endforeach; ?>
