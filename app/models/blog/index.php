@@ -9,19 +9,46 @@ $breadcrumb_list[1]['url'] = '';
 
 $blog_entrys = array();
 
-if (isset($_GET['search_keyword'])) {
+
+if(isset($_GET['search_filter'])) {
+	$search_filter = $_GET['search_filter'];
+}
+
+if(isset($_GET['search_keyword'])) {
+	$search_keyword = $_GET['search_keyword'];
+}
+
+
+if(isset($search_filter)){
+	//登録している記事の各項目をデータベースから取得
+	$sql = "SELECT * FROM blog_entry WHERE status = :status AND client_id = :client_id ";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":status" => $search_filter,
+		":client_id" => $user['id']
+	);
+	$stmt->execute($params);
+	$blog_entrys = $stmt->fetchAll();
+
+}elseif(isset($_GET['search_keyword'])) {
 	$search_keyword = h($_GET['search_keyword']);
 	$search_value = $search_keyword;
 
-} else {
+	$sql = "SELECT * FROM blog_entry WHERE (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND blog_id = :blog_id ";
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute(array(":blog_id" =>$blog_id ));
+	$blog_entrys = $stmt->fetchAll();
+
+}else{
 	$search_keyword = '';
 	$search_value = '';
+
+	$sql = "SELECT * FROM blog_entry WHERE (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND blog_id = :blog_id ";
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute(array(":blog_id" =>$blog_id ));
+	$blog_entrys = $stmt->fetchAll();
 }
 
-$sql = "SELECT * FROM blog_entry WHERE (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND blog_id = :blog_id ";
-$stmt = $pdo->prepare($sql);
-$stmt->execute(array(":blog_id" =>$blog_id ));
-$blog_entrys = $stmt->fetchAll();
 
 unset($pdo);
 ?>
@@ -86,12 +113,14 @@ unset($pdo);
 								<tr class="bg-inverse">
 									<th class="width-70 text-center text-white"></th>
 									<th class="width-100 text-center text-white">記事ＩＤ</th>
-									<th class="width-300  text-white">タイトル</th>
-									<th class="width-80  text-white">パス</th>
+									<th class="width-300 text-center text-white">タイトル</th>
+									<th class="width-80  text-center text-white">パス</th>
 									<th class="width-150 text-center text-white">閲覧数</th>
+									<th class="width-150 text-center text-white"></th>
 								</tr>
 							</thead>
 							<tbody>
+
 								<?php foreach ($blog_entrys as $blog_entry): ?>
 								<tr id="<?php echo h($blog_entry['blog_entry_code']);?>">
 									<td class="text-center">
@@ -101,7 +130,7 @@ unset($pdo);
 										<span class="label label-danger">下書き</span>
 										<?PHP endif; ?>
 									</td>
-									<td><?php echo $blog_entry['id'];?></td>
+									<td class="text-center"><?php echo $blog_entry['id'];?></td>
 									<td><?php echo $blog_entry['title'];?></td>
 									<td><a href="/blog/demo/<?php echo $blog_entry['slug'];?>.html" class="btn btn-primary"><?php echo $blog_entry['slug'];?>.html</a></td>
 									<td><center><?php echo $blog_entry['view_count'];?></center></td>
@@ -111,6 +140,7 @@ unset($pdo);
 									</td>
 								</tr>
 								<?php endforeach; ?>
+
 							</tbody>
 						</table>
 					</div>
