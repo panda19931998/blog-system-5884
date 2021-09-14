@@ -9,12 +9,10 @@ $breadcrumb_list[1]['url'] = '';
 
 $blog_entrys = array();
 
-if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))&&!(isset($_COOKIE['search_filter']))&&!(isset($_COOKIE['search_keyword']))){
+if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))){
 
     $search_filter = '';
-	setcookie('filter','', time()+3600*24*365);
 	$search_keyword = '';
-	setcookie('keyword','', time()+3600*24*365);
 
 	$sql = "SELECT * FROM blog_entry WHERE client_id = :client_id ";
 	$stmt = $pdo->prepare($sql);
@@ -24,9 +22,8 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))&&!(isset(
 	$stmt->execute($params);
 	$blog_entrys = $stmt->fetchAll();
 
-}elseif(isset($_GET['search_filter'])&&!(isset($_COOKIE['search_keyword']))) {
+}elseif(isset($_GET['search_filter'])&&!(isset($_GET['search_keyword'])) ){
 	$search_filter = $_GET['search_filter'];
-	setcookie('filter', $search_filter, time()+3600*24*365);
 	$search_keyword ='';
 
 	$sql = "SELECT * FROM blog_entry WHERE status = :status AND client_id = :client_id ";
@@ -39,9 +36,8 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))&&!(isset(
 	$blog_entrys = $stmt->fetchAll();
 
 
-}elseif(isset($_GET['search_keyword'])&&!(isset($_COOKIE['search_filter']))){
+}elseif(isset($_GET['search_keyword'])&&!(isset($_GET['search_filter']))){
     $search_keyword = $_GET['search_keyword'];
-    setcookie('keyword', $search_keyword, time()+3600*24*365);
 	$search_filter ='';
 
 	$search_value = $search_keyword;
@@ -55,34 +51,14 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))&&!(isset(
 	$blog_entrys = $stmt->fetchAll();
 
 
-}elseif(isset($_COOKIE['search_filter'])&&(isset($_GET['search_keyword']))){
+}elseif(isset($_GET['search_filter'])&&(isset($_GET['search_keyword']))){
 
-    $search_filter =$_COOKIE['search_filter'];
+    $search_filter =$_GET['search_filter'];
     $search_keyword = $_GET['search_keyword'];
 
-	setcookie('keyword',$search_keyword, time()+3600*24*365);
-
 	$search_value = $search_keyword;
 
-	$sql = "SELECT * FROM blog_entry WHERE  (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND status =:status AND blog_id = :blog_id ";
-	$stmt = $pdo->prepare($sql);
-	$params = array(
-		":status" => $search_filter,
-		":blog_id" => $blog_id
-	);
-	$stmt->execute($params);
-	$blog_entrys = $stmt->fetchAll();
-
-
-}elseif(isset($_COOKIE['search_keyword'])&&(isset($_GET['search_filter']))){
-    $search_keyword =$_COOKIE['search_keyword'];
-	$search_filter = $_GET['search_filter'];
-
-	setcookie('filter',$search_filter, time()+3600*24*365);
-
-	$search_value = $search_keyword;
-
-	$sql = "SELECT * FROM blog_entry WHERE  (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id AND status =:status AND blog_id = :blog_id ";
+	$sql = "SELECT * FROM blog_entry WHERE  status =:status AND blog_id = :blog_id AND (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' OR slug LIKE '%$search_keyword%' OR seo_description  LIKE '%$search_keyword%' OR seo_keywords LIKE '%$search_keyword%' ) ORDER BY id  ";
 	$stmt = $pdo->prepare($sql);
 	$params = array(
 		":status" => $search_filter,
@@ -93,8 +69,6 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))&&!(isset(
 
 
 }
-
-
 
 
 error_log($search_filter,3,"./error.log");
@@ -143,8 +117,17 @@ unset($pdo);
 						Filters by
 					</a>
 					<ul class="dropdown-menu" role="menu">
+						<?php if ($search_keyword) :?>
+						<li><a href="?search_filter=1&page=1&search_keyword=<?php echo $search_keyword;?>">公開中</a></li>
+						<?PHP else :?>
 						<li><a href="?search_filter=1&page=1">公開中</a></li>
+						<?PHP endif; ?>
+						<?php if ($search_keyword) :?>
+						<li><a href="?search_filter=2&page=1&search_keyword=<?php echo $search_keyword;?>">非公開</a></li>
+						<?PHP else :?>
 						<li><a href="?search_filter=2&page=1">非公開</a></li>
+						<?PHP endif; ?>
+
 					</ul>
 				</div>
 			<!-- end dropdown -->
