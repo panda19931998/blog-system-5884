@@ -106,6 +106,11 @@ unset($pdo);
 				<!-- begin input-group -->
 				<div class="input-group input-group-lg m-b-20">
 					<input type="text" id="search_keyword" name="search_keyword" class="form-control input-white" placeholder="検索キーワードを入力してください。" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>" />
+					<?php if ($search_filter) :?>
+
+
+					<input type="hidden" name="search_filter" value="<?php echo $search_filter ; ?>" />
+					<?PHP endif; ?>
 					<div class="input-group-append">
 						<button type="submit" class="btn btn-primary"><i class="fa fa-search fa-fw"></i></button>
 					</div>
