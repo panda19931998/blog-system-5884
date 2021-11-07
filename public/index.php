@@ -13,7 +13,7 @@ try {
 //	} elseif($request_path == '/client_code/') {
     } else {
 
-		// 物理ディレクトリURLを取得
+		// 物理ディレクトリURL取得
 
 		$uri = rtrim($_SERVER["REQUEST_URI"], '/');
 		$client_code = substr($uri, strrpos($uri, '/') + 1);
