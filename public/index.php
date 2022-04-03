@@ -17,7 +17,7 @@ try {
 
 		$uri = rtrim($_SERVER["REQUEST_URI"], '/');
 		$client_code = substr($uri, strrpos($uri, '/') + 1);
-		$client_code =rtrim($client_code, '.html');
+
 
 
 		$sql = "select * from client where client_code = :client_code limit 1";
