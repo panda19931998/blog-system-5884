@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__FILE__).'/url_list.php');
 require_once(dirname(__FILE__).'/../functions/require.php');
 try {
 	session_start();
@@ -7,12 +6,6 @@ try {
 	$pdo = connectDb();
 
 	$request_path = $_REQUEST['path'];
-
-	// サインアップページの場合はログインチェック無し
-	if ($request_path == '/signup/' || $request_path == '/signup.php') {
-		include(dirname(__FILE__).'/models/client/signup.php');
-//	} elseif($request_path == '/client_code/') {
-    } else {
 
 		// 物理ディレクトリURL取得
 
@@ -57,7 +50,7 @@ try {
 			include(dirname(__FILE__).'/models/blog'.$include_program);
 		} elseif ($request_path == '/'.$client_code.'/image') {
 			$include_program = '/image.php';
-			include(dirname(__FILE__).$client_code.$include_program);
+			include(dirname(__FILE__).'/models/blog'.$include_program);
 		} elseif ($request_path == '/'.$client_code.'/feed') {
 			$include_program = '/feed.php';
 			include(dirname(__FILE__).'/models/blog'.$include_program);
@@ -69,7 +62,6 @@ try {
 		} else {
 			include(dirname(__FILE__).'/models/blog/error.php');
 		}
-	}
 	unset($pdo);
 } catch (Exception $e) {
 	unset($pdo);

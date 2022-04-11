@@ -1,4 +1,1 @@
-<?php
-
-		echo 5;
- ?>
+ENTRY
