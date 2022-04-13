@@ -44,16 +44,24 @@ try {
 			$include_program = '/style.php';
 		} elseif ($request_path == '/'.$client_code.'/category'or $request_path =='/'.$client_code.'/category/') {
 			$include_program = '/list.php';
-		} elseif ($request_path == '/'.$client_code.'/image'or $request_path =='/'.$client_code.'/image/') {
+		}  elseif ($request_path == '/'.$client_code.'/image'or $request_path =='/'.$client_code.'/image/') {
 			$include_program = '/image.php';
 		} elseif ($request_path == '/'.$client_code.'/feed'or $request_path =='/'.$client_code.'/feed/') {
 			$include_program = '/feed.php';
-		} elseif ($request_path == '/'.$client_code.'/') {
+		} elseif ($request_path == '/'.$client_code.'/' or $request_path =='/'.$client_code.'') {
 			$include_program = '/list.php';
 		} elseif(substr($request_path , -4) =='html' or substr($request_path , -5) =='html/'){
 			$include_program ='/entry.php';
 		} else {
 			$include_program ='/error.php';
+		}
+
+		$category = strrpos($path_arr[2], "category",0);
+
+		if($category ===false){
+			$include_program ='/error.php';
+		} else {
+			$include_program = '/list.php';
 		}
 			include(dirname(__FILE__).'/models/blog'.$include_program);
 	unset($pdo);
