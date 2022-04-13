@@ -61,7 +61,11 @@ try {
 		if($category ===false){
 			$include_program ='/error.php';
 		} else {
-			$include_program = '/list.php';
+			if(strlen($path_arr[2]) ==8){
+				$include_program = '/list.php';
+			}else{
+				$include_program ='/error.php';
+			}
 		}
 			include(dirname(__FILE__).'/models/blog'.$include_program);
 	unset($pdo);
