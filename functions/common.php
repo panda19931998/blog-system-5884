@@ -138,4 +138,8 @@ function get_base64_header_string($file_extension) {
 		break;
 	}
 }
+
+function startsWith($haystack, $needle) {
+    return (strpos($haystack, $needle) === 0);
+}
 ?>

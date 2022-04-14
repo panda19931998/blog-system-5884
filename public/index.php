@@ -44,7 +44,9 @@ try {
 			$include_program = '/style.php';
 		} elseif ($request_path == '/'.$client_code.'/category'or $request_path =='/'.$client_code.'/category/') {
 			$include_program = '/list.php';
-		}  elseif ($request_path == '/'.$client_code.'/image'or $request_path =='/'.$client_code.'/image/') {
+		} elseif (startsWith($request_path,'/'.$client_code.'/category/')) {
+			$include_program = '/list.php';
+		} elseif ($request_path == '/'.$client_code.'/image'or $request_path =='/'.$client_code.'/image/') {
 			$include_program = '/image.php';
 		} elseif ($request_path == '/'.$client_code.'/feed'or $request_path =='/'.$client_code.'/feed/') {
 			$include_program = '/feed.php';
@@ -56,17 +58,6 @@ try {
 			$include_program ='/error.php';
 		}
 
-		$category = strrpos($path_arr[2], "category",0);
-
-		if($category ===false){
-			$include_program ='/error.php';
-		} else {
-			if(strlen($path_arr[2]) ==8){
-				$include_program = '/list.php';
-			}else{
-				$include_program ='/error.php';
-			}
-		}
 			include(dirname(__FILE__).'/models/blog'.$include_program);
 	unset($pdo);
 } catch (Exception $e) {
