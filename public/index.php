@@ -37,23 +37,23 @@ try {
 		echo h($blog_id);
 
 
-		if($request_path == '/'.$client_code.'/entry'or $request_path =='/'.$client_code.'/entry/'){
+		if(substr($request_path , -4) =='html' or substr($request_path , -5) =='html/'){
 			$include_program ='/entry.php';
 		// ファイル名が「style.php」だった場合
-		} elseif ($request_path == '/'.$client_code.'/style.css'or $request_path =='/'.$client_code.'/style.css/') {
+		} elseif (startsWith($request_path,'/'.$client_code.'/style.css')) {
 			$include_program = '/style.php';
-		} elseif ($request_path == '/'.$client_code.'/category'or $request_path =='/'.$client_code.'/category/') {
+//		} elseif ($request_path == '/'.$client_code.'/category'or $request_path =='/'.$client_code.'/category/') {
+//			$include_program = '/list.php';
+		} elseif (startsWith($request_path,'/'.$client_code.'/category')) {
 			$include_program = '/list.php';
-		} elseif (startsWith($request_path,'/'.$client_code.'/category/')) {
-			$include_program = '/list.php';
-		} elseif ($request_path == '/'.$client_code.'/image'or $request_path =='/'.$client_code.'/image/') {
+		} elseif (startsWith($request_path,'/'.$client_code.'/image')) {
 			$include_program = '/image.php';
-		} elseif ($request_path == '/'.$client_code.'/feed'or $request_path =='/'.$client_code.'/feed/') {
+		} elseif (startsWith($request_path,'/'.$client_code.'/feed')) {
 			$include_program = '/feed.php';
-		} elseif ($request_path == '/'.$client_code.'/' or $request_path =='/'.$client_code.'') {
-			$include_program = '/list.php';
-		} elseif(substr($request_path , -4) =='html' or substr($request_path , -5) =='html/'){
-			$include_program ='/entry.php';
+		} elseif (startsWith($request_path,'/'.$client_code.'/entry')) {
+			$include_program = '/entry.php';
+		} elseif (startsWith($request_path,'/'.$client_code)){
+			$include_program ='/list.php';
 		} else {
 			$include_program ='/error.php';
 		}
