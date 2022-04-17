@@ -142,4 +142,8 @@ function get_base64_header_string($file_extension) {
 function startsWith($haystack, $needle) {
     return (strpos($haystack, $needle) === 0);
 }
+
+function endsWith($haystack, $needle) {
+    return (strlen($haystack) > strlen($needle)) ? (substr($haystack, -strlen($needle)) == $needle) : false;
+}
 ?>
