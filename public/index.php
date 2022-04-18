@@ -7,11 +7,6 @@ try {
 
 	$request_path = $_REQUEST['path'];
 
-		// 物理ディレクトリURL取得
-
-//		$uri = rtrim($_SERVER["REQUEST_URI"], '/');
-//		$client_code = substr($uri, strrpos($uri, '/') + 1);
-
 		$path_arr = explode('/',$_SERVER['REQUEST_URI']);
 		$client_code = $path_arr[1];
 
@@ -36,20 +31,10 @@ try {
 
 		echo h($blog_id);
 
-
-//		if(substr($request_path , -4) =='html' or substr($request_path , -5) =='html/'){
-//			$include_program ='/entry.php';
 		if(endsWith($request_path,'html')){
 			$include_program ='/entry.php';
-		} elseif (endsWith($request_path,'html/')) {
-			$include_program = '/error.php';
-		// ファイル名が「style.php」だった場合
 		} elseif (endsWith($request_path,'style.css')) {
 			$include_program = '/style.php';
-		} elseif (endsWith($request_path,'style.css/')) {
-			$include_program = '/error.php';
-//		} elseif ($request_path == '/'.$client_code.'/category'or $request_path =='/'.$client_code.'/category/') {
-//			$include_program = '/list.php';
 		} elseif (startsWith($request_path,'/'.$client_code.'/category')) {
 			$include_program = '/list.php';
 		} elseif (startsWith($request_path,'/'.$client_code.'/image')) {
