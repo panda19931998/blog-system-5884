@@ -29,8 +29,6 @@ try {
 		$blog = $stmt->fetch();
 		$blog_id =$blog['id'];
 
-		echo h($blog_id);
-
 		if(endsWith($request_path,'html')){
 			$include_program ='/entry.php';
 		} elseif (endsWith($request_path,'style.css')) {
