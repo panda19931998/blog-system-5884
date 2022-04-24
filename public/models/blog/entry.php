@@ -2,38 +2,38 @@
 <!DOCTYPE html>
 <html lang="ja">
 	<head>
-
+		<?php echo h($blog["analytics_ua_code"]); ?>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>僕がいつもプログラムをどんな方法（流れ）で作成しているのか？</title>
+		<title><?php echo h($blog["title"]); ?></title>
 
-		<meta name="description" content="僕は普段から何かアイデアを思いつくと、それをささっとアプリやWebサービスとして作ってしまいます。このページでは、僕がいつもプログラムをどんな感じで作っているのかをご紹介しようと思います。">
-		<meta name="keywords" content="プログラム,作成,方法,流れ" />
-		<meta name="author" content="ハルジオン">
+		<meta name="description" content="<?php echo h($blog["blog_description"]); ?>">
+		<meta name="keywords" content="<?php echo h($blog["blog_keywords"]); ?>" />
+		<meta name="author" content="<?php echo h($blog["blog_author_name"]); ?>">
 
-		<link rel="icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/client_code/image/?i=favicon">
-		<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/client_code/image/?i=favicon">
-		<link rel="apple-touch-icon" sizes="180x180" href="http://b.blog-system-5884.localhost/client_code/image/?i=favicon180">
+		<link rel="icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
+		<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
+		<link rel="apple-touch-icon" sizes="180x180" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon180">
 
-		<link rel="canonical" href="http://b.blog-system-5884.localhost/client_code/workflow.html" />
+		<link rel="canonical" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" />
 
-		<link rel="alternate" type="application/rss+xml" title="初心者でも自宅で楽しく学べるハルジオン式プログラミング入門 &raquo; フィード" href="http://b.blog-system-5884.localhost/client_code/feed/" />
+		<link rel="alternate" type="application/rss+xml" title="<?php echo h($blog["title"]); ?> &raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
 
 		<meta property="og:locale" content="ja_JP" />
-		<meta property="og:site_name" content="初心者でも自宅で楽しく学べるハルジオン式プログラミング入門" />
-		<meta property="og:title" content="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？" />
-		<meta property="og:description" content="僕は普段から何かアイデアを思いつくと、それをささっとアプリやWebサービスとして作ってしまいます。このページでは、僕がいつもプログラムをどんな感じで作っているのかをご紹介しようと思います。" />
-		<meta property="og:url" content="http://b.blog-system-5884.localhost/client_code/workflow.html" />
+		<meta property="og:site_name" content="<?php echo h($blog["title"]); ?>" />
+		<meta property="og:title" content="<?php echo h($blog["title"]); ?>" />
+		<meta property="og:description" content="<?php echo h($blog["blog_description"]); ?>" />
+		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" />
 		<meta property="og:type" content="article" />
-		<meta property="og:image" content="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" />
+		<meta property="og:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" />
 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@" />
-		<meta name="twitter:title" content="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？" />
-		<meta name="twitter:description" content="僕は普段から何かアイデアを思いつくと、それをささっとアプリやWebサービスとして作ってしまいます。このページでは、僕がいつもプログラムをどんな感じで作っているのかをご紹介しようと思います。" />
-		<meta name="twitter:image" content="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" />
+		<meta name="twitter:title" content="<?php echo h($blog["blog_description"]); ?>" />
+		<meta name="twitter:description" content="<?php echo h($blog["blog_description"]); ?>" />
+		<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" />
 
 		<meta property="fb:admins" content="" />
 		<meta property="fb:app_id" content="" />
@@ -49,7 +49,7 @@
 
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-		<link href="http://b.blog-system-5884.localhost/client_code/style.css" rel="stylesheet">
+		<link href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/style.css" rel="stylesheet">
 
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -65,7 +65,7 @@
 		<div class="container">
 
 			<div class="blog-header-img">
-				<a href="http://b.blog-system-5884.localhost/client_code/"><img src="http://b.blog-system-5884.localhost/client_code/image/?i=blog_header" alt="初心者でも自宅で楽しく学べるハルジオン式プログラミング入門" class="img-responsive" /></a>
+				<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/"><img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=blog_header" alt="初心者でも自宅で楽しく学べるハルジオン式プログラミング入門" class="img-responsive" /></a>
 			</div>
 
 
@@ -97,14 +97,14 @@
 						<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 
 
-							<a href="http://b.blog-system-5884.localhost/client_code/category/27.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> プログラマーを知る</span></a>
+							<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> プログラマーを知る</span></a>
 
 
 						</p>
 
 
 						<figure class="blog-post-eyecatch-img">
-							<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" alt="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？" class="img-responsive" />
+							<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？" class="img-responsive" />
 						</figure>
 
 
@@ -134,12 +134,12 @@
 							<div class="col-md-3 col-sm-6 blog-entry-relation-area">
 
 
-								<a href="http://b.blog-system-5884.localhost/client_code/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
 								<div class="blog-entry-relation-eyecatch-area">
 
 
 									<figure class="blog-entry-relation-eyecatch">
-										<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" alt="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="img-responsive" />
+										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="img-responsive" />
 									</figure>
 
 
@@ -156,12 +156,12 @@
 							<div class="col-md-3 col-sm-6 blog-entry-relation-area">
 
 
-								<a href="http://b.blog-system-5884.localhost/client_code/crud.html" title="Web開発のキホン「CRUD」をわかりやすく解説">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/crud.html" title="Web開発のキホン「CRUD」をわかりやすく解説">
 								<div class="blog-entry-relation-eyecatch-area">
 
 
 									<figure class="blog-entry-relation-eyecatch">
-										<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" alt="Web開発のキホン「CRUD」をわかりやすく解説" class="img-responsive" />
+										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Web開発のキホン「CRUD」をわかりやすく解説" class="img-responsive" />
 									</figure>
 
 
@@ -193,7 +193,7 @@
 
 
 								<figure class="sidebar-profile-image">
-									<img src="http://b.blog-system-5884.localhost/client_code/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
+									<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
 								</figure>
 
 
@@ -226,7 +226,7 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 					<div class="sidebar-module">
 						<div class="panel">
 							<div class="panel-body">
-								<form action="http://b.blog-system-5884.localhost/client_code" method="GET">
+								<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>" method="GET">
 									<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索">
 								</form>
 							</div>
@@ -241,13 +241,13 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 							<div class="panel-body">
 
 
-								<a href="http://b.blog-system-5884.localhost/client_code/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
 								<ul class="sidebar-list">
 									<li class="sidebar-list-left">
 
 
 										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" class="img-responsive" alt="" />
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
 										</figure>
 
 
@@ -264,13 +264,13 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 								</a>
 
 
-								<a href="http://b.blog-system-5884.localhost/client_code/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
 								<ul class="sidebar-list">
 									<li class="sidebar-list-left">
 
 
 										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" class="img-responsive" alt="" />
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
 										</figure>
 
 
@@ -287,13 +287,13 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 								</a>
 
 
-								<a href="http://b.blog-system-5884.localhost/client_code/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
 								<ul class="sidebar-list">
 									<li class="sidebar-list-left">
 
 
 										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/client_code/image/?i=eyecatch&e=931" class="img-responsive" alt="" />
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
 										</figure>
 
 
@@ -323,19 +323,19 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 								<ul class="sidebar-category-list">
 
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/client_code/category/27.html"> プログラマーを知る (3)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"> プログラマーを知る (3)</a></li>
 
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/client_code/category/28.html"> プログラマーになる方法 (2)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"> プログラマーになる方法 (2)</a></li>
 
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/client_code/category/35.html"> プログラマーのメリット (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/35.html"> プログラマーのメリット (0)</a></li>
 
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/client_code/category/36.html"> プログラマー (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/36.html"> プログラマー (0)</a></li>
 
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/client_code/category/37.html"> プログラミング (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/37.html"> プログラミング (0)</a></li>
 
 								</ul>
 							</div>
