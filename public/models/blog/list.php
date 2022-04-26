@@ -2,12 +2,11 @@
 <!DOCTYPE html>
 <html lang="ja">
 	<head>
-		<?php echo h($blog["analytics_ua_code"]); ?>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title><?php echo h($blog["title"]); ?></title>
+		<title><?php echo h($blog["blog_title"]); ?></title>
 
 		<meta name="description" content="<?php echo h($blog["blog_description"]); ?>">
 		<meta name="keywords" content="<?php echo h($blog["blog_keywords"]); ?>" />
@@ -22,8 +21,8 @@
 		<link rel="alternate" type="application/rss+xml" title="<?php echo h($blog["title"]); ?>&raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
 
 		<meta property="og:locale" content="ja_JP" />
-		<meta property="og:site_name" content="<?php echo h($blog["title"]); ?>" />
-		<meta property="og:title" content="<?php echo h($blog["title"]); ?>" />
+		<meta property="og:site_name" content="<?php echo h($blog["blog_title"]); ?>" />
+		<meta property="og:title" content="<?php echo h($blog["blog_title"]); ?>" />
 		<meta property="og:description" content="<?php echo h($blog["blog_description"]); ?>" />
 		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" />
 		<meta property="og:type" content="website" />
@@ -31,7 +30,7 @@
 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@" />
-		<meta name="twitter:title" content="<?php echo h($blog["blog_description"]); ?>" />
+		<meta name="twitter:title" content="<?php echo h($blog["blog_title"]); ?>" />
 		<meta name="twitter:description" content="<?php echo h($blog["blog_description"]); ?>" />
 		<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top" />
 
