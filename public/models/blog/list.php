@@ -1,3 +1,95 @@
+<?php
+
+//id取得
+if(isset($_GET['id'])) {
+	$id = $_GET['id'];
+}
+
+$blog_entry = array();
+$blog_entrys = array();
+$blog_categorys = array();
+$blog_category = array();
+$blog_entry_rankings = array();
+$blog_categorys2 = array();
+$blog_category2 = array();
+
+//ブログの登録している記事を取得
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$blog_entrys = $stmt->fetchAll();
+
+
+//ページネーション
+
+//SQL文を変数にいれる。$count_sqlはデータの件数取得に使うための変数。
+$count_sql = "SELECT COUNT(*) as cnt FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ";
+$stmt = $pdo->prepare($count_sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$count = $stmt->fetch();
+
+
+//ページ数を取得する。GETでページが渡ってこなかった時(最初のページ)のときは$pageに１を格納する。
+if(isset($_GET['page']) && is_numeric($_GET['page'])) {
+  $page = $_GET['page'];
+} else {
+  $page = 1;
+}
+
+//最大ページ数を取得する。
+//５件ずつ表示させているので、$count['cnt']に入っている件数を５で割って小数点は切りあげると最大ページ数になる。
+$max_page = ceil($count['cnt'] / 10);
+
+
+if($page == 1 || $page == $max_page) {
+    $range = 4;
+} elseif ($page == 2 || $page == $max_page - 1) {
+    $range = 3;
+} else {
+    $range = 2;
+}
+
+$from_record = ($page - 1) * 10 + 1;
+
+if($page == $max_page && $count['cnt'] % 10 !== 0) {
+    $to_record = ($page - 1) * 10 + $count['cnt'] % 10;
+} else {
+    $to_record = $page * 10;
+}
+
+
+//人気記事ランキング
+
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$blog_entry_rankings = $stmt->fetchAll();
+
+
+//カテゴリー取得
+
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$blog_categorys2 = $stmt->fetchAll();
+
+?>
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -71,116 +163,61 @@
 
 				<div id="main" class="col-md-8 col-sm-8 col-xs-12">
 
+				<?php foreach ($blog_entrys as $val): ?>
+					<?php
+					//ブログの登録しているカテゴリーを取得
+					$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id = :blog_entry_id ";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":blog_id" => $blog_id,
+						":client_id" => $client['id'],
+						":blog_entry_id" =>  $val['id']
+					);
+					;$stmt->execute($params);
+					$blog_categorys[$val['id']] = $stmt->fetch();
 
-
-
-
-
-					<div class="blog-list-entry-area panel">
-						<article class="blog-list-entry-content">
-							<section class="">
-								<p class="blog-list-entry-posting-date-area" style="text-align:center;">
-									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> 2012.10.12&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> 2020.04.08</span>
-								</p>
-
-								<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">僕がいつもプログラムをどんな方法（流れ）で作成しているのか？</a></h1>
-
-
-								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
-
-
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> プログラマーを知る</span></a>
-
-
-								</p>
-
-
-
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>//image/?i=eyecatch&e=12');background-size: cover;">
-								</figure></a>
-
-
-								<div class="description"><p>僕は普段から何かアイデアを思いつくと、それをささっとアプリやWebサービスとして作ってしまいます。このページでは、僕がいつもプログラムをどんな感じで作っているのかをご紹介しようと思います。</p></div>
-
-								<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？" class="btn btn-default btn-lg">記事を読む</a></div>
-							</section>
-						</article>
-					</div>
-
-
-
-
-
+					$sql = "SELECT * FROM blog_category_master WHERE id = :id ";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":id" => $blog_categorys[$val['id']]['blog_category_master_id']
+					);
+					$stmt->execute($params);
+					$blog_category_master[$val['id']] = $stmt->fetch();
+					?>
 
 					<div class="blog-list-entry-area panel">
 						<article class="blog-list-entry-content">
 							<section class="">
 								<p class="blog-list-entry-posting-date-area" style="text-align:center;">
-									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> 2012.09.08&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> 2019.07.01</span>
+									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> <?php echo h($val['created_at']); ?>&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> <?php echo h($val['updated_at']); ?></span>
 								</p>
 
-								<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">初心者がプログラミングを学ぶには、何から勉強すれば良いか？</a></h1>
+								<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
 
 
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
 
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> プログラマーになる方法</span></a>
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['id']]['category_name']); ?></span></a>
 
 
 								</p>
 
 
 
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>//image/?i=eyecatch&e=11');background-size: cover;">
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
 								</figure></a>
 
 
-								<div class="description"><p>プログラミングを学んだことがない初心者がこれからプログラマーを目指すために勉強するべき「6つの分野」とは？これから学習を始める際にどのように進めていけば良いのか？</p></div>
+								<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
 
-								<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？" class="btn btn-default btn-lg">記事を読む</a></div>
+								<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
 							</section>
 						</article>
 					</div>
 
 
-
-
-
-
-					<div class="blog-list-entry-area panel">
-						<article class="blog-list-entry-content">
-							<section class="">
-								<p class="blog-list-entry-posting-date-area" style="text-align:center;">
-									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> 2012.09.04&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> 2019.07.01</span>
-								</p>
-
-								<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">Webプログラマーの仕事内容(業務内容)ってどんなことをするの？</a></h1>
-
-
-								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
-
-
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> プログラマーを知る</span></a>
-
-
-								</p>
-
-
-
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>//image/?i=eyecatch&e=10');background-size: cover;">
-								</figure></a>
-
-
-								<div class="description"><p>一口に「Webプログラマー」と言っても、どのような仕事をしているのか、なかなかイメージしづらいですよね。このページではWebプログラマーの具体的な仕事内容や、開発会社におけるプログラマーの2種類のタイプについて説明します。</p></div>
-
-								<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="btn btn-default btn-lg">記事を読む</a></div>
-							</section>
-						</article>
-					</div>
-
-
-
+				<?php endforeach; ?>
 
 					<div class="blog-list-pager-area">
 
@@ -244,14 +281,14 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 							</div>
 							<div class="panel-body">
 
-
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
+							<?php foreach ($blog_entry_rankings as $val): ?>
+								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
 								<ul class="sidebar-list">
 									<li class="sidebar-list-left">
 
 
 										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
 										</figure>
 
 
@@ -259,60 +296,15 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 									</li>
 									<li class="sidebar-list-right">
 										<div class="sidebar-popular-list-entry-title">
-											僕がいつもプログラムをどんな方法（流れ）で作成しているのか？										</div>
+											<?php echo h($val['title']); ?>										</div>
 										<div class="sidebar-popular-list-entry-views">
-											125 Views
+											<?php echo h($val['view_count']); ?> Views
 										</div>
 									</li>
 								</ul>
 								</a>
 
-
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
-								<ul class="sidebar-list">
-									<li class="sidebar-list-left">
-
-
-										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
-										</figure>
-
-
-										<p>2</p>
-									</li>
-									<li class="sidebar-list-right">
-										<div class="sidebar-popular-list-entry-title">
-											初心者がプログラミングを学ぶには、何から勉強すれば良いか？										</div>
-										<div class="sidebar-popular-list-entry-views">
-											36 Views
-										</div>
-									</li>
-								</ul>
-								</a>
-
-
-								<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
-								<ul class="sidebar-list">
-									<li class="sidebar-list-left">
-
-
-										<figure class="sidebar-popular-list-entry-eyecatch">
-											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
-										</figure>
-
-
-										<p>3</p>
-									</li>
-									<li class="sidebar-list-right">
-										<div class="sidebar-popular-list-entry-title">
-											Webプログラマーの仕事内容(業務内容)ってどんなことをするの？										</div>
-										<div class="sidebar-popular-list-entry-views">
-											21 Views
-										</div>
-									</li>
-								</ul>
-								</a>
-
+							<?php endforeach; ?>
 
 							</div>
 						</div>
@@ -326,22 +318,21 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 							<div class="panel-body">
 								<ul class="sidebar-category-list">
 
+									<?php foreach ($blog_categorys2 as $val): ?>
+										<?php
+										$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+										$stmt = $pdo->prepare($sql);
+										$params = array(
+											":blog_id" => $blog_id,
+											":client_id" => $client['id'],
+											":blog_category_master_id" => $val['id']
+										);
+										$stmt->execute($params);
+										$count2[$val['id']] = $stmt ->fetch();
+ 										?>
 
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"> プログラマーを知る (3)</a></li>
-
-
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"> プログラマーになる方法 (2)</a></li>
-
-
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/35.html"> プログラマーのメリット (0)</a></li>
-
-
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/36.html"> プログラマー (0)</a></li>
-
-
-									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/37.html"> プログラミング (0)</a></li>
-
-
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+									<?php endforeach; ?>
 								</ul>
 							</div>
 						</div>
@@ -349,6 +340,35 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 
 
 				</div>
+			</div>
+
+			<div class="pagination">
+				<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
+			</div>
+			<div class="pagination2">
+				<a href="?page=1" title="最初のページへ">« 最初へ</a>
+					<?php if ($page >= 2 ): ?>
+			            <a href="?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
+			        <?php else : ;?>
+			            <span class="first_last_page">&laquo;</span>
+			        <?php endif; ?>
+
+					<?php for ($i = 1; $i <= $max_page; $i++) : ?>
+					   <?php if($i >= $page - $range && $i <= $page + $range) : ?>
+					       <?php if($i == $page) : ?>
+					           <span class="now_page_number"><?php echo $i; ?></span>
+					       <?php else: ?>
+					           <a href="?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
+					       <?php endif; ?>
+					   <?php endif; ?>
+					<?php endfor; ?>
+
+					<?php if($page < $max_page) : ?>
+						<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
+					<?php else : ?>
+						<span class="first_last_page">&raquo;</span>
+					<?php endif; ?>
+				<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
 			</div>
 
 		</div>

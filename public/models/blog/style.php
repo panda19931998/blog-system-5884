@@ -1082,6 +1082,60 @@ width:100%;/* 任意の横幅 */;
     color: #fff;
 }
 
+
+/* -------------------------------------------
+   ページネーション
+------------------------------------------- */
+a:link {text-decoration:none }
+a.page_number:visited {color: black; text-decoration:none }
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+
+.pagination2 {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+.page_feed {
+  width: 30px;
+  margin: 0 10px;
+  padding: 5px 10px;
+  text-align: center;
+  background: #b8b8b8;
+  color: black;
+}
+.first_last_page {
+  width: 30px;
+  margin: 0 10px;
+  padding: 5px 10px;
+  text-align: center;
+  background: #f0f0f0;
+  color: black;
+}
+
+a:link {text-decoration:none }
+a.page_number:visited {color: black; text-decoration:none }
+.page_number {
+  width: 30px;
+  margin: 0 10px;
+  padding: 5px;
+  text-align: center;
+  background: #b8b8b8;
+  color: black;
+}
+.now_page_number {
+  width: 30px;
+  margin: 0 10px;
+  padding: 5px;
+  text-align: center;
+  background: #f0f0f0;
+  color: black;
+  font-weight: bold;
+}
+
 EOT;
 
 header('Content-type: text/css');
