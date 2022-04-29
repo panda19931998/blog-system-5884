@@ -65,6 +65,8 @@ if($page == $max_page && $count['cnt'] % 10 !== 0) {
     $to_record = $page * 10;
 }
 
+$blog_entrys_slice = array_slice($blog_entrys,($page - 1) * 10,($page * 10) -1 );
+
 
 //人気記事ランキング
 
@@ -163,7 +165,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 				<div id="main" class="col-md-8 col-sm-8 col-xs-12">
 
-				<?php foreach ($blog_entrys as $val): ?>
+				<?php foreach ($blog_entrys_slice as $val): ?>
 					<?php
 					//ブログの登録しているカテゴリーを取得
 					$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id = :blog_entry_id ";
