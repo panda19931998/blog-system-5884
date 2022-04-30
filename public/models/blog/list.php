@@ -16,7 +16,7 @@ $blog_category2 = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-$today = $date->format('Y-m-d');//$eventdayの形式とフォーマットをあわせてます。
+$today = $date->format('Y-m-d');
 
 //ブログの登録している記事を取得
 $sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ";
