@@ -13,15 +13,25 @@ $blog_entry_rankings = array();
 $blog_categorys2 = array();
 $blog_category2 = array();
 
+
+$date = new DateTime();
+$date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+$today = $date->format('Y-m-d');//$eventdayの形式とフォーマットをあわせてます。
+
 //ブログの登録している記事を取得
-$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ";
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND created_at <= :created_at ";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
-	":client_id" => $client['id']
+	":client_id" => $client['id'],
+	":status" => 1,
+	":created_at" => $today
 );
 $stmt->execute($params);
 $blog_entrys = $stmt->fetchAll();
+
+
+
 
 
 //ページネーション
