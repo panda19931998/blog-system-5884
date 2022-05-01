@@ -18,6 +18,8 @@ $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
 $today = $date->format('Y-m-d');
 
+
+if(!isset($_GET['q'])){
 //ブログの登録している記事を取得
 $sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ";
 $stmt = $pdo->prepare($sql);
@@ -30,21 +32,30 @@ $params = array(
 $stmt->execute($params);
 $blog_entrys = $stmt->fetchAll();
 
+//検索機能
+}else{
 
+    $search_keyword = $_GET['q'];
 
+	$search_value = $search_keyword;
+
+	$sql = "SELECT * FROM blog_entry WHERE  blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date AND (title LIKE '%$search_keyword%' OR contents LIKE '%$search_keyword%' ) ORDER BY id  ";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":blog_id" => $blog_id,
+		":client_id" => $client['id'],
+		":status" => 1,
+		":posting_date" => $today
+	);
+	$stmt->execute($params);
+	$blog_entrys = $stmt->fetchAll();
+
+}
 
 
 //ページネーション
 
-//SQL文を変数にいれる。$count_sqlはデータの件数取得に使うための変数。
-$count_sql = "SELECT COUNT(*) as cnt FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ";
-$stmt = $pdo->prepare($count_sql);
-$params = array(
-	":blog_id" => $blog_id,
-	":client_id" => $client['id']
-);
-$stmt->execute($params);
-$count = $stmt->fetch();
+$count['cnt'] = count($blog_entrys);
 
 
 //ページ数を取得する。GETでページが渡ってこなかった時(最初のページ)のときは$pageに１を格納する。
@@ -100,6 +111,7 @@ $params = array(
 );
 $stmt->execute($params);
 $blog_categorys2 = $stmt->fetchAll();
+
 
 ?>
 
@@ -280,7 +292,7 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 						<div class="panel">
 							<div class="panel-body">
 								<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
-									<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索">
+									<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
 								</form>
 							</div>
 						</div>
@@ -358,9 +370,18 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 				<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
 			</div>
 			<div class="pagination2">
+				<?php if (!isset($search_keyword)) :?>
 				<a href="?page=1" title="最初のページへ">« 最初へ</a>
+
+				<?PHP else :?>
+				<a href="?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
+				<?PHP endif; ?>
 					<?php if ($page >= 2 ): ?>
+						<?php if (!isset($search_keyword)) :?>
 			            <a href="?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
+						<?PHP else: ?>
+						<a href="?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
+						<?PHP endif; ?>
 			        <?php else : ;?>
 			            <span class="first_last_page">&laquo;</span>
 			        <?php endif; ?>
@@ -370,17 +391,29 @@ IT企業でWebプログラマーを15年ほどやっており、在職時は新�
 					       <?php if($i == $page) : ?>
 					           <span class="now_page_number"><?php echo $i; ?></span>
 					       <?php else: ?>
+							   <?php if (!isset($search_keyword)) :?>
 					           <a href="?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
+							   <?PHP else: ?>
+							   <a href="?page=<?php echo $i; ?>&q=<?php echo $search_keyword;?>" class="page_number"><?php echo $i; ?></a>
+							   <?PHP endif; ?>
 					       <?php endif; ?>
 					   <?php endif; ?>
 					<?php endfor; ?>
 
 					<?php if($page < $max_page) : ?>
+						<?php if (!isset($search_keyword)) :?>
 						<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
+						<?PHP else: ?>
+						<a href="?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
+						<?PHP endif; ?>
 					<?php else : ?>
 						<span class="first_last_page">&raquo;</span>
 					<?php endif; ?>
+				<?php if (!isset($search_keyword)) :?>
 				<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
+				<?PHP else: ?>
+				<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
+				<?PHP endif; ?>
 			</div>
 
 		</div>
