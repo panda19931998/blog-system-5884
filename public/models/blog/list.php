@@ -75,6 +75,9 @@ if(!isset($_GET['q'])){
 		}else{
 			$new_category_code = $path_arr[3];
 
+			$new_blog_category_master =array();
+			$new_blog_categorys =array();
+
 			$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_slug =:blog_category_slug ";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
@@ -93,15 +96,18 @@ if(!isset($_GET['q'])){
 				":blog_category_master_id" => $new_blog_category_master['id']
 			);
 			$stmt->execute($params);
-			$new_blog_category = $stmt->fetch();
+			$new_blog_categorys = $stmt->fetchAll();
 
-			$sql = "SELECT * FROM blog_entry WHERE id = :id ";
-			$stmt = $pdo->prepare($sql);
-			$params = array(
-				":id" => $new_blog_category['blog_entry_id']
-			);
-			$stmt->execute($params);
-			$blog_entrys = $stmt->fetchAll();
+			foreach ($new_blog_categorys as $val2){
+
+				$sql = "SELECT * FROM blog_entry WHERE id = :id ";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":id" => $val2['blog_entry_id']
+				);
+				$stmt->execute($params);
+				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
+			}
 		}
 
 
