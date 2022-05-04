@@ -63,10 +63,12 @@ if(!isset($_GET['q'])){
 
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE id = :id ";
+				$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
-					":id" => $val2['blog_entry_id']
+					":id" => $val2['blog_entry_id'],
+					":status" => 1,
+					":posting_date" => $today
 				);
 				$stmt->execute($params);
 				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
@@ -100,10 +102,12 @@ if(!isset($_GET['q'])){
 
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE id = :id ";
+				$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
-					":id" => $val2['blog_entry_id']
+					":id" => $val2['blog_entry_id'],
+					":status" => 1,
+					":posting_date" => $today
 				);
 				$stmt->execute($params);
 				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
