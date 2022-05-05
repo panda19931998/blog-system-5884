@@ -48,9 +48,7 @@ try {
 		$blog_entry_image = $stmt->fetch();
 		$image_code =$blog_entry_image['image_code'];
 
-		if(endsWith($request_path,'html')){
-			$include_program ='/entry.php';
-		} elseif (endsWith($request_path,'style.css')) {
+		if(endsWith($request_path,'style.css')) {
 			$include_program = '/style.php';
 		} elseif (startsWith($request_path,'/'.$client_code.'/category')) {
 			$include_program = '/list.php';
@@ -62,6 +60,8 @@ try {
 			$include_program = '/entry.php';
 		} elseif ($request_path == '/'.$client_code.'/' or $request_path =='/'.$client_code){
 			$include_program ='/list.php';
+		} elseif(endsWith($request_path,'html')){
+			$include_program ='/entry.php';
 		} else {
 			$include_program ='/error.php';
 		}
