@@ -1,9 +1,6 @@
 <?php
 
-//id取得
-if(isset($_GET['id'])) {
-	$id = $_GET['id'];
-}
+//変数を設定
 
 $blog_entry = array();
 $blog_category = array();
@@ -12,17 +9,18 @@ $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
 $today = $date->format('Y-m-d');
 
-if(endsWith($path_arr[3],'html')) {
+$end_path_arr = array();
+$end_path_arr =end($path_arr);
 
-	$new_category_code = str_replace('.html','',$path_arr[3]);
+//URLからデータを取り出し
+if(endsWith($end_path_arr,'html')) {
 
-}else{
-
-	$new_category_code = $path_arr[3];
+	$new_entry_code = str_replace('.html','',$end_path_arr);
 
 }
 
-if(isset($new_category_code)){
+//blog_entry_codeかslugかを判定
+if(is_numeric($new_entry_code)){
 	$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date AND blog_entry_code = :blog_entry_code ";
 	$stmt = $pdo->prepare($sql);
 	$params = array(
@@ -30,7 +28,7 @@ if(isset($new_category_code)){
 		":client_id" => $client['id'],
 		":status" => 1,
 		":posting_date" => $today,
-		":blog_entry_code" =>$new_category_code
+		":blog_entry_code" =>$new_entry_code
 	);
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
@@ -44,7 +42,7 @@ if(isset($new_category_code)){
 		":client_id" => $client['id'],
 		":status" => 1,
 		":posting_date" => $today,
-		":slug" => $new_category_code
+		":slug" => $new_entry_code
 	);
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
@@ -52,6 +50,7 @@ if(isset($new_category_code)){
 }
 
 
+//カテゴリーを取得
 
 $sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
 $stmt = $pdo->prepare($sql);
@@ -74,6 +73,7 @@ $params = array(
 $stmt->execute($params);
 $blog_category_master = $stmt->fetch();
 
+//カテゴリーにslugが有るかどうか判定
 if(isset($blog_category_master['blog_category_code'])){
 
 	$blog_category_code = $blog_category_master['blog_category_code'];
@@ -188,169 +188,150 @@ if(isset($blog_category_master['blog_category_code'])){
 
 				</p>
 
-
-				<figure class="blog-post-eyecatch-img">
-					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_category_code); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
-				</figure>
-
-
-				<p style="blog-post-contents;margin-top:40px;"><?php echo h($blog_entry['contents']); ?></p>
-
-
-
-
-				<!--
-				<div class="entry-pager">
+				<?php if(is_numeric($new_entry_code)) : ?>
+					<figure class="blog-post-eyecatch-img">
+						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
+					</figure><?php else : ?>
+						<figure class="blog-post-eyecatch-img">
+							<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
+						</figure><?php endif; ?>
 
 
 
-				<div class="entry-pager-previous">
-				<a href="http://b.blog-system-5884.localhost/client_code/how-to-web-programmer.html">【次の記事】 初心者がプログラミングを学ぶには、何から勉強すれば良いか？ <i class="fa fa-angle-right"></i></a>
-			</div>
-
-
-		</div>
-	-->
-
-
-	<span class="relation-entry">おすすめ記事</span>
-	<div class="row">
-
-
-		<div class="col-md-3 col-sm-6 blog-entry-relation-area">
-
-
-			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
-				<div class="blog-entry-relation-eyecatch-area">
-
-
-					<figure class="blog-entry-relation-eyecatch">
-						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="img-responsive" />
-					</figure>
-
-
-					<p class="relation-posting-date">2012.09.04</p>
-					<p class="relation-entry-title">Webプログラマーの仕事内容(業務内容)ってどんなことをするの？</p>
-				</div>
-			</a>
+						<p style="blog-post-contents;margin-top:40px;"><?php echo h($blog_entry['contents']); ?></p>
 
 
 
-		</div>
 
-
-		<div class="col-md-3 col-sm-6 blog-entry-relation-area">
-
-
-			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/crud.html" title="Web開発のキホン「CRUD」をわかりやすく解説">
-				<div class="blog-entry-relation-eyecatch-area">
-
-
-					<figure class="blog-entry-relation-eyecatch">
-						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Web開発のキホン「CRUD」をわかりやすく解説" class="img-responsive" />
-					</figure>
-
-
-					<p class="relation-posting-date">2020.04.24</p>
-					<p class="relation-entry-title">Web開発のキホン「CRUD」をわかりやすく解説</p>
-				</div>
-			</a>
+						<!--
+						<div class="entry-pager">
 
 
 
-		</div>
-
-
-
-	</div>
-	
-
-</div>
-
-
-</div>
-
-<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
-
-
-	<div class="sidebar-module">
-		<div class="panel">
-			<div class="panel-body">
-
-
-				<figure class="sidebar-profile-image">
-					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
-				</figure>
-
-
-				<div style="padding:10px;margin-top:10px;text-align:center;">
-					<span style="font-size:1.4em;font-weight:bold;">ハルジオン</span>
-				</div>
-				<div>
-					<div class="sidebar-profile">
-						Webプログラマー暦22年、2児の父。<br />
-						<br />
-						IT企業でWebプログラマーを15年ほどやっており、在職時は新人プログラマーの採用や育成なども担当。<br />
-						<br />
-						現在はその経験を活かして独立し、ネットを通じて多くの新人プログラマーを育成しています。<br />
-						<br />
-						日々思いついたアイデアをプログラミングで実現させ、ラーニングシステムやメルマガ配信システムなども全て自作。ほとんどの事務作業をプログラミングにより自動化し、より多くの時間を新しいアプリの開発や、家族との時間に充てています。<br />
-						<br />
-						僕の学んだノウハウを皆さんに伝授し、面白いアプリを一緒に開発していけるような仲間を世界中に作っていくことが目標です。<br />
-						<br />
-						具体的な方法に興味があれば、是非メルマガを読んでみて下さい。 <br />
+						<div class="entry-pager-previous">
+						<a href="http://b.blog-system-5884.localhost/client_code/how-to-web-programmer.html">【次の記事】 初心者がプログラミングを学ぶには、何から勉強すれば良いか？ <i class="fa fa-angle-right"></i></a>
 					</div>
-					<div class="sidebar-sns" style="margin-top:10px;">
 
 
-					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="sidebar-module">
-		<div class="panel">
-			<div class="panel-body">
-				<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>" method="GET">
-					<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索">
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<div class="sidebar-module">
-		<div class="panel">
-			<div class="panel-heading">
-				<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
-			</div>
-			<div class="panel-body">
+			-->
 
 
-				<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
-					<ul class="sidebar-list">
-						<li class="sidebar-list-left">
+			<span class="relation-entry">おすすめ記事</span>
+			<div class="row">
 
 
-							<figure class="sidebar-popular-list-entry-eyecatch">
-								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
+				<div class="col-md-3 col-sm-6 blog-entry-relation-area">
+
+
+					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+						<div class="blog-entry-relation-eyecatch-area">
+
+
+							<figure class="blog-entry-relation-eyecatch">
+								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="img-responsive" />
 							</figure>
 
 
-							<p>1</p>
-						</li>
-						<li class="sidebar-list-right">
-							<div class="sidebar-popular-list-entry-title">
-								僕がいつもプログラムをどんな方法（流れ）で作成しているのか？										</div>
-								<div class="sidebar-popular-list-entry-views">
-									127 Views
-								</div>
-							</li>
-						</ul>
+							<p class="relation-posting-date">2012.09.04</p>
+							<p class="relation-entry-title">Webプログラマーの仕事内容(業務内容)ってどんなことをするの？</p>
+						</div>
 					</a>
 
 
-					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
+
+				</div>
+
+
+				<div class="col-md-3 col-sm-6 blog-entry-relation-area">
+
+
+					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/crud.html" title="Web開発のキホン「CRUD」をわかりやすく解説">
+						<div class="blog-entry-relation-eyecatch-area">
+
+
+							<figure class="blog-entry-relation-eyecatch">
+								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Web開発のキホン「CRUD」をわかりやすく解説" class="img-responsive" />
+							</figure>
+
+
+							<p class="relation-posting-date">2020.04.24</p>
+							<p class="relation-entry-title">Web開発のキホン「CRUD」をわかりやすく解説</p>
+						</div>
+					</a>
+
+
+
+				</div>
+
+
+
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+	<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
+
+
+		<div class="sidebar-module">
+			<div class="panel">
+				<div class="panel-body">
+
+
+					<figure class="sidebar-profile-image">
+						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
+					</figure>
+
+
+					<div style="padding:10px;margin-top:10px;text-align:center;">
+						<span style="font-size:1.4em;font-weight:bold;">ハルジオン</span>
+					</div>
+					<div>
+						<div class="sidebar-profile">
+							Webプログラマー暦22年、2児の父。<br />
+							<br />
+							IT企業でWebプログラマーを15年ほどやっており、在職時は新人プログラマーの採用や育成なども担当。<br />
+							<br />
+							現在はその経験を活かして独立し、ネットを通じて多くの新人プログラマーを育成しています。<br />
+							<br />
+							日々思いついたアイデアをプログラミングで実現させ、ラーニングシステムやメルマガ配信システムなども全て自作。ほとんどの事務作業をプログラミングにより自動化し、より多くの時間を新しいアプリの開発や、家族との時間に充てています。<br />
+							<br />
+							僕の学んだノウハウを皆さんに伝授し、面白いアプリを一緒に開発していけるような仲間を世界中に作っていくことが目標です。<br />
+							<br />
+							具体的な方法に興味があれば、是非メルマガを読んでみて下さい。 <br />
+						</div>
+						<div class="sidebar-sns" style="margin-top:10px;">
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="sidebar-module">
+			<div class="panel">
+				<div class="panel-body">
+					<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>" method="GET">
+						<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索">
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="sidebar-module">
+			<div class="panel">
+				<div class="panel-heading">
+					<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
+				</div>
+				<div class="panel-body">
+
+
+					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
 						<ul class="sidebar-list">
 							<li class="sidebar-list-left">
 
@@ -360,20 +341,20 @@ if(isset($blog_category_master['blog_category_code'])){
 								</figure>
 
 
-								<p>2</p>
+								<p>1</p>
 							</li>
 							<li class="sidebar-list-right">
 								<div class="sidebar-popular-list-entry-title">
-									初心者がプログラミングを学ぶには、何から勉強すれば良いか？										</div>
+									僕がいつもプログラムをどんな方法（流れ）で作成しているのか？										</div>
 									<div class="sidebar-popular-list-entry-views">
-										36 Views
+										127 Views
 									</div>
 								</li>
 							</ul>
 						</a>
 
 
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
 							<ul class="sidebar-list">
 								<li class="sidebar-list-left">
 
@@ -383,60 +364,83 @@ if(isset($blog_category_master['blog_category_code'])){
 									</figure>
 
 
-									<p>3</p>
+									<p>2</p>
 								</li>
 								<li class="sidebar-list-right">
 									<div class="sidebar-popular-list-entry-title">
-										Webプログラマーの仕事内容(業務内容)ってどんなことをするの？										</div>
+										初心者がプログラミングを学ぶには、何から勉強すれば良いか？										</div>
 										<div class="sidebar-popular-list-entry-views">
-											21 Views
+											36 Views
 										</div>
 									</li>
 								</ul>
 							</a>
 
 
+							<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+								<ul class="sidebar-list">
+									<li class="sidebar-list-left">
+
+
+										<figure class="sidebar-popular-list-entry-eyecatch">
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
+										</figure>
+
+
+										<p>3</p>
+									</li>
+									<li class="sidebar-list-right">
+										<div class="sidebar-popular-list-entry-title">
+											Webプログラマーの仕事内容(業務内容)ってどんなことをするの？										</div>
+											<div class="sidebar-popular-list-entry-views">
+												21 Views
+											</div>
+										</li>
+									</ul>
+								</a>
+
+
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="sidebar-module">
-					<div class="panel">
-						<div class="panel-heading">
-							<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
-						</div>
-						<div class="panel-body">
-							<ul class="sidebar-category-list">
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"> プログラマーを知る (3)</a></li>
+					<div class="sidebar-module">
+						<div class="panel">
+							<div class="panel-heading">
+								<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
+							</div>
+							<div class="panel-body">
+								<ul class="sidebar-category-list">
 
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"> プログラマーになる方法 (2)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"> プログラマーを知る (3)</a></li>
 
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/35.html"> プログラマーのメリット (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"> プログラマーになる方法 (2)</a></li>
 
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/36.html"> プログラマー (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/35.html"> プログラマーのメリット (0)</a></li>
 
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/37.html"> プログラミング (0)</a></li>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/36.html"> プログラマー (0)</a></li>
 
-							</ul>
+
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/37.html"> プログラミング (0)</a></li>
+
+								</ul>
+							</div>
 						</div>
 					</div>
+
+
 				</div>
-
-
 			</div>
+
 		</div>
 
-	</div>
 
-
-	<footer class="blog-footer">
-		<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
-		<p class="blog-footer-right">&copy; SENSE SHARE</p>
-		<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
-	</footer>
+		<footer class="blog-footer">
+			<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
+			<p class="blog-footer-right">&copy; SENSE SHARE</p>
+			<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
+		</footer>
