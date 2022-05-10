@@ -34,8 +34,6 @@ switch ($image_type) {
 
 	//$blog_entry = 記事コードから記事を取得する
 
-	//ブログカテゴリーコードがslugかどうかを判定
-	if (startsWith($request_path,'/'.$client_code.'/entry')) {
 
 		$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_code = :blog_entry_code ";
 		$stmt = $pdo->prepare($sql);
@@ -46,20 +44,6 @@ switch ($image_type) {
 		);
 		$stmt->execute($params);
 		$blog_entry = $stmt->fetch();
-
-	}else{
-
-		$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND slug = :slug ";
-		$stmt = $pdo->prepare($sql);
-		$params = array(
-			":blog_id" => $blog_id,
-			":client_id" => $client['id'],
-			":slug" =>$blog_entry_code
-		);
-		$stmt->execute($params);
-		$blog_entry = $stmt->fetch();
-
-	}
 
 
 	if (!$blog_entry) {

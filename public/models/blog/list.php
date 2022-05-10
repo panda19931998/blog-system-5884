@@ -305,11 +305,13 @@ $blog_categorys2 = $stmt->fetchAll();
 									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> <?php echo h($val['created_at']); ?>&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> <?php echo h($val['updated_at']); ?></span>
 								</p>
 
-								<?php if(isset($val['slug'])) : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
+
+								<?php if (empty($val['slug']))  : ?>
+									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
 								<?php else : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
+									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
 								<?php endif; ?>
+
 
 
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
@@ -320,223 +322,217 @@ $blog_categorys2 = $stmt->fetchAll();
 
 								</p>
 
-								<?php if(isset($val['slug'])) : ?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>');background-size: cover;">
-									</figure></a><?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
-										</figure></a><?php endif; ?>
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
+									</figure></a>
 
+								<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
 
-										<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
+									<?php if (empty($val['slug'])): ?>
+										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div></a>
+									<?php else : ?>
+										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
+									<?php endif; ?>
 
-										<?php if(isset($val['slug'])) : ?>
-											<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div></a>
-										<?php else : ?>
-											<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
-										<?php endif; ?>
-									</section>
-								</article>
-							</div>
-
-
-						<?php endforeach; ?>
-
-						<div class="blog-list-pager-area">
-
-
-						</div>
+							</section>
+						</article>
 					</div>
 
-					<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
+
+				<?php endforeach; ?>
+
+				<div class="blog-list-pager-area">
 
 
-						<div class="sidebar-module">
-							<div class="panel">
-								<div class="panel-body">
+				</div>
+			</div>
+
+			<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
 
 
-									<figure class="sidebar-profile-image">
-										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
-									</figure>
+				<div class="sidebar-module">
+					<div class="panel">
+						<div class="panel-body">
 
 
-									<div style="padding:10px;margin-top:10px;text-align:center;">
-										<span style="font-size:1.4em;font-weight:bold;">ハルジオン</span>
-									</div>
-									<div>
-										<div class="sidebar-profile">
-											Webプログラマー暦22年、2児の父。<br />
-											<br />
-											IT企業でWebプログラマーを15年ほどやっており、在職時は新人プログラマーの採用や育成なども担当。<br />
-											<br />
-											現在はその経験を活かして独立し、ネットを通じて多くの新人プログラマーを育成しています。<br />
-											<br />
-											日々思いついたアイデアをプログラミングで実現させ、ラーニングシステムやメルマガ配信システムなども全て自作。ほとんどの事務作業をプログラミングにより自動化し、より多くの時間を新しいアプリの開発や、家族との時間に充てています。<br />
-											<br />
-											僕の学んだノウハウを皆さんに伝授し、面白いアプリを一緒に開発していけるような仲間を世界中に作っていくことが目標です。<br />
-											<br />
-											具体的な方法に興味があれば、是非メルマガを読んでみて下さい。 <br />
-										</div>
-										<div class="sidebar-sns" style="margin-top:10px;">
+							<figure class="sidebar-profile-image">
+								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
+							</figure>
 
 
-										</div>
-									</div>
+							<div style="padding:10px;margin-top:10px;text-align:center;">
+								<span style="font-size:1.4em;font-weight:bold;">ハルジオン</span>
+							</div>
+							<div>
+								<div class="sidebar-profile">
+									Webプログラマー暦22年、2児の父。<br />
+									<br />
+									IT企業でWebプログラマーを15年ほどやっており、在職時は新人プログラマーの採用や育成なども担当。<br />
+									<br />
+									現在はその経験を活かして独立し、ネットを通じて多くの新人プログラマーを育成しています。<br />
+									<br />
+									日々思いついたアイデアをプログラミングで実現させ、ラーニングシステムやメルマガ配信システムなども全て自作。ほとんどの事務作業をプログラミングにより自動化し、より多くの時間を新しいアプリの開発や、家族との時間に充てています。<br />
+									<br />
+									僕の学んだノウハウを皆さんに伝授し、面白いアプリを一緒に開発していけるような仲間を世界中に作っていくことが目標です。<br />
+									<br />
+									具体的な方法に興味があれば、是非メルマガを読んでみて下さい。 <br />
+								</div>
+								<div class="sidebar-sns" style="margin-top:10px;">
+
+
 								</div>
 							</div>
 						</div>
+					</div>
+				</div>
 
-						<div class="sidebar-module">
-							<div class="panel">
-								<div class="panel-body">
-									<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
-										<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
-									</form>
-								</div>
-							</div>
+				<div class="sidebar-module">
+					<div class="panel">
+						<div class="panel-body">
+							<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
+								<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
+							</form>
 						</div>
+					</div>
+				</div>
 
-						<div class="sidebar-module">
-							<div class="panel">
-								<div class="panel-heading">
-									<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
-								</div>
-								<div class="panel-body">
+				<div class="sidebar-module">
+					<div class="panel">
+						<div class="panel-heading">
+							<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
+						</div>
+						<div class="panel-body">
 
-									<?php foreach ($blog_entry_rankings as $val): ?>
+							<?php foreach ($blog_entry_rankings as $val): ?>
 
-										<?php if(isset($val['slug'])) : ?>
-											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
-											<?php else : ?>
-												<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
-												<?php endif; ?>
-												<ul class="sidebar-list">
-													<li class="sidebar-list-left">
-
-														<?php if(isset($val['slug'])) : ?>
-															<figure class="sidebar-popular-list-entry-eyecatch">
-																<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>" class="img-responsive" alt="" />
-															</figure><?php else : ?>
-																<figure class="sidebar-popular-list-entry-eyecatch">
-																	<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
-																</figure><?php endif; ?>
+								<?php if(empty($val['slug'])) : ?>
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+									<?php else : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+										<?php endif; ?>
+										<ul class="sidebar-list">
+											<li class="sidebar-list-left">
 
 
-																<p>1</p>
-															</li>
-															<li class="sidebar-list-right">
-																<div class="sidebar-popular-list-entry-title">
-																	<?php echo h($val['title']); ?>										</div>
-																	<div class="sidebar-popular-list-entry-views">
-																		<?php echo h($val['view_count']); ?> Views
-																	</div>
-																</li>
-															</ul>
-														</a>
+													<figure class="sidebar-popular-list-entry-eyecatch">
+														<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
+													</figure>
 
-													<?php endforeach; ?>
 
-												</div>
-											</div>
-										</div>
-
-										<div class="sidebar-module">
-											<div class="panel">
-												<div class="panel-heading">
-													<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
-												</div>
-												<div class="panel-body">
-													<ul class="sidebar-category-list">
-
-														<?php foreach ($blog_categorys2 as $val): ?>
-															<?php
-															$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
-															$stmt = $pdo->prepare($sql);
-															$params = array(
-																":blog_id" => $blog_id,
-																":client_id" => $client['id'],
-																":blog_category_master_id" => $val['id']
-															);
-															$stmt->execute($params);
-															$count2[$val['id']] = $stmt ->fetch();
-															?>
-
-															<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
-														<?php endforeach; ?>
+														<p>1</p>
+													</li>
+													<li class="sidebar-list-right">
+														<div class="sidebar-popular-list-entry-title">
+															<?php echo h($val['title']); ?>										</div>
+															<div class="sidebar-popular-list-entry-views">
+																<?php echo h($val['view_count']); ?> Views
+															</div>
+														</li>
 													</ul>
-												</div>
-											</div>
+												</a>
+
+											<?php endforeach; ?>
+
 										</div>
-
-
 									</div>
 								</div>
 
-								<div class="pagination">
-									<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
+								<div class="sidebar-module">
+									<div class="panel">
+										<div class="panel-heading">
+											<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
+										</div>
+										<div class="panel-body">
+											<ul class="sidebar-category-list">
+
+												<?php foreach ($blog_categorys2 as $val): ?>
+													<?php
+													$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+													$stmt = $pdo->prepare($sql);
+													$params = array(
+														":blog_id" => $blog_id,
+														":client_id" => $client['id'],
+														":blog_category_master_id" => $val['id']
+													);
+													$stmt->execute($params);
+													$count2[$val['id']] = $stmt ->fetch();
+													?>
+
+													<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+									</div>
 								</div>
-								<div class="pagination2">
+
+
+							</div>
+						</div>
+
+						<div class="pagination">
+							<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
+						</div>
+						<div class="pagination2">
+							<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+								<a href="?page=1" title="最初のページへ">« 最初へ</a>
+								<?PHP elseif(isset($search_keyword) and !isset($$new_category_code)): ?>
+								<a href="?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
+
+								<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
+								<a href="<?php echo $new_category_code ;?>/?page=1" title="最初のページへ">« 最初へ</a>
+								<?PHP endif; ?>
+								<?php if ($page >= 2 ): ?>
 									<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-										<a href="<?php echo $new_category_code ;?>/?page=1" title="最初のページへ">« 最初へ</a>
-										<?PHP elseif(isset($search_keyword) and !isset($$new_category_code)): ?>
-										<a href="<?php echo $new_category_code ;?>/?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
-
+										<a href="?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
+										<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
+										<a href="?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
 										<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-										<a href="?page=1" title="最初のページへ">« 最初へ</a>
+										<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page - 1); ?>" tclass="page_feed">&laquo;</a>
 										<?PHP endif; ?>
-										<?php if ($page >= 2 ): ?>
-											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-												<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
-												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
-												<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
-												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-												<a href="?page=<?php echo($page - 1); ?>" tclass="page_feed">&laquo;</a>
-												<?PHP endif; ?>
-											<?php else : ;?>
-												<span class="first_last_page">&laquo;</span>
+									<?php else : ;?>
+										<span class="first_last_page">&laquo;</span>
+									<?php endif; ?>
+
+									<?php for ($i = 1; $i <= $max_page; $i++) : ?>
+										<?php if($i >= $page - $range && $i <= $page + $range) : ?>
+											<?php if($i == $page) : ?>
+												<span class="now_page_number"><?php echo $i; ?></span>
+											<?php else: ?>
+												<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+													<a href="?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
+													<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
+													<a href="?page=<?php echo $i; ?>&q=<?php echo $search_keyword;?>" class="page_number"><?php echo $i; ?></a>
+													<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
+													<a href="<?php echo $new_category_code ;?>/?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
+													<?PHP endif; ?>
+												<?php endif; ?>
 											<?php endif; ?>
+										<?php endfor; ?>
 
-											<?php for ($i = 1; $i <= $max_page; $i++) : ?>
-												<?php if($i >= $page - $range && $i <= $page + $range) : ?>
-													<?php if($i == $page) : ?>
-														<span class="now_page_number"><?php echo $i; ?></span>
-													<?php else: ?>
-														<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-															<a href="<?php echo $new_category_code ;?>/?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
-															<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
-															<a href="<?php echo $new_category_code ;?>/?page=<?php echo $i; ?>&q=<?php echo $search_keyword;?>" class="page_number"><?php echo $i; ?></a>
-															<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-															<a href="?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
-															<?PHP endif; ?>
-														<?php endif; ?>
-													<?php endif; ?>
-												<?php endfor; ?>
+										<?php if($page < $max_page) : ?>
+											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+												<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
+												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
+												<a href="?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
+												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
+												<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
+												<?PHP endif; ?>
+											<?php else : ?>
+												<span class="first_last_page">&raquo;</span>
+											<?php endif; ?>
+											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+												<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
+												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
+												<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
+												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
+												<a href="<?php echo $new_category_code ;?>/?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
+												<?PHP endif; ?>
+											</div>
 
-												<?php if($page < $max_page) : ?>
-													<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-														<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
-														<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
-														<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
-														<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-														<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
-														<?PHP endif; ?>
-													<?php else : ?>
-														<span class="first_last_page">&raquo;</span>
-													<?php endif; ?>
-													<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-														<a href="<?php echo $new_category_code ;?>/?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
-														<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
-														<a href="<?php echo $new_category_code ;?>/?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
-														<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-														<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
-														<?PHP endif; ?>
-													</div>
-
-												</div>
+										</div>
 
 
-												<footer class="blog-footer">
-													<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
-													<p class="blog-footer-right">&copy; SENSE SHARE</p>
-													<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
-												</footer>
+										<footer class="blog-footer">
+											<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
+											<p class="blog-footer-right">&copy; SENSE SHARE</p>
+											<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
+										</footer>

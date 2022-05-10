@@ -53,7 +53,6 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 
 }
 
-
 //カテゴリーを取得
 
 $sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
@@ -72,7 +71,7 @@ $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
 	":client_id" => $client['id'],
-	":id" => $blog_category['id']
+	":id" => $blog_category['blog_category_master_id']
 );
 $stmt->execute($params);
 $blog_category_master = $stmt->fetch();
@@ -116,12 +115,10 @@ if(isset($blog_category_master['blog_category_code'])){
 	<meta property="og:title" content="<?php echo h($blog["blog_title"]); ?>" />
 	<meta property="og:description" content="<?php echo h($blog["blog_description"]); ?>" />
 
-	<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?><?php echo h($new_category_code); ?>.html" />
-
 	<?php if (startsWith($request_path,'/'.$client_code.'/entry')) :?>
-		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?><?php echo h($new_entry_code); ?>.html" />
+		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($new_entry_code); ?>.html" />
 	<?php else : ?>
-		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($new_entry_code); ?>" />
+		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($new_entry_code); ?>.html" />
 	<?php endif; ?>
 
 	<meta property="og:type" content="article" />
@@ -201,7 +198,7 @@ if(isset($blog_category_master['blog_category_code'])){
 				</p>
 
 				<figure class="blog-post-eyecatch-img">
-					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
+					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
 				</figure>
 
 
