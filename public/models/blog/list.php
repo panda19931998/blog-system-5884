@@ -305,10 +305,10 @@ $blog_categorys2 = $stmt->fetchAll();
 									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> <?php echo h($val['created_at']); ?>&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> <?php echo h($val['updated_at']); ?></span>
 								</p>
 
-								<?php if(isset($val['blog_entry_code'])) : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
-								<?php else : ?>
+								<?php if(isset($val['slug'])) : ?>
 									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
+								<?php else : ?>
+									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
 								<?php endif; ?>
 
 
@@ -320,16 +320,20 @@ $blog_categorys2 = $stmt->fetchAll();
 
 								</p>
 
-								<?php if(isset($val['blog_entry_code'])) : ?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
+								<?php if(isset($val['slug'])) : ?>
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>');background-size: cover;">
 									</figure></a><?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>');background-size: cover;">
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
 										</figure></a><?php endif; ?>
 
 
 										<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
 
-										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
+										<?php if(isset($val['slug'])) : ?>
+											<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div></a>
+										<?php else : ?>
+											<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
+										<?php endif; ?>
 									</section>
 								</article>
 							</div>
@@ -401,20 +405,20 @@ $blog_categorys2 = $stmt->fetchAll();
 
 									<?php foreach ($blog_entry_rankings as $val): ?>
 
-										<?php if(isset($val['blog_entry_code'])) : ?>
-											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+										<?php if(isset($val['slug'])) : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
 											<?php else : ?>
-												<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+												<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
 												<?php endif; ?>
 												<ul class="sidebar-list">
 													<li class="sidebar-list-left">
 
-														<?php if(isset($val['blog_entry_code'])) : ?>
+														<?php if(isset($val['slug'])) : ?>
 															<figure class="sidebar-popular-list-entry-eyecatch">
-																<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
+																<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>" class="img-responsive" alt="" />
 															</figure><?php else : ?>
 																<figure class="sidebar-popular-list-entry-eyecatch">
-																	<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['slug']); ?>" class="img-responsive" alt="" />
+																	<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
 																</figure><?php endif; ?>
 
 

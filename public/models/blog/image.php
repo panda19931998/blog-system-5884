@@ -35,7 +35,7 @@ switch ($image_type) {
 	//$blog_entry = 記事コードから記事を取得する
 
 	//ブログカテゴリーコードがslugかどうかを判定
-	if(is_numeric($blog_entry_code)){
+	if (startsWith($request_path,'/'.$client_code.'/entry')) {
 
 		$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_code = :blog_entry_code ";
 		$stmt = $pdo->prepare($sql);
