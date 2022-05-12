@@ -191,9 +191,11 @@ if(isset($blog_category_master['blog_category_code'])){
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 
-
-					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($blog_category_master['category_name']);?></span></a>
-
+					<?php if (empty($blog_category_master['category_name']))  : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> 未分類</span></a>
+					<?php else : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($blog_category_master['category_name']);?></span></a>
+					<?php endif; ?>
 
 				</p>
 

@@ -316,8 +316,11 @@ $blog_categorys2 = $stmt->fetchAll();
 
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
-
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['id']]['category_name']); ?></span></a>
+									<?php if (empty($blog_category_master[$val['id']]['category_name']))  : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i>未分類</span></a>
+									<?php else : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['id']]['category_name']); ?></span></a>
+									<?php endif; ?>
 
 
 								</p>
@@ -477,7 +480,9 @@ $blog_categorys2 = $stmt->fetchAll();
 							<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
 						</div>
 						<div class="pagination2">
-							<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+
+							<?php if (!($page == 1)) :?>
+								<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 								<a href="?page=1" title="最初のページへ">« 最初へ</a>
 								<?PHP elseif(isset($search_keyword) and !isset($$new_category_code)): ?>
 								<a href="?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
@@ -485,8 +490,10 @@ $blog_categorys2 = $stmt->fetchAll();
 								<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
 								<a href="<?php echo $new_category_code ;?>/?page=1" title="最初のページへ">« 最初へ</a>
 								<?PHP endif; ?>
-								<?php if ($page >= 2 ): ?>
-									<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+							<?PHP endif; ?>
+
+									<?php if ($page >= 2 ): ?>
+										<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 										<a href="?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
 										<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 										<a href="?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
@@ -494,7 +501,7 @@ $blog_categorys2 = $stmt->fetchAll();
 										<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page - 1); ?>" tclass="page_feed">&laquo;</a>
 										<?PHP endif; ?>
 									<?php else : ;?>
-										<span class="first_last_page">&laquo;</span>
+										<span class="first_last_page"></span>
 									<?php endif; ?>
 
 									<?php for ($i = 1; $i <= $max_page; $i++) : ?>
@@ -513,8 +520,9 @@ $blog_categorys2 = $stmt->fetchAll();
 											<?php endif; ?>
 										<?php endfor; ?>
 
-										<?php if($page < $max_page) : ?>
-											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+
+											<?php if(!($page == $max_page)) : ?>
+												<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 												<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
 												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 												<a href="?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
@@ -522,15 +530,18 @@ $blog_categorys2 = $stmt->fetchAll();
 												<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
 												<?PHP endif; ?>
 											<?php else : ?>
-												<span class="first_last_page">&raquo;</span>
+												<span class="first_last_page"></span>
 											<?php endif; ?>
-											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+
+											<?php if (!($page == $max_page)) :?>
+												<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 												<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
 												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 												<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
 												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
 												<a href="<?php echo $new_category_code ;?>/?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
 												<?PHP endif; ?>
+											<?PHP endif; ?>
 											</div>
 
 										</div>
