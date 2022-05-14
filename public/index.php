@@ -50,12 +50,12 @@ try {
 	$image_code =$blog_entry_image['image_code'];
 
 	//パスごとに遷移先を振り分ける
-	if(endsWith($request_path,'html')){
-		$include_program ='/entry.php';
-	}elseif(endsWith($request_path,'style.css')) {
-		$include_program = '/style.php';
-	} elseif (startsWith($request_path,'/'.$client_code.'/category')) {
+	if (startsWith($request_path,'/'.$client_code.'/category')) {
 		$include_program = '/list.php';
+	} elseif(endsWith($request_path,'html')){
+		$include_program ='/entry.php';
+	} elseif(endsWith($request_path,'style.css')) {
+		$include_program = '/style.php';
 	} elseif (startsWith($request_path,'/'.$client_code.'/image')) {
 		$include_program = '/image.php';
 	} elseif (startsWith($request_path,'/'.$client_code.'/feed')) {

@@ -4,6 +4,10 @@
 
 $blog_entry = array();
 $blog_category = array();
+$blog_entrys = array();
+$blog_entry_rankings = array();
+$blog_categorys2 = array();
+
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
@@ -85,6 +89,32 @@ if(isset($blog_category_master['blog_category_code'])){
 	$blog_category_code = $blog_category_master['blog_category_slug'];
 
 }
+
+
+//人気記事ランキング
+
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$blog_entry_rankings = $stmt->fetchAll();
+
+
+//カテゴリー１覧取得
+
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id']
+);
+$stmt->execute($params);
+$blog_categorys2 = $stmt->fetchAll();
+
+
 
 ?>
 
@@ -338,116 +368,80 @@ if(isset($blog_category_master['blog_category_code'])){
 			<div class="panel-body">
 
 
-				<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($new_entry_code); ?>.html" title="僕がいつもプログラムをどんな方法（流れ）で作成しているのか？">
-					<ul class="sidebar-list">
-						<li class="sidebar-list-left">
+				<?php foreach ($blog_entry_rankings as $val): ?>
 
-
-							<figure class="sidebar-popular-list-entry-eyecatch">
-								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" class="img-responsive" alt="" />
-							</figure>
-
-
-							<p>1</p>
-						</li>
-						<li class="sidebar-list-right">
-							<div class="sidebar-popular-list-entry-title">
-								僕がいつもプログラムをどんな方法（流れ）で作成しているのか？										</div>
-								<div class="sidebar-popular-list-entry-views">
-									127 Views
-								</div>
-							</li>
-						</ul>
-					</a>
-
-
-					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/how-to-web-programmer.html" title="初心者がプログラミングを学ぶには、何から勉強すれば良いか？">
-						<ul class="sidebar-list">
-							<li class="sidebar-list-left">
-
-
-								<figure class="sidebar-popular-list-entry-eyecatch">
-									<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
-								</figure>
-
-
-								<p>2</p>
-							</li>
-							<li class="sidebar-list-right">
-								<div class="sidebar-popular-list-entry-title">
-									初心者がプログラミングを学ぶには、何から勉強すれば良いか？										</div>
-									<div class="sidebar-popular-list-entry-views">
-										36 Views
-									</div>
-								</li>
-							</ul>
-						</a>
-
-
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
+					<?php if(empty($val['slug'])) : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+						<?php else : ?>
+							<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+							<?php endif; ?>
 							<ul class="sidebar-list">
 								<li class="sidebar-list-left">
 
 
 									<figure class="sidebar-popular-list-entry-eyecatch">
-										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" class="img-responsive" alt="" />
+										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
 									</figure>
 
 
-									<p>3</p>
+									<p>1</p>
 								</li>
 								<li class="sidebar-list-right">
 									<div class="sidebar-popular-list-entry-title">
-										Webプログラマーの仕事内容(業務内容)ってどんなことをするの？										</div>
+										<?php echo h($val['title']); ?>										</div>
 										<div class="sidebar-popular-list-entry-views">
-											21 Views
+											<?php echo h($val['view_count']); ?> Views
 										</div>
 									</li>
 								</ul>
 							</a>
 
+						<?php endforeach; ?>
 
-						</div>
+
+
 					</div>
 				</div>
-
-				<div class="sidebar-module">
-					<div class="panel">
-						<div class="panel-heading">
-							<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
-						</div>
-						<div class="panel-body">
-							<ul class="sidebar-category-list">
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/27.html"> プログラマーを知る (3)</a></li>
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/28.html"> プログラマーになる方法 (2)</a></li>
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/35.html"> プログラマーのメリット (0)</a></li>
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/36.html"> プログラマー (0)</a></li>
-
-
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/37.html"> プログラミング (0)</a></li>
-
-							</ul>
-						</div>
-					</div>
-				</div>
-
-
 			</div>
-		</div>
 
+			<div class="sidebar-module">
+				<div class="panel">
+					<div class="panel-heading">
+						<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
+					</div>
+					<div class="panel-body">
+						<ul class="sidebar-category-list">
+
+
+							<?php foreach ($blog_categorys2 as $val): ?>
+								<?php
+								$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+								$stmt = $pdo->prepare($sql);
+								$params = array(
+									":blog_id" => $blog_id,
+									":client_id" => $client['id'],
+									":blog_category_master_id" => $val['id']
+								);
+								$stmt->execute($params);
+								$count2[$val['id']] = $stmt ->fetch();
+								?>
+
+								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
 	</div>
 
+</div>
 
-	<footer class="blog-footer">
-		<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
-		<p class="blog-footer-right">&copy; SENSE SHARE</p>
-		<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
-	</footer>
+
+<footer class="blog-footer">
+	<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
+	<p class="blog-footer-right">&copy; SENSE SHARE</p>
+	<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
+</footer>
