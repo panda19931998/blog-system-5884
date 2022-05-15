@@ -10,6 +10,7 @@ $blog_categorys2 = array();
 $blog_categorys3 = array();
 $random_blog_categorys = array();
 $blog_categorys_entrys = array();
+$shuffle_blog_categorys = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
@@ -85,15 +86,18 @@ $blog_category_master = $stmt->fetch();
 
 //カテゴリーが一致する記事を４つ取得
 
-$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id ";
+$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id AND blog_entry_id!= :blog_entry_id";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
 	":client_id" => $client['id'],
-	":blog_category_master_id" => $blog_category['blog_category_master_id']
+	":blog_category_master_id" => $blog_category['blog_category_master_id'],
+	":blog_entry_id" => $blog_entry['id']
 );
 $stmt->execute($params);
 $blog_categorys3 = $stmt->fetchAll();
+
+shuffle($blog_categorys3);
 
 $random_blog_categorys = array_slice($blog_categorys3 , 0, 4);
 
