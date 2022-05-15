@@ -7,7 +7,9 @@ $blog_category = array();
 $blog_entrys = array();
 $blog_entry_rankings = array();
 $blog_categorys2 = array();
-
+$blog_categorys3 = array();
+$random_blog_categorys = array();
+$blog_categorys_entrys = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
@@ -43,7 +45,7 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 
 }else{
 
-	$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date AND slug =:slug ";
+	$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id  AND status = :status AND posting_date <= :posting_date AND slug =:slug ";
 	$stmt = $pdo->prepare($sql);
 	$params = array(
 		":blog_id" => $blog_id,
@@ -54,6 +56,7 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 	);
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
+
 
 }
 
@@ -79,6 +82,37 @@ $params = array(
 );
 $stmt->execute($params);
 $blog_category_master = $stmt->fetch();
+
+//カテゴリーが一致する記事を４つ取得
+
+$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id ";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id'],
+	":blog_category_master_id" => $blog_category['blog_category_master_id']
+);
+$stmt->execute($params);
+$blog_categorys3 = $stmt->fetchAll();
+
+$random_blog_categorys = array_slice($blog_categorys3 , 0, 4);
+
+
+foreach ($random_blog_categorys as $val4){
+
+	$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
+	$stmt = $pdo->prepare($sql);
+	$params = array(
+		":id" => $val4['blog_entry_id'],
+		":status" => 1,
+		":posting_date" => $today
+	);
+	$stmt->execute($params);
+	$blog_categorys_entrys[$val4['blog_entry_id']] = $stmt->fetch();
+
+}
+
+
 
 //カテゴリーにslugが有るかどうか判定
 if(isset($blog_category_master['blog_category_code'])){
@@ -257,56 +291,32 @@ $blog_categorys2 = $stmt->fetchAll();
 	<span class="relation-entry">おすすめ記事</span>
 	<div class="row">
 
+		<?php foreach ($blog_categorys_entrys as $val3): ?>
+			<div class="col-md-3 col-sm-6 blog-entry-relation-area">
 
-		<div class="col-md-3 col-sm-6 blog-entry-relation-area">
+				<?php if (empty($val3['slug'])): ?>
+					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val3['blog_entry_code']) ; ?>.html" title="<?php echo h($val3['title']) ; ?>">
+					<?php else : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val3['slug']) ; ?>.html" title="<?php echo h($val3['title']) ; ?>">
+						<?php endif; ?>
+						<div class="blog-entry-relation-eyecatch-area">
 
+							<figure class="blog-entry-relation-eyecatch">
+								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val3['blog_entry_code']) ; ?>" alt="<?php echo h($val3['title']) ; ?>" class="img-responsive" />
+							</figure>
 
-			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/web-programmer-work.html" title="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？">
-				<div class="blog-entry-relation-eyecatch-area">
-
-
-					<figure class="blog-entry-relation-eyecatch">
-						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" alt="Webプログラマーの仕事内容(業務内容)ってどんなことをするの？" class="img-responsive" />
-					</figure>
-
-
-					<p class="relation-posting-date">2012.09.04</p>
-					<p class="relation-entry-title">Webプログラマーの仕事内容(業務内容)ってどんなことをするの？</p>
+							<p class="relation-posting-date"><?php echo date('Y-m-d',strtotime(h($val3['posting_date']))); ?></p>
+							<p class="relation-entry-title"><?php echo h($val3['title']); ?></p>
+						</div>
+					</a>
 				</div>
-			</a>
-
+			<?php endforeach; ?>
 
 
 		</div>
-
-
-		<div class="col-md-3 col-sm-6 blog-entry-relation-area">
-
-
-			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/crud.html" title="Web開発のキホン「CRUD」をわかりやすく解説">
-				<div class="blog-entry-relation-eyecatch-area">
-
-
-					<figure class="blog-entry-relation-eyecatch">
-						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry_code); ?>" alt="Web開発のキホン「CRUD」をわかりやすく解説" class="img-responsive" />
-					</figure>
-
-
-					<p class="relation-posting-date">2020.04.24</p>
-					<p class="relation-entry-title">Web開発のキホン「CRUD」をわかりやすく解説</p>
-				</div>
-			</a>
-
-
-
-		</div>
-
 
 
 	</div>
-
-
-</div>
 
 
 </div>
