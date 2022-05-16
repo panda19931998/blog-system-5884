@@ -164,39 +164,43 @@ $blog_categorys2 = $stmt->fetchAll();
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title><?php echo h($blog["blog_title"]); ?></title>
+	<title><?php echo h($blog_entry['title']); ?></title>
 
-	<meta name="description" content="<?php echo h($blog["blog_description"]); ?>">
-	<meta name="keywords" content="<?php echo h($blog["blog_keywords"]); ?>" />
+	<meta name="description" content="<?php echo h($blog_entry['seo_description']); ?>">
+	<meta name="keywords" content="<?php echo h($blog_entry['seo_keywords']); ?>" />
 	<meta name="author" content="<?php echo h($blog["blog_author_name"]); ?>">
 
 	<link rel="icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
 	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
 	<link rel="apple-touch-icon" sizes="180x180" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon180">
 
-	<link rel="canonical" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($new_category_code); ?>.html" />
+	<?php if (startsWith($request_path,'/'.$client_code.'/entry')) :?>
+		<link rel="canonical" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($blog_entry['blog_entry_code']); ?>.html" />
+	<?php else : ?>
+		<link rel="canonical" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($blog_entry['slug']); ?>.html" />
+	<?php endif; ?>
 
 	<link rel="alternate" type="application/rss+xml" title="<?php echo h($blog["title"]); ?> &raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
 
 	<meta property="og:locale" content="ja_JP" />
 	<meta property="og:site_name" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta property="og:title" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta property="og:description" content="<?php echo h($blog["blog_description"]); ?>" />
+	<meta property="og:title" content="<?php echo h($blog_entry['title']); ?>" />
+	<meta property="og:description" content="<?php echo h($blog_entry['seo_description']); ?>" />
 
 	<?php if (startsWith($request_path,'/'.$client_code.'/entry')) :?>
-		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($new_entry_code); ?>.html" />
+		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($blog_entry['blog_entry_code']); ?>.html" />
 	<?php else : ?>
-		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($new_entry_code); ?>.html" />
+		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($blog_entry['slug']); ?>.html" />
 	<?php endif; ?>
 
 	<meta property="og:type" content="article" />
-	<meta property="og:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" />
+	<meta property="og:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" />
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@" />
-	<meta name="twitter:title" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta name="twitter:description" content="<?php echo h($blog["blog_description"]); ?>" />
-	<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($new_entry_code); ?>" />
+	<meta name="twitter:title" content="<?php echo h($blog_entry['title']); ?>" />
+	<meta name="twitter:description" content="<?php echo h($blog_entry['sel_description']); ?>" />
+	<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" />
 
 	<meta property="fb:admins" content="" />
 	<meta property="fb:app_id" content="" />
