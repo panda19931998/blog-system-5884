@@ -272,12 +272,12 @@ $blog_categorys2 = $stmt->fetchAll();
 				</p>
 
 				<figure class="blog-post-eyecatch-img">
-					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo h($blog_entry['title']); ?>" class="img-responsive" />
+					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo $blog_entry['title']; ?>" class="img-responsive" />
 				</figure>
 
 
 
-				<p style="blog-post-contents;margin-top:40px;"><?php echo h($blog_entry['contents']); ?></p>
+				<p style="blog-post-contents;margin-top:40px;"><?php echo $blog_entry['contents']; ?></p>
 
 
 
@@ -303,14 +303,14 @@ $blog_categorys2 = $stmt->fetchAll();
 			<div class="col-md-3 col-sm-6 blog-entry-relation-area">
 
 				<?php if (empty($val3['slug'])): ?>
-					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val3['blog_entry_code']) ; ?>.html" title="<?php echo h($val3['title']) ; ?>">
+					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val3['blog_entry_code']) ; ?>.html" title="<?php echo $val3['title'] ; ?>">
 					<?php else : ?>
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val3['slug']) ; ?>.html" title="<?php echo h($val3['title']) ; ?>">
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val3['slug']) ; ?>.html" title="<?php echo $val3['title'] ; ?>">
 						<?php endif; ?>
 						<div class="blog-entry-relation-eyecatch-area">
 
 							<figure class="blog-entry-relation-eyecatch">
-								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val3['blog_entry_code']) ; ?>" alt="<?php echo h($val3['title']) ; ?>" class="img-responsive" />
+								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val3['blog_entry_code']) ; ?>" alt="<?php echo $val3['title'] ; ?>" class="img-responsive" />
 							</figure>
 
 							<p class="relation-posting-date"><?php echo date('Y-m-d',strtotime(h($val3['posting_date']))); ?></p>
@@ -389,9 +389,9 @@ $blog_categorys2 = $stmt->fetchAll();
 				<?php foreach ($blog_entry_rankings as $val): ?>
 
 					<?php if(empty($val['slug'])) : ?>
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['blog_title']; ?>">
 						<?php else : ?>
-							<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+							<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['blog_title']; ?>">
 							<?php endif; ?>
 							<ul class="sidebar-list">
 								<li class="sidebar-list-left">
@@ -406,7 +406,7 @@ $blog_categorys2 = $stmt->fetchAll();
 								</li>
 								<li class="sidebar-list-right">
 									<div class="sidebar-popular-list-entry-title">
-										<?php echo h($val['title']); ?>										</div>
+										<?php echo $val['title']; ?>										</div>
 										<div class="sidebar-popular-list-entry-views">
 											<?php echo h($val['view_count']); ?> Views
 										</div>
