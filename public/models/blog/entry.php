@@ -164,11 +164,11 @@ $blog_categorys2 = $stmt->fetchAll();
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title><?php echo h($blog_entry['title']); ?></title>
+	<title><?php echo $blog_entry['title']; ?></title>
 
-	<meta name="description" content="<?php echo h($blog_entry['seo_description']); ?>">
-	<meta name="keywords" content="<?php echo h($blog_entry['seo_keywords']); ?>" />
-	<meta name="author" content="<?php echo h($blog["blog_author_name"]); ?>">
+	<meta name="description" content="<?php echo $blog_entry['seo_description']; ?>">
+	<meta name="keywords" content="<?php echo $blog_entry['seo_keywords']; ?>" />
+	<meta name="author" content="<?php echo $blog["blog_author_name"]; ?>">
 
 	<link rel="icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
 	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=favicon">
@@ -180,12 +180,12 @@ $blog_categorys2 = $stmt->fetchAll();
 		<link rel="canonical" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($blog_entry['slug']); ?>.html" />
 	<?php endif; ?>
 
-	<link rel="alternate" type="application/rss+xml" title="<?php echo h($blog["title"]); ?> &raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
+	<link rel="alternate" type="application/rss+xml" title="<?php echo $blog["title"]; ?> &raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
 
 	<meta property="og:locale" content="ja_JP" />
-	<meta property="og:site_name" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta property="og:title" content="<?php echo h($blog_entry['title']); ?>" />
-	<meta property="og:description" content="<?php echo h($blog_entry['seo_description']); ?>" />
+	<meta property="og:site_name" content="<?php echo $blog["blog_title"]; ?>" />
+	<meta property="og:title" content="<?php echo $blog_entry['title']; ?>" />
+	<meta property="og:description" content="<?php echo $blog_entry['seo_description']; ?>" />
 
 	<?php if (startsWith($request_path,'/'.$client_code.'/entry')) :?>
 		<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($blog_entry['blog_entry_code']); ?>.html" />
@@ -198,8 +198,8 @@ $blog_categorys2 = $stmt->fetchAll();
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@" />
-	<meta name="twitter:title" content="<?php echo h($blog_entry['title']); ?>" />
-	<meta name="twitter:description" content="<?php echo h($blog_entry['sel_description']); ?>" />
+	<meta name="twitter:title" content="<?php echo $blog_entry['title']; ?>" />
+	<meta name="twitter:description" content="<?php echo $blog_entry['sel_description']; ?>" />
 	<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" />
 
 	<meta property="fb:admins" content="" />
@@ -232,7 +232,7 @@ $blog_categorys2 = $stmt->fetchAll();
 	<div class="container">
 
 		<div class="blog-header-img">
-			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/"><img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=blog_header" alt="<?php echo h($blog['blog_title']); ?>" class="img-responsive" /></a>
+			<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/"><img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=blog_header" alt="<?php echo $blog['blog_title']; ?>" class="img-responsive" /></a>
 		</div>
 
 
@@ -259,7 +259,7 @@ $blog_categorys2 = $stmt->fetchAll();
 				<i class="fa fa-clock-o"></i> <?php echo h($blog_entry['posting_date']); ?>&nbsp;&nbsp;&nbsp;
 				<i class="fa fa-refresh"></i> <?php echo h($blog_entry['created_at']); ?>						</div>
 
-				<h1 class="blog-post-title"><?php echo h($blog_entry['title']); ?></h1>
+				<h1 class="blog-post-title"><?php echo $blog_entry['title']; ?></h1>
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 
@@ -314,7 +314,7 @@ $blog_categorys2 = $stmt->fetchAll();
 							</figure>
 
 							<p class="relation-posting-date"><?php echo date('Y-m-d',strtotime(h($val3['posting_date']))); ?></p>
-							<p class="relation-entry-title"><?php echo h($val3['title']); ?></p>
+							<p class="relation-entry-title"><?php echo $val3['title']; ?></p>
 						</div>
 					</a>
 				</div>

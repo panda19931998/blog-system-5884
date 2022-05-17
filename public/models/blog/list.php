@@ -226,17 +226,17 @@ $blog_categorys2 = $stmt->fetchAll();
 	<link rel="alternate" type="application/rss+xml" title="<?php echo h($blog["title"]); ?>&raquo; フィード" href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/feed/" />
 
 	<meta property="og:locale" content="ja_JP" />
-	<meta property="og:site_name" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta property="og:title" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta property="og:description" content="<?php echo h($blog["blog_description"]); ?>" />
+	<meta property="og:site_name" content="<?php echo $blog["blog_title"]; ?>" />
+	<meta property="og:title" content="<?php echo $blog["blog_title"]; ?>" />
+	<meta property="og:description" content="<?php echo $blog["blog_description"]; ?>" />
 	<meta property="og:url" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/workflow.html" />
 	<meta property="og:type" content="website" />
 	<meta property="og:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top" />
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@" />
-	<meta name="twitter:title" content="<?php echo h($blog["blog_title"]); ?>" />
-	<meta name="twitter:description" content="<?php echo h($blog["blog_description"]); ?>" />
+	<meta name="twitter:title" content="<?php echo $blog["blog_title"]; ?>" />
+	<meta name="twitter:description" content="<?php echo $blog["blog_description"]; ?>" />
 	<meta name="twitter:image" content="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top" />
 
 	<meta property="fb:admins" content="" />
@@ -307,9 +307,9 @@ $blog_categorys2 = $stmt->fetchAll();
 
 
 								<?php if (empty($val['slug']))  : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
+									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
 								<?php else : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"> <?php echo h($val['title']); ?></a></h1>
+									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
 								<?php endif; ?>
 
 
@@ -338,7 +338,7 @@ $blog_categorys2 = $stmt->fetchAll();
 									<?php if (empty($val['slug'])): ?>
 										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div></a>
 									<?php else : ?>
-										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div>
+										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>" class="btn btn-default btn-lg">記事を読む</a></div>
 									<?php endif; ?>
 
 							</section>
@@ -413,9 +413,9 @@ $blog_categorys2 = $stmt->fetchAll();
 							<?php foreach ($blog_entry_rankings as $val): ?>
 
 								<?php if(empty($val['slug'])) : ?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['blog_title']; ?>">
 									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['blog_title']); ?>">
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['blog_title']; ?>">
 										<?php endif; ?>
 										<ul class="sidebar-list">
 											<li class="sidebar-list-left">
@@ -430,7 +430,7 @@ $blog_categorys2 = $stmt->fetchAll();
 													</li>
 													<li class="sidebar-list-right">
 														<div class="sidebar-popular-list-entry-title">
-															<?php echo h($val['title']); ?>										</div>
+															<?php echo $val['title']; ?>										</div>
 															<div class="sidebar-popular-list-entry-views">
 																<?php echo h($val['view_count']); ?> Views
 															</div>
