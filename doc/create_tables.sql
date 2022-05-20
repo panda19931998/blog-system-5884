@@ -10,6 +10,7 @@ CREATE TABLE `blog` (
   `blog_description` varchar(500) COLLATE utf8_bin DEFAULT NULL,
   `blog_keywords` varchar(500) COLLATE utf8_bin DEFAULT NULL,
   `blog_author_name` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  'blog_author_profile' text COLLATE utf8_bin,
   `blog_header_image` mediumblob,
   `blog_header_image_ext` varchar(10) COLLATE utf8_bin DEFAULT NULL,
   `blog_favicon_image` mediumblob,
@@ -278,3 +279,7 @@ ALTER TABLE `client`
 --
 ALTER TABLE `client_auto_login`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--blogテーブルにカラム、blog_author_profileを追加
+ALTER TABLE 'blog'
+　ADD 'blog_author_profile' text AFTER 'blog_author_name';
