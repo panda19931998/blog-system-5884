@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<h1 class="page-header">ブログ基本設定</h1>
 				<!-- end page-header -->
 
-<form method="POST" class="form-horizontal form-bordered" id="mainForm" enctype="multipart/form-data">
+<form method="POST" class="form-horizontal form-bordered" id="mainForm" enctype="multipart/form-data" name="form">
 	<!-- begin panel -->
 	<div class="panel panel-inverse">
 		<!-- begin panel-body -->
@@ -238,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<label class="col-md-2 col-form-label">プロフィール</label>
 				<div class="col-md-10">
 					<textarea class="form-control " name="blog_author_profile" rows="10"><?php echo $blog['blog_author_profile']; ?></textarea><span class="help-block"><?php if ( isset($err['blog_author_profile'])) echo h($err['blog_author_profile']); ?></span>
-					<div class="invalid-feedback"></div>
+					<div class="invalid-feedback" ></div>
 				</div>
 			</div>
 

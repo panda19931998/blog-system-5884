@@ -993,6 +993,7 @@ width:100%;/* 任意の横幅 */;
 
 .sidebar-profile {
   margin-top: 15px;
+  white-space: pre-line;
 }
 
 .sidebar-list {

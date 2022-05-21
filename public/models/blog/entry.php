@@ -354,8 +354,6 @@ $blog_categorys2 = $stmt->fetchAll();
 						<?php echo $blog['blog_author_profile']; ?>
 					</div>
 					<div class="sidebar-sns" style="margin-top:10px;">
-
-
 					</div>
 				</div>
 			</div>
