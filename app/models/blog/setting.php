@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$blog['blog_description'] = $_POST['blog_description'];
 	$blog['blog_keywords'] = $_POST['blog_keywords'];
 	$blog['blog_author_name'] = $_POST['blog_author_name'];
+	$blog['blog_author_profile'] = $_POST['blog_author_profile'];
 	$blog['analytics_ua_code'] = $_POST['analytics_ua_code'];
 
 	$header_err = array();
@@ -119,6 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$err['blog_author_name'] = '著者名を入力して下さい。';
 	}
 
+	// プロフィールが空
+	if ($blog['blog_author_profile'] == '') {
+		$err['blog_author_profile'] = 'プロフィールを入力して下さい。';
+	}
+
 	//アナリティクストラッキングＩＤ が空
 	if ($blog['analytics_ua_code'] == '') {
 		$err['analytics_ua_code'] = 'アナリティクストラッキングＩＤを入力して下さい。';
@@ -136,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				blog_description =:blog_description,
 				blog_keywords =:blog_keywords,
 				blog_author_name =:blog_author_name,
+				blog_author_profile =:blog_author_profile,
 				blog_header_image = :blog_header_image,
 				blog_header_image_ext = :blog_header_image_ext,
 				blog_favicon_image = :blog_favicon_image,
@@ -154,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->bindValue(':blog_description', $blog['blog_description'], PDO::PARAM_STR);
 				$stmt->bindValue(':blog_keywords', $blog['blog_keywords'], PDO::PARAM_STR);
 				$stmt->bindValue(':blog_author_name', $blog['blog_author_name'], PDO::PARAM_STR);
+				$stmt->bindValue(':blog_author_profile', $blog['blog_author_profile'], PDO::PARAM_STR);
 				$stmt->bindValue(':blog_header_image', $blog['blog_header_image'], PDO::PARAM_LOB);
 				$stmt->bindValue(':blog_header_image_ext', $blog['blog_header_image_ext'], PDO::PARAM_STR);
 				$stmt->bindValue(':blog_favicon_image', $blog['blog_favicon_image'], PDO::PARAM_LOB);
@@ -189,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<h1 class="page-header">ブログ基本設定</h1>
 				<!-- end page-header -->
 
-<form method="POST" class="form-horizontal form-bordered" id="mainForm" enctype="multipart/form-data">
+<form method="POST" class="form-horizontal form-bordered" id="mainForm" enctype="multipart/form-data" name="form">
 	<!-- begin panel -->
 	<div class="panel panel-inverse">
 		<!-- begin panel-body -->
@@ -223,6 +231,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				<div class="col-md-10">
 					<input name="blog_author_name" type="text" class="form-control " value="<?php echo $blog['blog_author_name']; ?>" /><span class="help-block"><?php if ( isset($err['blog_author_name'])) echo h($err['blog_author_name']); ?></span>
 					<div class="invalid-feedback"></div>
+				</div>
+			</div>
+
+			<div class="form-group row <?php if ($err['blog_author_profile'] != '') echo 'has-error'; ?>">
+				<label class="col-md-2 col-form-label">プロフィール</label>
+				<div class="col-md-10">
+					<textarea class="form-control " name="blog_author_profile" rows="10"><?php echo $blog['blog_author_profile']; ?></textarea><span class="help-block"><?php if ( isset($err['blog_author_profile'])) echo h($err['blog_author_profile']); ?></span>
+					<div class="invalid-feedback" ></div>
 				</div>
 			</div>
 

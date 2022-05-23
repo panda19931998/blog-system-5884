@@ -368,21 +368,11 @@ $blog_categorys2 = $stmt->fetchAll();
 
 
 							<div style="padding:10px;margin-top:10px;text-align:center;">
-								<span style="font-size:1.4em;font-weight:bold;">ハルジオン</span>
+								<span style="font-size:1.4em;font-weight:bold;"><?php echo $blog['blog_author_name']; ?></span>
 							</div>
 							<div>
 								<div class="sidebar-profile">
-									Webプログラマー暦22年、2児の父。<br />
-									<br />
-									IT企業でWebプログラマーを15年ほどやっており、在職時は新人プログラマーの採用や育成なども担当。<br />
-									<br />
-									現在はその経験を活かして独立し、ネットを通じて多くの新人プログラマーを育成しています。<br />
-									<br />
-									日々思いついたアイデアをプログラミングで実現させ、ラーニングシステムやメルマガ配信システムなども全て自作。ほとんどの事務作業をプログラミングにより自動化し、より多くの時間を新しいアプリの開発や、家族との時間に充てています。<br />
-									<br />
-									僕の学んだノウハウを皆さんに伝授し、面白いアプリを一緒に開発していけるような仲間を世界中に作っていくことが目標です。<br />
-									<br />
-									具体的な方法に興味があれば、是非メルマガを読んでみて下さい。 <br />
+									<?php echo $blog['blog_author_profile']; ?>
 								</div>
 								<div class="sidebar-sns" style="margin-top:10px;">
 
