@@ -146,3 +146,18 @@ reader.readAsDataURL(file);
 
 
 </script>
+
+<script>
+// プレビューボタンが押された時の処理
+$('[data-click="preview"]').click(function(e) {
+	var form = document.getElementById("mainform");
+
+	form.action = "/blog/preview/";
+	form.target = "_blank";
+	form.submit();
+
+	form.action = "";
+	form.target = "_self";
+
+});
+</script>

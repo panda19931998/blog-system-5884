@@ -3,17 +3,21 @@ $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
+
 //id取得
 if(isset($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
+$status = '';
 
 $blog_entry = array();
 $blog_entry2 = array();
 $blog_category_masters = array();
 $category_id = array();
 $blog_category_master = array();
-
+$blog_entry_eye_catch['eye_catch_image'] ='';
+$blog_entry_eye_catch['eye_catch_image_ext'] ='';
 //ブログの登録しているカテゴリーを取得の準備
 $sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id ";
 $stmt = $pdo->prepare($sql);
@@ -23,6 +27,11 @@ $params = array(
 );
 $stmt->execute($params);
 $blog_category_masters = $stmt->fetchAll();
+
+//カテゴリーのチェックを登録したものにあらかじめチェックを入れる
+foreach((array) $blog_category_masters as $val){
+	$checked["category_id"][$val['blog_category_code']]=" ";
+}
 
   // 初めて画面にアクセスした時の処理
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -39,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		);
 		$stmt->execute($params);
 		$blog_entry = $stmt->fetch();
+
+		$blog_entry_eye_catch['eye_catch_image'] = $blog_entry['eye_catch_image'];
+		$blog_entry_eye_catch['eye_catch_image_ext'] =$blog_entry['eye_catch_image_ext'];
 
 		$title = $blog_entry['title'];
 		$slug = $blog_entry['slug'];
@@ -57,18 +69,36 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		checkToken();
 
+		//blog_entry_code取得
+		if(isset($_GET['code'])) {
+			$start_blog_entry_code = $_GET['code'];
+		}
+
 		$err = array();
 		$complete_msg = "";
 
 		//登録した記事の各項目を取得
-		$sql = "SELECT * FROM blog_entry WHERE client_id = :client_id LIMIT 1";
-		$stmt = $pdo->prepare($sql);
-		$params = array(
-			":client_id" => $user['id']
-		);
-		$stmt->execute($params);
-		$blog_entry2 = $stmt->fetch();
+		if(isset($blog_entry_code)){
+			//登録している記事の各項目をデータベースから取得
+			$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":blog_entry_code" => $start_blog_entry_code,
+				":client_id" => $user['id']
+			);
+			$stmt->execute($params);
+			$blog_entry2 = $stmt->fetch();
+		}else{
 
+			$sql = "SELECT * FROM blog_entry WHERE client_id = :client_id LIMIT 1";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":client_id" => $user['id']
+			);
+			$stmt->execute($params);
+			$blog_entry2 = $stmt->fetch();
+
+		}
 		$title = $_POST['title'];
 		$contents = $_POST['contents'];
 		$posting_date = $_POST['posting_date'];
@@ -115,13 +145,30 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 
 		if($file_upload_array_default['file'] ==''){
-			$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
-			$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
+			if(isset($blog_entry2['eye_catch_image'])){
+
+			$blog_entry_eye_catch['eye_catch_image'] = $blog_entry2['eye_catch_image'];
+			$blog_entry_eye_catch['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
+
+			}else{
+
+				$blog_entry_eye_catch['eye_catch_image'] = '';
+				$blog_entry_eye_catch['eye_catch_image_ext'] = '';
+
+			}
 		} else {
-			$blog_entry['eye_catch_image'] = $file_upload_array_default['file'];
-			$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
+
+			$blog_entry_eye_catch['eye_catch_image'] = $file_upload_array_default['file'];
+			$blog_entry_eye_catch['eye_catch_image_ext'] = $file_upload_array_default['ext'];
+
 		}
 
+		if (isset($_FILES['eye_catch_image'])){
+			echo  $_FILES['eye_catch_image']['error'];
+		}
+
+
+//		$blog_entry['eye_catch_image'] = fread($blog_entry_eye_catch['eye_catch_image'], filesize($_FILES['eye_catch_image']['tmp_name']));
 
 		//error_log($file_upload_array_default['file'],3,"./error.log");
 		//error_log($file_upload_array_default['size'],3,"./error.log");
@@ -263,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->bindValue(':slug', $slug, PDO::PARAM_STR);
 				$stmt->bindValue(':client_id', (int)$user['id'], PDO::PARAM_INT);
 				$stmt->bindValue(':blog_id', (int)$blog_id, PDO::PARAM_INT);
-				$stmt->bindValue(':eye_catch_image', $blog_entry['eye_catch_image'], PDO::PARAM_LOB);
+				$stmt->bindValue(':eye_catch_image', $blog_entry_eye_catch['eye_catch_image'], PDO::PARAM_LOB);
 				$stmt->bindValue(':eye_catch_image_ext', $blog_entry['eye_catch_image_ext'], PDO::PARAM_STR);
 				$stmt->execute();
 
@@ -331,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					":seo_keywords" => $seo_keywords,
 					":status" => $status,
 					":slug" => $slug,
-					":eye_catch_image" => $blog_entry['eye_catch_image'],
+					":eye_catch_image" => $blog_entry_eye_catch['eye_catch_image'],
 					":eye_catch_image_ext" => $blog_entry['eye_catch_image_ext'],
 					":client_id" => $user['id'],
 					":blog_entry_code" => $id
@@ -548,15 +595,23 @@ $breadcrumb_list[1]['url'] = '';
 		<div class="vertical-box-column bg-silver width-300 border-left">
 			<!-- begin wrapper -->
 			<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
-
 				<div class="image-preview m-b-4"></div>
-				<?php if (isset($blog_entry) && $blog_entry['eye_catch_image']): ?>
-				<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+
+				<?php if ($blog_entry_eye_catch['eye_catch_image'] ==''): ?>
+				<?php else: ?>
+					<img src="<?php echo get_base64_header_string($blog_entry_eye_catch['eye_catch_image_ext']) ?><?php echo base64_encode(fread($blog_entry_eye_catch['eye_catch_image'], filesize($_FILES['eye_catch_image']['tmp_name'])));?>"  class="img-responsive width-full m-b-5" />
+
 				<?php endif; ?>
+
+
+				<?php// echo fclose(fread($blog_entry_eye_catch['eye_catch_image'])); ?>
+
+
+
 				<label class="m-t-1 m-b-1">
 					<span class="btn btn-inverse p-l-40 p-r-40 btn-sm">
 						<i class="fa fa-image"></i> アイキャッチ画像
-						<input type="file" name="eye_catch_image" value="" style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
+						<input type="file" name="eye_catch_image" value=""  class="img-responsive width-full m-b-5"  style="display:none"><span class="help-block"><?php if ( isset($default_err['eye_catch_image'])) echo h($default_err['eye_catch_image']); ?></span>
 					</span>
 				</label>
 			</div>
@@ -607,7 +662,7 @@ $breadcrumb_list[1]['url'] = '';
 		</div>
 	</div>
 
-	<input type="hidden" name="code" value="" />
+	<input type="hidden" name="code" value="<?php echo h($blog_entry_code); ?>" />
 	<input type="hidden" name="mode" value="save" />
 	<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
 	<input type="hidden" name="FLUXDEMOTOKEN" value="fb101adcbf182caee4e77515ddcb8acc39818d47" />
