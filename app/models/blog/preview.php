@@ -18,29 +18,30 @@ $stmt->execute($params);
 $client = $stmt->fetch();
 $client_code = $client['client_code'];
 
-//id取得
-if(isset($_GET['code'])) {
-	$id = $_GET['code'];
-}
+
 
 
 
 // 初めて画面にアクセスした時の処理
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-  // CSRF対策
-  setToken();
+	// CSRF対策
+	setToken();
 
-  $title = '';
-  $contents = '';
+	$title = '';
+	$contents = '';
 
 } else {
 
-$title = $_POST['title'];
-$contents = $_POST['contents'];
+	$title = $_POST['title'];
+	$contents = $_POST['contents'];
+
+	if(isset($_POST['code'])){
+		$id = $_POST['code'];
+	}
 
 
 	if(isset($id)){
-	//登録している記事の各項目をデータベースから取得
+		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
@@ -50,33 +51,32 @@ $contents = $_POST['contents'];
 		$stmt->execute($params);
 		$blog_entry2 = $stmt->fetch();
 
-	}else{
-
-		$blog_entry2['eye_catch_image_ext'] ='';
 	}
 
-//アイキャッチ画像を取得
+	//アイキャッチ画像を取得
 
-$default_err = array();
+	$default_err = array();
 
 
-$file_upload_array_default = file_upload('eye_catch_image', $default_err);
+	$file_upload_array_default = file_upload('eye_catch_image', $default_err);
 
 	if($file_upload_array_default['file'] ==''){
 
-		if($blog_entry2['eye_catch_image_ext'] ==''){
+		if(isset($blog_entry2['eye_catch_image_ext'])){
 
-			$blog_entry['eye_catch_image'] = '';
-			$blog_entry['eye_catch_image_ext'] = '';
-		}else{
 			$blog_entry['eye_catch_image'] = $blog_entry2['eye_catch_image'];
 			$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
+		}else{
+
+			$blog_entry['eye_catch_image_ext'] = '';
+
 		}
 
 
 	} else {
-		$blog_entry['eye_catch_image'] = $file_upload_array_default['file'];
+		$blog_entry['eye_catch_image'] = fread($file_upload_array_default['file'], filesize($_FILES['eye_catch_image']['tmp_name']));
 		$blog_entry['eye_catch_image_ext'] = $file_upload_array_default['ext'];
+
 	}
 
 
@@ -131,7 +131,7 @@ $blog_categorys2 = $stmt->fetchAll();
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/style.css" rel="stylesheet">
+	<link href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/style.css" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -171,41 +171,41 @@ $blog_categorys2 = $stmt->fetchAll();
 
 		<div class="blog-post panel">
 			<div class="blog-post-posting-date">
-								</div>
-
-				<h1 class="blog-post-title"><?php echo $title; ?></h1>
-
-				<figure class="blog-post-eyecatch-img">
-
-					<?php if ($blog_entry2['eye_catch_image_ext'] ==''): ?>
-					<?php else: ?>
-						<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode(fread($blog_entry['eye_catch_image'], filesize($_FILES['eye_catch_image']['tmp_name'])));?>"  class="img-responsive width-full m-b-5" />
-
-					<?php endif; ?>
-				</figure>
-
-
-				<p style="blog-post-contents;margin-top:40px;"><?php echo $contents; ?></p>
-
-
-
-
-				<!--
-				<div class="entry-pager">
-
-
-
-				<div class="entry-pager-previous">
-				<a href="http://b.blog-system-5884.localhost/client_code/how-to-web-programmer.html">【次の記事】 初心者がプログラミングを学ぶには、何から勉強すれば良いか？ <i class="fa fa-angle-right"></i></a>
 			</div>
 
+			<h1 class="blog-post-title"><?php echo $title; ?></h1>
 
+			<figure class="blog-post-eyecatch-img">
+
+				<?php if ($blog_entry['eye_catch_image_ext'] ==''): ?>
+				<?php else: ?>
+					<img src="<?php echo get_base64_header_string($blog_entry['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+
+				<?php endif; ?>
+			</figure>
+
+
+			<p style="blog-post-contents;margin-top:40px;"><?php echo $contents; ?></p>
+
+
+
+
+			<!--
+			<div class="entry-pager">
+
+
+
+			<div class="entry-pager-previous">
+			<a href="http://b.blog-system-5884.localhost/client_code/how-to-web-programmer.html">【次の記事】 初心者がプログラミングを学ぶには、何から勉強すれば良いか？ <i class="fa fa-angle-right"></i></a>
 		</div>
-	-->
-
 
 
 	</div>
+-->
+
+
+
+</div>
 
 
 </div>
