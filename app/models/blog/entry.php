@@ -49,8 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_entry = $stmt->fetch();
 
-		$blog_entry_eye_catch['eye_catch_image'] = $blog_entry['eye_catch_image'];
-		$blog_entry_eye_catch['eye_catch_image_ext'] =$blog_entry['eye_catch_image_ext'];
+
+		if(isset($blog_entry['eye_catch_image'])){
+
+			$blog_entry_eye_catch['eye_catch_image'] = $blog_entry['eye_catch_image'];
+			$blog_entry_eye_catch['eye_catch_image_ext'] = $blog_entry['eye_catch_image_ext'];
+
+		}else{
+
+			$blog_entry_eye_catch['eye_catch_image'] = $blog['blog_default_eye_catch_image'];
+			$blog_entry_eye_catch['eye_catch_image_ext'] = $blog['blog_default_eye_catch_image_ext'];
+
+		}
+
 
 		$title = $blog_entry['title'];
 		$slug = $blog_entry['slug'];
@@ -131,25 +142,24 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		$default_err = array();
 
-
-
 		$file_upload_array_default = file_upload('eye_catch_image', $default_err);
 
 
 		if($file_upload_array_default['file'] ==''){
 
-			if(isset($blog_entry2['eye_catch_image'])){
+			if (isset($blog_entry2['eye_catch_image'])) {
+	    		// 画像が存在するときの処理
 
 				$blog_entry_eye_catch['eye_catch_image'] = $blog_entry2['eye_catch_image'];
 				$blog_entry_eye_catch['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
 
-			}else{
+			} else {
+	    		//画像が存在しない時の処理
 
-				$blog_entry_eye_catch['eye_catch_image'] = '';
-				$blog_entry_eye_catch['eye_catch_image_ext'] = '';
+				$blog_entry_eye_catch['eye_catch_image'] = $blog['blog_default_eye_catch_image'];
+				$blog_entry_eye_catch['eye_catch_image_ext'] = $blog['blog_default_eye_catch_image_ext'];
 
 			}
-
 		} else {
 
 			$blog_entry_eye_catch['eye_catch_image'] = fread($file_upload_array_default['file'], filesize($_FILES['eye_catch_image']['tmp_name']));
@@ -587,13 +597,8 @@ $breadcrumb_list[1]['url'] = '';
 					<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
 						<div class="image-preview m-b-4"></div>
 
-						<?php if ($blog_entry_eye_catch['eye_catch_image'] ==''): ?>
-						<?php else: ?>
+
 							<img src="<?php echo get_base64_header_string($blog_entry_eye_catch['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry_eye_catch['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
-						<?php endif; ?>
-
-
-
 
 
 						<?php// echo fclose(fread($blog_entry_eye_catch['eye_catch_image'])); ?>

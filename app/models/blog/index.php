@@ -9,6 +9,16 @@ $breadcrumb_list[1]['url'] = '';
 
 $blog_entrys = array();
 
+//client_code取得
+$sql = "SELECT * FROM client WHERE id = :id ";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":id" => $user['id']
+);
+$stmt->execute($params);
+$blog_entry_client_code = $stmt->fetch();
+$client_code = $blog_entry_client_code['client_code'];
+
 if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))){
 
     $search_filter = '';
@@ -173,7 +183,14 @@ unset($pdo);
 									</td>
 									<td class="text-center"><?php echo $blog_entry['id'];?></td>
 									<td><?php echo $blog_entry['title'];?></td>
-									<td><a href="/blog/demo/<?php echo $blog_entry['slug'];?>.html" class="btn btn-primary"><?php echo $blog_entry['slug'];?>.html</a></td>
+									<?php if(empty($blog_entry['slug'])) : ?>
+										<td><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo $blog_entry['blog_entry_code'];?>.html" class="btn btn-primary" " target="_blank"><?php echo $blog_entry['blog_entry_code'];?>.html</a></td>
+									<?php else : ?>
+										<td><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo $blog_entry['slug'];?>.html" class="btn btn-primary " target="_blank""><?php echo $blog_entry['slug'];?>.html</a></td>
+									<?php endif; ?>
+
+
+
 									<td><center><?php echo $blog_entry['view_count'];?></center></td>
 									<td class="text-center">
 										<a href="/blog/entry/?id=<?php echo h($blog_entry['blog_entry_code']);?>" class="btn btn-primary">編集</a>

@@ -271,11 +271,19 @@ $blog_categorys2 = $stmt->fetchAll();
 
 				</p>
 
-				<figure class="blog-post-eyecatch-img">
-					<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo $blog_entry['title']; ?>" class="img-responsive" />
-				</figure>
+				<?php if(isset($blog_entry['eye_catch_image'])) :?>
 
+					<figure class="blog-post-eyecatch-img">
+						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo $blog_entry['title']; ?>" class="img-responsive" />
+					</figure>
 
+				<?php else:?>
+
+					<figure class="blog-post-eyecatch-img">
+						<img src="<?php echo get_base64_header_string($blog['blog_default_eye_catch_image_ext']) ?><?php echo base64_encode($blog['blog_default_eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+					</figure>
+
+				<?php endif;?>
 
 				<p style="blog-post-contents;margin-top:40px;"><?php echo $blog_entry['contents']; ?></p>
 
