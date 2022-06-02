@@ -324,6 +324,10 @@ $blog_categorys2 = $stmt->fetchAll();
 
 
 								</p>
+								<?php if (empty($val['eye_catch_image'])):?>
+									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
+									</figure></a>
+								<?php else :?>
 
 									<?php if (empty($val['slug'])): ?>
 										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
@@ -333,6 +337,7 @@ $blog_categorys2 = $stmt->fetchAll();
 										</figure></a>
 									<?php endif; ?>
 
+								<?php endif; ?>
 								<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
 
 									<?php if (empty($val['slug'])): ?>
