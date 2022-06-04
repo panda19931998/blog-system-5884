@@ -19,16 +19,19 @@ $today = $date->format('Y-m-d');
 $end_path_arr = array();
 $end_path_arr = end($path_arr);
 
+
 //URLからデータを取り出し
-if(endsWith($end_path_arr,'html')) {
 
-	$new_entry_code = str_replace('.html','',$end_path_arr);
+	if (startsWith($request_path,'/'.$client_code.'/entry')) {
+		$new_entry_code2 = str_replace('.html','',$end_path_arr);
 
-}else{
+		$new_entry_code = urldecode($new_entry_code2);
+	}else{
+		$new_entry_code_slug2 = str_replace('.html','',$end_path_arr);
 
-	$new_entry_code = $end_path_arr;
+		$new_entry_code_slug = urldecode($new_entry_code_slug2);
+	}
 
-}
 
 //blog_entry_codeかslugかを判定
 if (startsWith($request_path,'/'.$client_code.'/entry')) {
@@ -53,7 +56,7 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 		":client_id" => $client['id'],
 		":status" => 1,
 		":posting_date" => $today,
-		":slug" => $new_entry_code
+		":slug" => $new_entry_code_slug
 	);
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
@@ -131,11 +134,13 @@ if(isset($blog_category_master['blog_category_code'])){
 
 //人気記事ランキング
 
-$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ORDER BY view_count DESC LIMIT 10";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
-	":client_id" => $client['id']
+	":client_id" => $client['id'],
+	":status" => 1,
+	":posting_date" => $today
 );
 $stmt->execute($params);
 $blog_entry_rankings = $stmt->fetchAll();
@@ -396,11 +401,19 @@ $blog_categorys2 = $stmt->fetchAll();
 							<ul class="sidebar-list">
 								<li class="sidebar-list-left">
 
+									<?php if (empty($val['eye_catch_image'])):?>
 
-									<figure class="sidebar-popular-list-entry-eyecatch">
-										<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
-									</figure>
+										<figure class="sidebar-popular-list-entry-eyecatch">
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top; ?>" class="img-responsive" alt="" />
+										</figure>
 
+									<?php else :?>
+
+										<figure class="sidebar-popular-list-entry-eyecatch">
+											<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
+										</figure>
+
+									<?php endif; ?>
 
 									<p>1</p>
 								</li>

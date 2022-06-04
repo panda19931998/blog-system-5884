@@ -31,14 +31,14 @@ try {
 	$blog_id =$blog['id'];
 
 	//blog_entry_code,image_codeを取得
-	$sql = "select * from blog_entry where client_id = :client_id limit 1";
-	$stmt = $pdo->prepare($sql);
-	$params = array(
-		":client_id" => $client['id']
-	);
-	$stmt->execute($params);
-	$blog_entry = $stmt->fetch();
-	$blog_entry_code =$blog_entry['blog_entry_code'];
+	//$sql = "select * from blog_entry where client_id = :client_id limit 1";
+	//$stmt = $pdo->prepare($sql);
+	//$params = array(
+	//	":client_id" => $client['id']
+	//);
+	//$stmt->execute($params);
+	//$blog_entry = $stmt->fetch();
+	//$blog_entry_code =$blog_entry['blog_entry_code'];
 
 	$sql = "select * from blog_entry_image where client_id = :client_id limit 1";
 	$stmt = $pdo->prepare($sql);

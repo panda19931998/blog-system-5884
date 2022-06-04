@@ -180,14 +180,17 @@ $blog_entrys_slice = array_slice($blog_entrys,($page - 1) * 10,($page * 10) -1 )
 
 //人気記事ランキング
 
-$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ORDER BY view_count DESC LIMIT 10";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
-	":client_id" => $client['id']
+	":client_id" => $client['id'],
+	":status" => 1,
+	":posting_date" => $today
 );
 $stmt->execute($params);
 $blog_entry_rankings = $stmt->fetchAll();
+
 
 
 //カテゴリー取得
@@ -325,8 +328,15 @@ $blog_categorys2 = $stmt->fetchAll();
 
 								</p>
 								<?php if (empty($val['eye_catch_image'])):?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
-									</figure></a>
+
+									<?php if (empty($val['slug'])): ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
+										</figure></a>
+									<?php else : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
+										</figure></a>
+									<?php endif; ?>
+
 								<?php else :?>
 
 									<?php if (empty($val['slug'])): ?>
@@ -415,11 +425,19 @@ $blog_categorys2 = $stmt->fetchAll();
 										<ul class="sidebar-list">
 											<li class="sidebar-list-left">
 
+												<?php if (empty($val['eye_catch_image'])):?>
+
+													<figure class="sidebar-popular-list-entry-eyecatch">
+														<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top; ?>" class="img-responsive" alt="" />
+													</figure>
+
+												<?php else :?>
 
 													<figure class="sidebar-popular-list-entry-eyecatch">
 														<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
 													</figure>
 
+												<?php endif; ?>
 
 														<p>1</p>
 													</li>
