@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		checkToken();
 
 		//blog_entry_code取得
-		if(isset($_POST['code'])){
+		if(!empty($_POST['code'])){
 
 			$start_blog_entry_code = $_POST['code'];
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$complete_msg = "";
 
 		//登録した記事の各項目を取得
-		if(isset($start_blog_entry_code)){
+		if($start_blog_entry_code!=''){
 			//登録している記事の各項目をデータベースから取得
 			$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 			$stmt = $pdo->prepare($sql);
@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_entry_code_sequence = $stmt->fetch();
 
-		if(!isset($id)&&!isset($start_blog_entry_code)){
+		if(!isset($id)&& $start_blog_entry_code ==''){
 
 				//ブログカテゴリーコードのシーケンスがなかった場合
 				if ($blog_entry_code_sequence['sequence'] == '') {
@@ -299,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
 				}
 		}else{
-			if(isset($start_blog_entry_code)){
+			if($start_blog_entry_code!=''){
 
 			$blog_entry_code = $start_blog_entry_code;
 
@@ -311,7 +311,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 //error_log($blog_entry_code,3,"./error.log");
 		if (empty($err)) {
 
-			if(!isset($id) && !isset($start_blog_entry_code)){
+			if(!isset($id) && $start_blog_entry_code ==''){
 
 
 				// 登録処理
@@ -376,7 +376,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 
 			} else {
 
-				if(isset($start_blog_entry_code)){
+				if($start_blog_entry_code!=''){
 					$id =$start_blog_entry_code;
 				}
 
