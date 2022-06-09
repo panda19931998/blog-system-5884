@@ -15,9 +15,14 @@ $blog_categorys2 = array();
 $blog_category2 = array();
 
 //日付を取得
+//$date = new DateTime();
+//$date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+//$today = $date->format('Y-m-d');
+
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-$today = $date->format('Y-m-d');
+$date->modify('+1 day');
+$today = $date->format('Y-m-d H:i:s');
 
 //検索のパラメーターの判定
 if(!isset($_GET['q'])){
@@ -314,7 +319,8 @@ $blog_categorys2 = $stmt->fetchAll();
 								<?php else : ?>
 									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
 								<?php endif; ?>
-
+								<?php echo h($val['posting_date']); ?>
+								<?php echo h($today); ?>
 
 
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">

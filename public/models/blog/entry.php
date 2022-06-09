@@ -14,7 +14,9 @@ $shuffle_blog_categorys = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
-$today = $date->format('Y-m-d');
+$date->modify('+1 day');
+$today = $date->format('Y-m-d H:i:s');
+
 
 $end_path_arr = array();
 $end_path_arr = end($path_arr);
@@ -47,6 +49,7 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
 
+
 }else{
 
 	$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id  AND status = :status AND posting_date <= :posting_date AND slug =:slug ";
@@ -61,7 +64,11 @@ if (startsWith($request_path,'/'.$client_code.'/entry')) {
 	$stmt->execute($params);
 	$blog_entry = $stmt->fetch();
 
+}
 
+// 記事が非公開の時
+if ($blog_entry['status'] !=1) {
+	$err['status'] = '記事は非公開です';
 }
 
 //カテゴリーを取得
@@ -257,7 +264,9 @@ $blog_categorys2 = $stmt->fetchAll();
 
 	<div id="main" class="col-md-8 col-sm-8 col-xs-12 blog-main">
 
-
+		<div class="m-l-10 m-r-10 <?php if ($err['status'] != '') echo 'has-error'; ?>" >
+			<span class="help-block"><?php if ( isset($err['status'])) echo h($err['status']); ?></span>
+		</div>
 
 		<div class="blog-post panel">
 			<div class="blog-post-posting-date">
@@ -267,19 +276,26 @@ $blog_categorys2 = $stmt->fetchAll();
 				<h1 class="blog-post-title"><?php echo $blog_entry['title']; ?></h1>
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
-
+				<?php if (!isset($err['status'])):?>
 					<?php if (empty($blog_category_master['category_name']))  : ?>
 						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> 未分類</span></a>
 					<?php else : ?>
 						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($blog_category_master['category_name']);?></span></a>
 					<?php endif; ?>
+				<?php else :?>
 
+				<?php endif ;?>
 				</p>
 
 				<?php if(isset($blog_entry['eye_catch_image'])) :?>
 
 					<figure class="blog-post-eyecatch-img">
 						<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($blog_entry['blog_entry_code']); ?>" alt="<?php echo $blog_entry['title']; ?>" class="img-responsive" />
+					</figure>
+
+				<?php elseif($blog_entry['status']!==1):?>
+
+					<figure class="blog-post-eyecatch-img">
 					</figure>
 
 				<?php else:?>

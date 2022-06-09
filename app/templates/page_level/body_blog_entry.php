@@ -120,6 +120,7 @@ $('form').on('change', 'input[type="file"]', function(e) {
 var file = e.target.files[0],
 reader = new FileReader(),
 $preview = $(".image-preview");
+
 t = this;
 
 // 画像ファイル以外の場合は何もしない
