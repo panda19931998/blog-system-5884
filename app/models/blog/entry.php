@@ -7,7 +7,12 @@ $page_base_body_tag_template = "body_blog_entry.php";
 
 //id取得
 if(isset($_GET['id'])) {
-	$id = $_GET['id'];
+
+	$blog_entry_code = $_GET['id'];
+
+}elseif(isset($_POST['code'])){
+
+	$blog_entry_code = $_POST['code'];
 }
 
 $status = '';
@@ -44,12 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 //	$_SESSION['blog_entry_code']='';
 
-	if(isset($id)){
+	if(isset($blog_entry_code)){
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
-			":blog_entry_code" => $id,
+			":blog_entry_code" => $blog_entry_code,
 			":client_id" => $user['id']
 		);
 		$stmt->execute($params);
@@ -87,24 +92,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		checkToken();
 
-		//blog_entry_code取得
-		if(!empty($_POST['code'])){
-
-			$start_blog_entry_code = $_POST['code'];
-
-		}
-
-
 		$err = array();
 		$complete_msg = "";
 
 		//登録した記事の各項目を取得
-		if($start_blog_entry_code!=''){
+		if(isset($blog_entry_code)){
 			//登録している記事の各項目をデータベースから取得
 			$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
-				":blog_entry_code" => $start_blog_entry_code,
+				":blog_entry_code" => $blog_entry_code,
 				":client_id" => $user['id']
 			);
 			$stmt->execute($params);
@@ -215,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$err['blog_category_slug'] = 'スラッグは50バイト以内で入力して下さい。';
 			} else {
 				// スラッグが重複
-				if(!isset($id)){
+				if(!isset($blog_entry_code)){
 					if ($slug2 !='') {
 						$err['slug'] = '別のスラッグを入力してください。';
 					}
@@ -263,7 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 		$blog_entry_code_sequence = $stmt->fetch();
 
-		if(!isset($id)&& $start_blog_entry_code ==''){
+
+		if(!isset($blog_entry_code)){
 
 				//ブログカテゴリーコードのシーケンスがなかった場合
 				if ($blog_entry_code_sequence['sequence'] == '') {
@@ -298,21 +296,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 					$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
 				}
-		}else{
-			if($start_blog_entry_code!=''){
-
-			$blog_entry_code = $start_blog_entry_code;
-
-			}
 
 		}
 
-error_log($start_blog_entry_code,3,"./error.log");
-//error_log($blog_entry_code,3,"./error.log");
-		if (empty($err)) {
-
-			if(!isset($id) && $start_blog_entry_code ==''){
-
+			if (empty($err)) {
 
 				// 登録処理
 				$sql = "INSERT INTO blog_entry
@@ -372,14 +359,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 
 				$complete_msg = "登録されました。\n";
 
-
-
 			} else {
-
-				if($start_blog_entry_code!=''){
-					$id =$start_blog_entry_code;
-				}
-
 
 				//登録した各項目を更新
 				$sql = "UPDATE blog_entry
@@ -409,7 +389,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 					":eye_catch_image" => $blog_entry_eye_catch['eye_catch_image'],
 					":eye_catch_image_ext" => $blog_entry_eye_catch['eye_catch_image_ext'],
 					":client_id" => $user['id'],
-					":blog_entry_code" => $id
+					":blog_entry_code" => $blog_entry_code
 				);
 				$stmt->execute($params);
 
@@ -418,7 +398,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":client_id" => $user['id'],
-					":blog_entry_code" => $id
+					":blog_entry_code" => $blog_entry_code
 				);
 				$stmt->execute($params);
 				$blog_entry3 = $stmt->fetch();
@@ -460,7 +440,7 @@ error_log($start_blog_entry_code,3,"./error.log");
 
 				$complete_msg = "登録されました。\n";
 			}
-		}
+		
 
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
