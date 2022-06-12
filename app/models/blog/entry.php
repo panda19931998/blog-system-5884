@@ -10,9 +10,9 @@ if(isset($_GET['id'])) {
 
 	$blog_entry_code = $_GET['id'];
 
-}elseif(isset($_POST['code'])){
+}elseif(isset($_POST['id'])){
 
-	$blog_entry_code = $_POST['code'];
+	$blog_entry_code = $_POST['id'];
 }
 
 $status = '';
@@ -440,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				$complete_msg = "登録されました。\n";
 			}
-		
+
 
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
@@ -673,7 +673,7 @@ $breadcrumb_list[1]['url'] = '';
 			</div>
 		</div>
 <?php error_log($blog_entry_code,3,"./error.log"); ?>
-		<input type="hidden" name="code" value="<?php if(isset($blog_entry_code)) echo h($blog_entry_code);?>" />
+		<input type="hidden" name="id" value="<?php if(isset($blog_entry_code)) echo h($blog_entry_code);?>" />
 		<input type="hidden" name="mode" value="save" />
 		<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
 		<input type="hidden" name="FLUXDEMOTOKEN" value="fb101adcbf182caee4e77515ddcb8acc39818d47" />
