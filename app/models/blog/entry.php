@@ -3,17 +3,12 @@ $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
-
-
 //id取得
-if(isset($_GET['id'])) {
-
-	$blog_entry_code = $_GET['id'];
-
-}elseif(isset($_POST['id'])){
-
-	$blog_entry_code = $_POST['id'];
+if (isset($_REQUEST['id'])) {
+$blog_entry_code = $_REQUEST['id'];
 }
+
+
 
 $status = '';
 
@@ -261,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$blog_entry_code_sequence = $stmt->fetch();
 
 
-		if(!isset($blog_entry_code)){
+		if (!$blog_entry_code) {
 
 				//ブログカテゴリーコードのシーケンスがなかった場合
 				if ($blog_entry_code_sequence['sequence'] == '') {
@@ -299,7 +294,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		}
 
-			if (empty($err)) {
+
+		if (empty($err)) {
+
+			if (!isset($_REQUEST['id'])) {
 
 				// 登録処理
 				$sql = "INSERT INTO blog_entry
@@ -440,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				$complete_msg = "登録されました。\n";
 			}
-
+		}
 
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
