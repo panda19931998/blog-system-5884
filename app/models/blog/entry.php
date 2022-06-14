@@ -4,10 +4,9 @@ $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
 //id取得
-if (isset($_REQUEST['id'])) {
+if ($_REQUEST['id']) {
 $blog_entry_code = $_REQUEST['id'];
 }
-
 
 
 $status = '';
@@ -67,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry_eye_catch['eye_catch_image_ext'] = $blog['blog_default_eye_catch_image_ext'];
 
 		}
+
 
 
 		$title = $blog_entry['title'];
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		if (empty($err)) {
 
-			if (!isset($_REQUEST['id'])) {
+			if (!$_REQUEST['id']) {
 
 				// 登録処理
 				$sql = "INSERT INTO blog_entry
@@ -606,10 +606,16 @@ $breadcrumb_list[1]['url'] = '';
 
 			<div class="vertical-box-column bg-silver width-300 border-left">
 				<!-- begin wrapper -->
-				<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
-					<div class="image-preview m-b-4"><img src="<?php echo get_base64_header_string($blog_entry_eye_catch['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry_eye_catch['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
-					</div>
 
+				<div class="wrapper bg-silver text-center border-bottom　<?php if ($default_err['eye_catch_image']!= '') echo 'has-error'; ?>>">
+					<?php if (isset($_REQUEST['id'])) :?>
+						<div class="image-preview m-b-4">
+							<img src="<?php echo get_base64_header_string($blog_entry_eye_catch['eye_catch_image_ext']) ?><?php echo base64_encode($blog_entry_eye_catch['eye_catch_image']);?>"  class="img-responsive width-full m-b-5" />
+						</div>
+					<?php else :?>
+						<div class="image-preview m-b-4">
+						</div>
+					<?php endif ;?>
 
 
 
