@@ -508,21 +508,34 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$stmt->execute($params);
 
 		//登録処理の確認
-		$sth = $pdo -> query($sql);
-		$count = $stmt-> rowCount();
 
-		if($count = 1){
-			$status = 1;
+		$sql = "SELECT COUNT(*)  FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_code =:blog_category_code AND category_name =:category_name LIMIT 1";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":client_id" => $user['id'],
+			":blog_category_code" => $blog_category_code,
+			":category_name" => $new_category_name
+		);
+		$stmt->execute($params);
+		$count = $stmt->fetchColumn();
+
+
+		if($count == 1){
+			$status2 = 1;
 		} else {
-			$status = 2;
+			$status2 = 2;
 		};
+  //error_log($new_category_name,3,"./error.log");
 
-		$data['status'] = $status;
-		$data['blog_category_code'] = $blog_category_code ;
+		$data['status'] = "$status2";
+		$data['blog_category_code'] = "$blog_category_code";
 
+//		$data = array("status" => "1","blog_category_code" => "$blog_category_code");
 		//body_blog_entryにデータを送る
 		header("Content-type: application/json; charset=UTF-8");
 		echo json_encode($data);
+
 		exit;
 
 	}
@@ -676,7 +689,7 @@ $breadcrumb_list[1]['url'] = '';
 				<!-- end wrapper -->
 			</div>
 		</div>
-<?php error_log($blog_entry_code,3,"./error.log"); ?>
+
 		<input type="hidden" name="id" value="<?php if(isset($blog_entry_code)) echo h($blog_entry_code);?>" />
 		<input type="hidden" name="mode" value="save" />
 		<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
