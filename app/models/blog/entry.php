@@ -531,9 +531,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$data['status'] = "$status2";
 		$data['blog_category_code'] = "$blog_category_code";
 
+
 //		$data = array("status" => "1","blog_category_code" => "$blog_category_code");
 		//body_blog_entryにデータを送る
 		header("Content-type: application/json; charset=UTF-8");
+		error_log(json_encode($data),3,"./error.log");
 		echo json_encode($data);
 
 		exit;

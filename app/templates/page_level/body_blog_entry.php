@@ -94,7 +94,7 @@ function create_category() {
 			type: "POST",
 			url: "/blog/entry/",
 			data: formData,
-//			dataType : "json",
+			dataType : "json",
 			processData: false,
 			contentType: false,
 		}).done(function(data){
