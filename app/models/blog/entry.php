@@ -1,11 +1,11 @@
 <?php
-error_reporting(E_ALL & ~E_NOTICE);
+//error_reporting(E_ALL & ~E_NOTICE);
 $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
 //id取得
-if ($_REQUEST['id']) {
+if (!empty($_REQUEST['id'])) {
 $blog_entry_code = $_REQUEST['id'];
 }
 
