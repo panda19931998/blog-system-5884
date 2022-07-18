@@ -56,6 +56,36 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$blog_entry = $stmt->fetch();
 
 
+		//登録したカテゴリーにチェックを入れる
+		$sql = "SELECT * FROM blog_category WHERE status =:status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":status" => 1,
+			":blog_id" => $blog_id,
+			":client_id" => $user['id'],
+			":blog_entry_id" =>$blog_entry_code
+		);
+		$stmt->execute($params);
+		$blog_categorys2 = $stmt->fetchAll();
+
+		foreach((array) $blog_category_masters as $val){
+
+			foreach((array) $blog_categorys2 as $val2){
+
+//error_log($val2['blog_category_master_id'],3,"./error.log");
+
+				if($val['id'] == $val2['blog_category_master_id']){
+
+					$checked["category_id"][$val['blog_category_code']]="checked";
+
+				}
+			}
+
+		}
+
+
+
+		//アイキャッチ画像の設定
 		if(isset($blog_entry['eye_catch_image'])){
 
 			$blog_entry_eye_catch['eye_catch_image'] = $blog_entry['eye_catch_image'];
@@ -113,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$slug = $_POST['slug'];
 		$category_id = $_POST['category_id'];
 
+
 		if(isset($_POST['status'])){
 			$status = 1;
 		} else {
@@ -127,10 +158,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		if(isset($_POST["category_id"])){
 			foreach((array) $_POST["category_id"] as $val){
 				$checked["category_id"][$val]=" checked";
+				$category_status[$val]=1;
 			}
 		}
 
-
+		foreach((array) $blog_category_masters as $val){
+			if($checked["category_id"][$val['blog_category_code']]==" "){
+				$category_status[$val['blog_category_code']]=0;
+			}
+		}
 
 		//client_id,blog_idを確認
 		$sql = "SELECT * FROM blog_entry_code_sequence WHERE blog_id = :blog_id AND client_id = :client_id LIMIT 1";
@@ -171,11 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry_eye_catch['eye_catch_image_ext'] = $file_upload_array_default['ext'];
 
 		}
-
-		//error_log($file_upload_array_default['file'],3,"./error.log");
-		//error_log($file_upload_array_default['size'],3,"./error.log");
-		//error_log($blog_entry['eye_catch_image'],3,"./error.log");
-		//error_log($blog_entry['eye_catch_image_ext'],3,"./error.log");
 
 
 		// タイトル名が空
@@ -347,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
-						":status" => $status,
+						":status" => $category_status[$val],
 						":client_id" => $user['id'],
 						":blog_id" => $blog_id,
 						":blog_entry_id" => $blog_entry3['id'],
@@ -402,39 +433,48 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute($params);
 				$blog_entry3 = $stmt->fetch();
 
-				foreach((array)$category_id as $val){
 
-					$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id AND client_id =:client_id AND blog_category_code =:blog_category_code LIMIT 1";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":blog_id" => $blog_id,
-						":client_id" => $user['id'],
-						":blog_category_code" => $val
-					);
-					$stmt->execute($params);
+				foreach((array)$blog_category_masters as $val3){
 
-					$blog_category_master[$val] = $stmt->fetch();
+					foreach((array)$category_id as $val){
 
-					$sql = "UPDATE blog_category
-					SET
-					status = :status,
-					client_id =:client,
-					blog_id =:blog_id,
-					blog_entry_id =:blog_entry_id,
-					blog_category_master_id =:blog_category_master_id,
-					updated_at = now()
-					WHERE
-					client_id = :client_id AND
-					blog_id = :blog_id";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":status" => $status,
-						":client_id" => $user['id'],
-						":blog_id" => $blog_id,
-						":blog_entry_id" =>$blog_entry3['id'],
-						":blog_category_master_id" =>$blog_category_master[$val]['id'],
-					);
-					$stmt->execute($params);
+						$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id AND client_id =:client_id AND blog_category_code =:blog_category_code LIMIT 1";
+						$stmt = $pdo->prepare($sql);
+						$params = array(
+							":blog_id" => $blog_id,
+							":client_id" => $user['id'],
+							":blog_category_code" => $val
+						);
+						$stmt->execute($params);
+
+						$blog_category_master[$val] = $stmt->fetch();
+
+//error_log($blog_category_master[$val]['id'],3,"./error.log");
+
+						if($val3['id'] == $blog_category_master[$val]['id']){
+							$category_status[$val3['id']] = 1;
+						}
+
+
+						$sql = "UPDATE blog_category
+						SET
+						status = :status,
+						updated_at = now()
+						WHERE
+						client_id = :client_id AND
+						blog_id = :blog_id AND
+						blog_category_master_id =:blog_category_master_id AND
+						blog_entry_id =:blog_entry_id";
+						$stmt = $pdo->prepare($sql);
+						$params = array(
+							":status" => $category_status[$val3['id']],
+							":client_id" => $user['id'],
+							":blog_id" => $blog_id,
+							":blog_entry_id" =>$blog_entry3['blog_entry_code'],
+							":blog_category_master_id" =>$val3['id'],
+						);
+						$stmt->execute($params);
+					}
 				}
 
 				$complete_msg = "登録されました。\n";
@@ -496,13 +536,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		//新しいブログカテゴリー登録処理
 		$sql = "INSERT INTO blog_category_master
-		(client_id, blog_id, blog_category_code, category_name, created_at, updated_at)
+		(client_id, blog_id, sort_order ,blog_category_code, category_name, created_at, updated_at)
 		VALUES
-		(:client_id, :blog_id, :blog_category_code, :category_name, now(), now())";
+		(:client_id, :blog_id, :sort_order,:blog_category_code, :category_name, now(), now())";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
 			":client_id" => $user['id'],
 			":blog_id" => $blog_id,
+			":sort_order" => 4,
 			":blog_category_code" => $blog_category_code,
 			":category_name" => $new_category_name
 		);
@@ -536,7 +577,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 //		$data = array("status" => "1","blog_category_code" => "$blog_category_code");
 		//body_blog_entryにデータを送る
 		header("Content-type: application/json; charset=UTF-8");
-		error_log(json_encode($data),3,"./error.log");
 		echo json_encode($data);
 
 		exit;

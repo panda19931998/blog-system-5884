@@ -19,7 +19,10 @@ $client = $stmt->fetch();
 $client_code = $client['client_code'];
 
 
-
+//id取得
+if (!empty($_REQUEST['id'])) {
+$blog_entry_code = $_REQUEST['id'];
+}
 
 
 // 初めて画面にアクセスした時の処理
@@ -35,17 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$title = $_POST['title'];
 	$contents = $_POST['contents'];
 
-	if(isset($_POST['code'])){
-		$id = $_POST['code'];
-	}
-
-
-	if(isset($id)){
+	if(isset($blog_entry_code)){
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
-			":blog_entry_code" => $id,
+			":blog_entry_code" => $blog_entry_code,
 			":client_id" => $user['id']
 		);
 		$stmt->execute($params);
@@ -68,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
 		}else{
 
-			$blog_entry['eye_catch_image_ext'] = '';
+			$blog_entry['eye_catch_image'] = $blog['blog_default_eye_catch_image'];
+			$blog_entry['eye_catch_image_ext'] = $blog['blog_default_eye_catch_image_ext'];
 
 		}
 
