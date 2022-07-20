@@ -329,8 +329,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		if (empty($err)) {
 
-			if (!$_REQUEST['id']) {
-
+//			if (!$_REQUEST['id']) {
+			if (empty($blog_entry2)) {
 				// 登録処理
 				$sql = "INSERT INTO blog_entry
 				(blog_entry_code, title, contents, posting_date, seo_description, seo_keywords, status, slug, client_id, blog_id, eye_catch_image, eye_catch_image_ext, created_at, updated_at)
@@ -360,17 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute();
 				$blog_entry3 = $stmt->fetch();
 
-				foreach((array)$category_id as $val){
-					$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id and client_id =:client_id and blog_category_code =:blog_category_code limit 1";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":blog_id" => $blog_id,
-						":client_id" => $user['id'],
-						":blog_category_code" => $val
-					);
-					$stmt->execute($params);
-
-					$blog_category_master[$val] = $stmt->fetch();
+				foreach((array) $blog_category_masters as $val){
 
 					$sql = "INSERT INTO blog_category
 					(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
@@ -378,11 +368,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
-						":status" => $category_status[$val],
+						":status" => $category_status[$val['blog_category_code']],
 						":client_id" => $user['id'],
 						":blog_id" => $blog_id,
-						":blog_entry_id" => $blog_entry3['id'],
-						":blog_category_master_id" => $blog_category_master[$val]['id']
+						":blog_entry_id" => $blog_entry3['blog_entry_code'],
+						":blog_category_master_id" => $val['id']
 					);
 					$stmt->execute($params);
 				}
