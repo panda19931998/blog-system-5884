@@ -426,25 +426,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 				foreach((array)$blog_category_masters as $val3){
 
-					foreach((array)$category_id as $val){
-
-						$sql = "SELECT * FROM blog_category_master WHERE blog_id =:blog_id AND client_id =:client_id AND blog_category_code =:blog_category_code LIMIT 1";
-						$stmt = $pdo->prepare($sql);
-						$params = array(
-							":blog_id" => $blog_id,
-							":client_id" => $user['id'],
-							":blog_category_code" => $val
-						);
-						$stmt->execute($params);
-
-						$blog_category_master[$val] = $stmt->fetch();
-
-//error_log($blog_category_master[$val]['id'],3,"./error.log");
-
-						if($val3['id'] == $blog_category_master[$val]['id']){
-							$category_status[$val3['id']] = 1;
-						}
-
 
 						$sql = "UPDATE blog_category
 						SET
@@ -457,14 +438,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 						blog_entry_id =:blog_entry_id";
 						$stmt = $pdo->prepare($sql);
 						$params = array(
-							":status" => $category_status[$val3['id']],
+							":status" => $category_status[$val3['blog_category_code']],
 							":client_id" => $user['id'],
 							":blog_id" => $blog_id,
 							":blog_entry_id" =>$blog_entry3['blog_entry_code'],
 							":blog_category_master_id" =>$val3['id'],
 						);
 						$stmt->execute($params);
-					}
 				}
 
 				$complete_msg = "登録されました。\n";
