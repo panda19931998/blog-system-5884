@@ -72,15 +72,26 @@ if(!isset($_GET['q'])){
 
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
+				$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND status =:status AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
-					":id" => $val2['blog_entry_id'],
+					":blog_entry_code" => $val2['blog_entry_id'],
 					":status" => 1,
 					":posting_date" => $today
 				);
 				$stmt->execute($params);
-				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
+				$blog_entrys0[$val2['blog_entry_id']] = $stmt->fetch();
+
+
+				if(!empty($blog_entrys0[$val2['blog_entry_id']])){
+
+					$blog_entrys[$val2['blog_entry_id']] = $blog_entrys0[$val2['blog_entry_id']];
+
+				}
+
+//				error_log($blog_entrys[$val2['blog_entry_id']]['blog_entry_code'],3,"./error.log");
+
+
 			}
 
 		}else{
@@ -111,10 +122,10 @@ if(!isset($_GET['q'])){
 
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
+				$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND status =:status AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
-					":id" => $val2['blog_entry_id'],
+					":blog_entry_code" => $val2['blog_entry_id'],
 					":status" => 1,
 					":posting_date" => $today
 				);
@@ -125,6 +136,9 @@ if(!isset($_GET['q'])){
 
 
 	}
+
+
+//error_log($new_category_code,3,"./error.log");
 
 	//検索機能
 }else{
@@ -181,6 +195,7 @@ if($page == $max_page && $count['cnt'] % 10 !== 0) {
 }
 
 $blog_entrys_slice = array_slice($blog_entrys,($page - 1) * 10,($page * 10) -1 );
+
 
 
 //人気記事ランキング
@@ -292,18 +307,18 @@ $blog_categorys2 = $stmt->fetchAll();
 					$params = array(
 						":blog_id" => $blog_id,
 						":client_id" => $client['id'],
-						":blog_entry_id" =>  $val['id']
+						":blog_entry_id" =>  $val['blog_entry_code']
 					);
 					;$stmt->execute($params);
-					$blog_categorys[$val['id']] = $stmt->fetch();
+					$blog_categorys[$val['blog_entry_code']] = $stmt->fetch();
 
 					$sql = "SELECT * FROM blog_category_master WHERE id = :id ";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
-						":id" => $blog_categorys[$val['id']]['blog_category_master_id']
+						":id" => $blog_categorys[$val['blog_entry_code']]['blog_category_master_id']
 					);
 					$stmt->execute($params);
-					$blog_category_master[$val['id']] = $stmt->fetch();
+					$blog_category_master[$val['blog_entry_code']] = $stmt->fetch();
 					?>
 
 					<div class="blog-list-entry-area panel">
@@ -325,10 +340,10 @@ $blog_categorys2 = $stmt->fetchAll();
 
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
-									<?php if (empty($blog_category_master[$val['id']]['category_name']))  : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i>未分類</span></a>
+									<?php if (empty($blog_category_master[$val['blog_entry_code']]['category_name']))  : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['blog_entry_code']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i>未分類</span></a>
 									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['id']]['category_name']); ?></span></a>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['blog_entry_code']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['blog_entry_code']]['category_name']); ?></span></a>
 									<?php endif; ?>
 
 

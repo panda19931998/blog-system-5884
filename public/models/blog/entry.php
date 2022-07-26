@@ -73,15 +73,37 @@ if ($blog_entry['status'] !=1) {
 
 //カテゴリーを取得
 
-$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
+$sql = "SELECT * FROM blog_category WHERE status = :status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":status" => 1,
+	":blog_id" => $blog_id,
+	":client_id" => $client['id'],
+	":blog_entry_id" => $blog_entry['blog_entry_code']
+);
+$stmt->execute($params);
+$blog_categorys0 = $stmt->fetchAll();
+
+//カテゴリーマスター取得
+
+//if(!empty($blog_categorys0)){}
+foreach ($blog_categorys0 as $val){
+
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
 	":client_id" => $client['id'],
-	":blog_entry_id" => $blog_entry['id']
+	":id" => $val['blog_category_master_id']
 );
 $stmt->execute($params);
-$blog_category = $stmt->fetch();
+$blog_category_masters0[$val['blog_category_master_id']] = $stmt->fetch();
+
+error_log($blog_category_masters0[$val['blog_category_master_id']]['blog_category_code'],3,"./error.log");
+
+
+//error_log($val['blog_category_master_id'],3,"./error.log");
+}
 
 
 $sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id ";
@@ -277,12 +299,14 @@ $blog_categorys2 = $stmt->fetchAll();
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 				<?php if (!isset($err['status'])):?>
-					<?php if (empty($blog_category_master['category_name']))  : ?>
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> 未分類</span></a>
-					<?php else : ?>
-						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_code); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($blog_category_master['category_name']);?></span></a>
-					<?php endif; ?>
-				<?php else :?>
+					<?php //if (empty($blog_category_masters0))  : ?>
+						<?php// echo "未分類"; ?>
+					<?php //else : ?>
+						<?php foreach ($blog_category_masters0 as $val): ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+						<?php endforeach ;?>
+					<?php //endif; ?>
+				<?php //else :?>
 
 				<?php endif ;?>
 				</p>
