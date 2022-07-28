@@ -60,39 +60,47 @@ if(!isset($_GET['q'])){
 			$stmt->execute($params);
 			$new_blog_category_master = $stmt->fetch();
 
-			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id ";
+			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id ";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
 				":blog_id" => $blog_id,
 				":client_id" => $client['id'],
+				":status" => 1,
 				":blog_category_master_id" => $new_blog_category_master['id']
 			);
 			$stmt->execute($params);
 			$new_blog_categorys = $stmt->fetchAll();
 
+		if(isset($new_blog_categorys)){
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND status =:status AND posting_date <= :posting_date ";
+				$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
+					":blog_id" => $blog_id,
+					":client_id" => $client['id'],
 					":blog_entry_code" => $val2['blog_entry_id'],
-					":status" => 1,
 					":posting_date" => $today
 				);
 				$stmt->execute($params);
-				$blog_entrys0[$val2['blog_entry_id']] = $stmt->fetch();
+				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
 
 
-				if(!empty($blog_entrys0[$val2['blog_entry_id']])){
-
-					$blog_entrys[$val2['blog_entry_id']] = $blog_entrys0[$val2['blog_entry_id']];
-
-				}
-
-//				error_log($blog_entrys[$val2['blog_entry_id']]['blog_entry_code'],3,"./error.log");
-
+//error_log($val['blog_entry_code'],3,"./error.log");
 
 			}
+
+//			foreach ($blog_entrys0 as $val3){
+
+//				if($val3['status'] ==1){
+
+//					$blog_entrys[$val3['blog_entry_code']] = $val3;
+
+//				}
+
+//			}
+
+		}
 
 		}else{
 			$new_category_code = $path_arr[3];
@@ -138,7 +146,6 @@ if(!isset($_GET['q'])){
 	}
 
 
-//error_log($new_category_code,3,"./error.log");
 
 	//検索機能
 }else{
@@ -302,23 +309,19 @@ $blog_categorys2 = $stmt->fetchAll();
 				<?php foreach ($blog_entrys_slice as $val): ?>
 					<?php
 					//ブログの登録しているカテゴリーを取得
-					$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id = :blog_entry_id ";
+
+					$sql = "SELECT * FROM blog_category WHERE status = :status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
+						":status" => 1,
 						":blog_id" => $blog_id,
 						":client_id" => $client['id'],
-						":blog_entry_id" =>  $val['blog_entry_code']
-					);
-					;$stmt->execute($params);
-					$blog_categorys[$val['blog_entry_code']] = $stmt->fetch();
-
-					$sql = "SELECT * FROM blog_category_master WHERE id = :id ";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":id" => $blog_categorys[$val['blog_entry_code']]['blog_category_master_id']
+						":blog_entry_id" => $val['blog_entry_code']
 					);
 					$stmt->execute($params);
-					$blog_category_master[$val['blog_entry_code']] = $stmt->fetch();
+					$blog_categorys[$val['blog_entry_code']] = $stmt->fetchAll();
+
+
 					?>
 
 					<div class="blog-list-entry-area panel">
@@ -328,8 +331,8 @@ $blog_categorys2 = $stmt->fetchAll();
 									<span class="blog-list-entry-posting_date"><i class="fa fa-clock-o"></i> <?php echo h($val['created_at']); ?>&nbsp;&nbsp;&nbsp;<i class="fa fa-refresh"></i> <?php echo h($val['updated_at']); ?></span>
 								</p>
 
-
 								<?php if (empty($val['slug']))  : ?>
+								<?php// if (isset($val['blog_entry_code']))  : ?>
 									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
 								<?php else : ?>
 									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
@@ -337,14 +340,27 @@ $blog_categorys2 = $stmt->fetchAll();
 								<?php echo h($val['posting_date']); ?>
 								<?php echo h($today); ?>
 
-
 								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
-									<?php if (empty($blog_category_master[$val['blog_entry_code']]['category_name']))  : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['blog_entry_code']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i>未分類</span></a>
-									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($blog_category_master[$val['blog_entry_code']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($blog_category_master[$val['blog_entry_code']]['category_name']); ?></span></a>
-									<?php endif; ?>
+									<?php foreach ($blog_categorys[$val['blog_entry_code']] as $val6): ?>
+
+										<?php
+										//カテゴリーマスター取得
+										$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id";
+										$stmt = $pdo->prepare($sql);
+										$params = array(
+											":blog_id" => $blog_id,
+											":client_id" => $client['id'],
+											":id" => $val6['blog_category_master_id']
+										);
+										$stmt->execute($params);
+										$val6 = $stmt->fetch();
+
+										?>
+
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val6['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($val6['category_name']); ?></span></a>
+
+									<?php endforeach; ?>
 
 
 								</p>
@@ -488,11 +504,12 @@ $blog_categorys2 = $stmt->fetchAll();
 
 												<?php foreach ($blog_categorys2 as $val): ?>
 													<?php
-													$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+													$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id";
 													$stmt = $pdo->prepare($sql);
 													$params = array(
 														":blog_id" => $blog_id,
 														":client_id" => $client['id'],
+														":status" => 1,
 														":blog_category_master_id" => $val['id']
 													);
 													$stmt->execute($params);

@@ -99,7 +99,6 @@ $params = array(
 $stmt->execute($params);
 $blog_category_masters0[$val['blog_category_master_id']] = $stmt->fetch();
 
-error_log($blog_category_masters0[$val['blog_category_master_id']]['blog_category_code'],3,"./error.log");
 
 
 //error_log($val['blog_category_master_id'],3,"./error.log");
