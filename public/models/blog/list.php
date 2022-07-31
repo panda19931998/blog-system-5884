@@ -5,6 +5,10 @@ if(isset($_GET['id'])) {
 	$id = $_GET['id'];
 }
 
+if(isset($_GET['ccode'])){
+	$ccode = $_GET['ccode'];
+}
+
 //変数を設定
 $blog_entry = array();
 $blog_entrys = array();
@@ -42,11 +46,14 @@ if(!isset($_GET['q'])){
 
 	}else{
 		//カテゴリーのslugが有るかどうか判定
-		if(endsWith($path_arr[3],'html')) {
+		if(endsWith($path_arr[3],'html')||isset($ccode)) {
 
 			//カテゴリー取得
+		if(isset($ccode)){
+			$new_category_code =$ccode;
+		}else{
 			$new_category_code = str_replace('.html','',$path_arr[3]);
-
+		}
 			$new_blog_category_master =array();
 			$new_blog_categorys =array();
 
@@ -74,31 +81,23 @@ if(!isset($_GET['q'])){
 		if(isset($new_blog_categorys)){
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
+				$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
 					":blog_id" => $blog_id,
 					":client_id" => $client['id'],
+					":status" =>1,
 					":blog_entry_code" => $val2['blog_entry_id'],
 					":posting_date" => $today
 				);
 				$stmt->execute($params);
 				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
 
-
-//error_log($val['blog_entry_code'],3,"./error.log");
-
 			}
 
-//			foreach ($blog_entrys0 as $val3){
+			$blog_entrys = array_filter($blog_entrys);
 
-//				if($val3['status'] ==1){
-
-//					$blog_entrys[$val3['blog_entry_code']] = $val3;
-
-//				}
-
-//			}
+//error_log($blog_entrys,3,"./error.log");
 
 		}
 
@@ -181,7 +180,7 @@ if(isset($_GET['page']) && is_numeric($_GET['page'])) {
 }
 
 //最大ページ数を取得する。
-//５件ずつ表示させているので、$count['cnt']に入っている件数を５で割って小数点は切りあげると最大ページ数になる。
+//10件ずつ表示させているので、$count['cnt']に入っている件数を10で割って小数点は切りあげると最大ページ数になる。
 $max_page = ceil($count['cnt'] / 10);
 
 
@@ -201,8 +200,7 @@ if($page == $max_page && $count['cnt'] % 10 !== 0) {
 	$to_record = $page * 10;
 }
 
-$blog_entrys_slice = array_slice($blog_entrys,($page - 1) * 10,($page * 10) -1 );
-
+$blog_entrys_slice = array_slice($blog_entrys,($page - 1) * 10 ,10 );
 
 
 //人気記事ランキング
@@ -504,7 +502,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 												<?php foreach ($blog_categorys2 as $val): ?>
 													<?php
-													$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id";
+													$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id";
 													$stmt = $pdo->prepare($sql);
 													$params = array(
 														":blog_id" => $blog_id,
@@ -513,10 +511,34 @@ $blog_categorys2 = $stmt->fetchAll();
 														":blog_category_master_id" => $val['id']
 													);
 													$stmt->execute($params);
-													$count2[$val['id']] = $stmt ->fetch();
+//													$count2[$val['id']] = $stmt ->fetch();
+													$blog_categorys0[$val['id']] = $stmt ->fetchAll();
+
+
+													foreach ($blog_categorys0[$val['id']] as $val2){
+														$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
+														$stmt = $pdo->prepare($sql);
+														$params = array(
+															":blog_id" => $blog_id,
+															":client_id" => $client['id'],
+															":status" =>1,
+															":blog_entry_code" => $val2['blog_entry_id'],
+															":posting_date" => $today
+														);
+														$stmt->execute($params);
+														$blog_entrys0[$val['id']][$val2['blog_entry_id']] = $stmt->fetch();
+
+													}
+
+													$blog_entrys0[$val['id']] = array_filter($blog_entrys0[$val['id']]);
+
+													$count[$val['id']] =count($blog_entrys0[$val['id']]);
+
+
+
 													?>
 
-													<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+													<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count[$val['id']] ;?>)</a></li>
 												<?php endforeach; ?>
 											</ul>
 										</div>
@@ -535,11 +557,11 @@ $blog_categorys2 = $stmt->fetchAll();
 							<?php if (!($page == 1)) :?>
 								<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 								<a href="?page=1" title="最初のページへ">« 最初へ</a>
-								<?PHP elseif(isset($search_keyword) and !isset($$new_category_code)): ?>
+								<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 								<a href="?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
 
 								<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-								<a href="<?php echo $new_category_code ;?>/?page=1" title="最初のページへ">« 最初へ</a>
+								<a href="<?php //echo $new_category_code ;?>?page=1&ccode=<?php echo $new_category_code ;?>" title="最初のページへ">« 最初へ</a>
 								<?PHP endif; ?>
 							<?PHP endif; ?>
 
@@ -549,7 +571,7 @@ $blog_categorys2 = $stmt->fetchAll();
 										<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 										<a href="?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
 										<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-										<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page - 1); ?>" tclass="page_feed">&laquo;</a>
+										<a href="<?php //echo $new_category_code ;?>?page=<?php echo($page - 1); ?>&ccode=<?php echo $new_category_code ;?>" tclass="page_feed">&laquo;</a>
 										<?PHP endif; ?>
 									<?php else : ;?>
 										<span class="first_last_page"></span>
@@ -565,7 +587,7 @@ $blog_categorys2 = $stmt->fetchAll();
 													<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 													<a href="?page=<?php echo $i; ?>&q=<?php echo $search_keyword;?>" class="page_number"><?php echo $i; ?></a>
 													<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-													<a href="<?php echo $new_category_code ;?>/?page=<?php echo $i; ?>" class="page_number"><?php echo $i; ?></a>
+													<a href="<?php //echo $new_category_code ;?>?page=<?php echo $i; ?>&ccode=<?php echo $new_category_code ;?>" class="page_number"><?php echo $i; ?></a>
 													<?PHP endif; ?>
 												<?php endif; ?>
 											<?php endif; ?>
@@ -578,7 +600,7 @@ $blog_categorys2 = $stmt->fetchAll();
 												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 												<a href="?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
 												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-												<a href="<?php echo $new_category_code ;?>/?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
+												<a href="<?php //echo $new_category_code ;?>?page=<?php echo($page + 1); ?>&ccode=<?php echo $new_category_code ;?>" class="page_feed">&raquo;</a>
 												<?PHP endif; ?>
 											<?php else : ?>
 												<span class="first_last_page"></span>
@@ -590,7 +612,7 @@ $blog_categorys2 = $stmt->fetchAll();
 												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 												<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
 												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-												<a href="<?php echo $new_category_code ;?>/?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
+												<a href="<?php //echo $new_category_code ;?>?page= <?php echo $max_page ; ?>&ccode=<?php echo $new_category_code ;?>"  title="最後のページへ">最後へ »</a>
 												<?PHP endif; ?>
 											<?PHP endif; ?>
 											</div>
