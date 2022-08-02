@@ -57,10 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 
 		//登録したカテゴリーにチェックを入れる
-		$sql = "SELECT * FROM blog_category WHERE status =:status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id";
+		$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
-			":status" => 1,
 			":blog_id" => $blog_id,
 			":client_id" => $user['id'],
 			":blog_entry_id" =>$blog_entry_code
@@ -142,6 +141,19 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$seo_keywords = $_POST['seo_keywords'];
 		$slug = $_POST['slug'];
 		$category_id = $_POST['category_id'];
+
+		foreach((array) $_POST["category_id"] as $val){
+		$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_code =:blog_category_code ";
+		$stmt = $pdo->prepare($sql);
+		$params = array(
+			":blog_id" => $blog_id,
+			":client_id" => $user['id'],
+			":blog_category_code" => $val
+		);
+		$stmt->execute($params);
+		$blog_category_masters2[$val] = $stmt->fetch();
+
+		}
 
 
 		if(isset($_POST['status'])){
@@ -353,22 +365,20 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$stmt->execute();
 
 
-
 				//カテゴリー登録処理
 				$sql = "SELECT * FROM blog_entry ORDER BY id DESC LIMIT 1";
 				$stmt = $pdo->prepare($sql);
 				$stmt->execute();
 				$blog_entry3 = $stmt->fetch();
 
-				foreach((array) $blog_category_masters as $val){
+				foreach((array) $blog_category_masters2 as $val){
 
 					$sql = "INSERT INTO blog_category
-					(status, client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
+					(client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
 					VALUES
 					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
-						":status" => $category_status[$val['blog_category_code']],
 						":client_id" => $user['id'],
 						":blog_id" => $blog_id,
 						":blog_entry_id" => $blog_entry3['blog_entry_code'],
@@ -424,27 +434,30 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				$blog_entry3 = $stmt->fetch();
 
 
-				foreach((array)$blog_category_masters as $val3){
+				//登録していたカテゴリーを削除
+				$sql = "DELETE FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":blog_id" => $blog_id,
+					":client_id" => $user['id'],
+					":blog_entry_id" => $blog_entry3['blog_entry_code'],
+				);
+				$stmt->execute($params);
 
+				foreach((array) $blog_category_masters2 as $val){
 
-						$sql = "UPDATE blog_category
-						SET
-						status = :status,
-						updated_at = now()
-						WHERE
-						client_id = :client_id AND
-						blog_id = :blog_id AND
-						blog_category_master_id =:blog_category_master_id AND
-						blog_entry_id =:blog_entry_id";
-						$stmt = $pdo->prepare($sql);
-						$params = array(
-							":status" => $category_status[$val3['blog_category_code']],
-							":client_id" => $user['id'],
-							":blog_id" => $blog_id,
-							":blog_entry_id" =>$blog_entry3['blog_entry_code'],
-							":blog_category_master_id" =>$val3['id'],
-						);
-						$stmt->execute($params);
+					$sql = "INSERT INTO blog_category
+					(client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
+					VALUES
+					(:client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":client_id" => $user['id'],
+						":blog_id" => $blog_id,
+						":blog_entry_id" => $blog_entry3['blog_entry_code'],
+						":blog_category_master_id" => $val['id']
+					);
+					$stmt->execute($params);
 				}
 
 				$complete_msg = "登録されました。\n";

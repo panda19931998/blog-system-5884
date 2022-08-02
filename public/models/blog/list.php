@@ -67,12 +67,11 @@ if(!isset($_GET['q'])){
 			$stmt->execute($params);
 			$new_blog_category_master = $stmt->fetch();
 
-			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id ";
+			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id ";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
 				":blog_id" => $blog_id,
 				":client_id" => $client['id'],
-				":status" => 1,
 				":blog_category_master_id" => $new_blog_category_master['id']
 			);
 			$stmt->execute($params);
@@ -308,10 +307,9 @@ $blog_categorys2 = $stmt->fetchAll();
 					<?php
 					//ブログの登録しているカテゴリーを取得
 
-					$sql = "SELECT * FROM blog_category WHERE status = :status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
+					$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
-						":status" => 1,
 						":blog_id" => $blog_id,
 						":client_id" => $client['id'],
 						":blog_entry_id" => $val['blog_entry_code']
@@ -502,12 +500,11 @@ $blog_categorys2 = $stmt->fetchAll();
 
 												<?php foreach ($blog_categorys2 as $val): ?>
 													<?php
-													$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_category_master_id =:blog_category_master_id";
+													$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
 													$stmt = $pdo->prepare($sql);
 													$params = array(
 														":blog_id" => $blog_id,
 														":client_id" => $client['id'],
-														":status" => 1,
 														":blog_category_master_id" => $val['id']
 													);
 													$stmt->execute($params);
