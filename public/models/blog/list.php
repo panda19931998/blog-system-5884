@@ -49,11 +49,11 @@ if(!isset($_GET['q'])){
 		if(endsWith($path_arr[3],'html')||isset($ccode)) {
 
 			//カテゴリー取得
-		if(isset($ccode)){
-			$new_category_code =$ccode;
-		}else{
-			$new_category_code = str_replace('.html','',$path_arr[3]);
-		}
+			if(isset($ccode)){
+				$new_category_code =$ccode;
+			}else{
+				$new_category_code = str_replace('.html','',$path_arr[3]);
+			}
 			$new_blog_category_master =array();
 			$new_blog_categorys =array();
 
@@ -77,28 +77,28 @@ if(!isset($_GET['q'])){
 			$stmt->execute($params);
 			$new_blog_categorys = $stmt->fetchAll();
 
-		if(isset($new_blog_categorys)){
-			foreach ($new_blog_categorys as $val2){
+			if(isset($new_blog_categorys)){
+				foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
-				$stmt = $pdo->prepare($sql);
-				$params = array(
-					":blog_id" => $blog_id,
-					":client_id" => $client['id'],
-					":status" =>1,
-					":blog_entry_code" => $val2['blog_entry_id'],
-					":posting_date" => $today
-				);
-				$stmt->execute($params);
-				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
+					$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
+					$stmt = $pdo->prepare($sql);
+					$params = array(
+						":blog_id" => $blog_id,
+						":client_id" => $client['id'],
+						":status" =>1,
+						":blog_entry_code" => $val2['blog_entry_id'],
+						":posting_date" => $today
+					);
+					$stmt->execute($params);
+					$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
+
+				}
+
+				$blog_entrys = array_filter($blog_entrys);
+
+				//error_log($blog_entrys,3,"./error.log");
 
 			}
-
-			$blog_entrys = array_filter($blog_entrys);
-
-//error_log($blog_entrys,3,"./error.log");
-
-		}
 
 		}else{
 			$new_category_code = $path_arr[3];
@@ -328,60 +328,60 @@ $blog_categorys2 = $stmt->fetchAll();
 								</p>
 
 								<?php if (empty($val['slug']))  : ?>
-								<?php// if (isset($val['blog_entry_code']))  : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
-								<?php else : ?>
-									<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
-								<?php endif; ?>
-								<?php echo h($val['posting_date']); ?>
-								<?php echo h($today); ?>
+									<?php// if (isset($val['blog_entry_code']))  : ?>
+										<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
+									<?php else : ?>
+										<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
+									<?php endif; ?>
+									<?php echo h($val['posting_date']); ?>
+									<?php echo h($today); ?>
 
-								<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
+									<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
-									<?php foreach ($blog_categorys[$val['blog_entry_code']] as $val6): ?>
+										<?php foreach ($blog_categorys[$val['blog_entry_code']] as $val6): ?>
 
-										<?php
-										//カテゴリーマスター取得
-										$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id";
-										$stmt = $pdo->prepare($sql);
-										$params = array(
-											":blog_id" => $blog_id,
-											":client_id" => $client['id'],
-											":id" => $val6['blog_category_master_id']
-										);
-										$stmt->execute($params);
-										$val6 = $stmt->fetch();
+											<?php
+											//カテゴリーマスター取得
+											$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id";
+											$stmt = $pdo->prepare($sql);
+											$params = array(
+												":blog_id" => $blog_id,
+												":client_id" => $client['id'],
+												":id" => $val6['blog_category_master_id']
+											);
+											$stmt->execute($params);
+											$val6 = $stmt->fetch();
 
-										?>
+											?>
 
 											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val6['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($val6['category_name']); ?></span></a>
 
-									<?php endforeach; ?>
+										<?php endforeach; ?>
 
 
-								</p>
-								<?php if (empty($val['eye_catch_image'])):?>
+									</p>
+									<?php if (empty($val['eye_catch_image'])):?>
 
-									<?php if (empty($val['slug'])): ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
-										</figure></a>
-									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
-										</figure></a>
+										<?php if (empty($val['slug'])): ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
+											</figure></a>
+										<?php else : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top');background-size: cover;">
+											</figure></a>
+										<?php endif; ?>
+
+									<?php else :?>
+
+										<?php if (empty($val['slug'])): ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
+											</figure></a>
+										<?php else : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
+											</figure></a>
+										<?php endif; ?>
+
 									<?php endif; ?>
-
-								<?php else :?>
-
-									<?php if (empty($val['slug'])): ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
-										</figure></a>
-									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo h($val['title']); ?>"><figure class="blog-list-entry-eyecatch" style="background-image: url('http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>');background-size: cover;">
-										</figure></a>
-									<?php endif; ?>
-
-								<?php endif; ?>
-								<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
+									<div class="description"><p><?php echo h($val['seo_description']); ?></p></div>
 
 									<?php if (empty($val['slug'])): ?>
 										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo h($val['title']); ?>" class="btn btn-default btn-lg">記事を読む</a></div></a>
@@ -389,170 +389,170 @@ $blog_categorys2 = $stmt->fetchAll();
 										<div id="list-more-area"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>" class="btn btn-default btn-lg">記事を読む</a></div>
 									<?php endif; ?>
 
-							</section>
-						</article>
+								</section>
+							</article>
+						</div>
+
+
+					<?php endforeach; ?>
+
+					<div class="blog-list-pager-area">
+
+
 					</div>
-
-
-				<?php endforeach; ?>
-
-				<div class="blog-list-pager-area">
-
-
 				</div>
-			</div>
 
-			<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
-
-
-				<div class="sidebar-module">
-					<div class="panel">
-						<div class="panel-body">
+				<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
 
 
-							<figure class="sidebar-profile-image">
-								<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
-							</figure>
+					<div class="sidebar-module">
+						<div class="panel">
+							<div class="panel-body">
 
 
-							<div style="padding:10px;margin-top:10px;text-align:center;">
-								<span style="font-size:1.4em;font-weight:bold;"><?php echo $blog['blog_author_name']; ?></span>
-							</div>
-							<div>
-								<div class="sidebar-profile">
-									<?php echo $blog['blog_author_profile']; ?>
+								<figure class="sidebar-profile-image">
+									<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=profile" class="img-responsive img-circle" alt="" style="width:150px" />
+								</figure>
+
+
+								<div style="padding:10px;margin-top:10px;text-align:center;">
+									<span style="font-size:1.4em;font-weight:bold;"><?php echo $blog['blog_author_name']; ?></span>
 								</div>
-								<div class="sidebar-sns" style="margin-top:10px;">
+								<div>
+									<div class="sidebar-profile">
+										<?php echo $blog['blog_author_profile']; ?>
+									</div>
+									<div class="sidebar-sns" style="margin-top:10px;">
 
 
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="sidebar-module">
-					<div class="panel">
-						<div class="panel-body">
-							<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
-								<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
-							</form>
-						</div>
-					</div>
-				</div>
-
-				<div class="sidebar-module">
-					<div class="panel">
-						<div class="panel-heading">
-							<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
-						</div>
-						<div class="panel-body">
-
-							<?php foreach ($blog_entry_rankings as $val): ?>
-
-								<?php if(empty($val['slug'])) : ?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['blog_title']; ?>">
-									<?php else : ?>
-										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['blog_title']; ?>">
-										<?php endif; ?>
-										<ul class="sidebar-list">
-											<li class="sidebar-list-left">
-
-												<?php if (empty($val['eye_catch_image'])):?>
-
-													<figure class="sidebar-popular-list-entry-eyecatch">
-														<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top; ?>" class="img-responsive" alt="" />
-													</figure>
-
-												<?php else :?>
-
-													<figure class="sidebar-popular-list-entry-eyecatch">
-														<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
-													</figure>
-
-												<?php endif; ?>
-
-														<p>1</p>
-													</li>
-													<li class="sidebar-list-right">
-														<div class="sidebar-popular-list-entry-title">
-															<?php echo $val['title']; ?>										</div>
-															<div class="sidebar-popular-list-entry-views">
-																<?php echo h($val['view_count']); ?> Views
-															</div>
-														</li>
-													</ul>
-												</a>
-
-											<?php endforeach; ?>
-
-										</div>
 									</div>
 								</div>
+							</div>
+						</div>
+					</div>
 
-								<div class="sidebar-module">
-									<div class="panel">
-										<div class="panel-heading">
-											<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
-										</div>
-										<div class="panel-body">
-											<ul class="sidebar-category-list">
+					<div class="sidebar-module">
+						<div class="panel">
+							<div class="panel-body">
+								<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
+									<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
+								</form>
+							</div>
+						</div>
+					</div>
 
-												<?php foreach ($blog_categorys2 as $val): ?>
-													<?php
-													$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+					<div class="sidebar-module">
+						<div class="panel">
+							<div class="panel-heading">
+								<h2 class="panel-title"><i class="fa fa-trophy"></i> 人気記事ランキング</h2>
+							</div>
+							<div class="panel-body">
+
+								<?php foreach ($blog_entry_rankings as $val): ?>
+
+									<?php if(empty($val['slug'])) : ?>
+										<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo h($val['blog_entry_code']); ?>.html" title="<?php echo $val['blog_title']; ?>">
+										<?php else : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['blog_title']; ?>">
+											<?php endif; ?>
+											<ul class="sidebar-list">
+												<li class="sidebar-list-left">
+
+													<?php if (empty($val['eye_catch_image'])):?>
+
+														<figure class="sidebar-popular-list-entry-eyecatch">
+															<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch_top; ?>" class="img-responsive" alt="" />
+														</figure>
+
+													<?php else :?>
+
+														<figure class="sidebar-popular-list-entry-eyecatch">
+															<img src="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/image/?i=eyecatch&e=<?php echo h($val['blog_entry_code']); ?>" class="img-responsive" alt="" />
+														</figure>
+
+													<?php endif; ?>
+
+													<p>1</p>
+												</li>
+												<li class="sidebar-list-right">
+													<div class="sidebar-popular-list-entry-title">
+														<?php echo $val['title']; ?>										</div>
+														<div class="sidebar-popular-list-entry-views">
+															<?php echo h($val['view_count']); ?> Views
+														</div>
+													</li>
+												</ul>
+											</a>
+
+										<?php endforeach; ?>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="sidebar-module">
+								<div class="panel">
+									<div class="panel-heading">
+										<h2 class="panel-title"><i class="fa fa-folder-open"></i> カテゴリー</h2>
+									</div>
+									<div class="panel-body">
+										<ul class="sidebar-category-list">
+
+											<?php foreach ($blog_categorys2 as $val): ?>
+												<?php
+												$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+												$stmt = $pdo->prepare($sql);
+												$params = array(
+													":blog_id" => $blog_id,
+													":client_id" => $client['id'],
+													":blog_category_master_id" => $val['id']
+												);
+												$stmt->execute($params);
+												//													$count2[$val['id']] = $stmt ->fetch();
+												$blog_categorys0[$val['id']] = $stmt ->fetchAll();
+
+
+												foreach ($blog_categorys0[$val['id']] as $val2){
+													$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
 													$stmt = $pdo->prepare($sql);
 													$params = array(
 														":blog_id" => $blog_id,
 														":client_id" => $client['id'],
-														":blog_category_master_id" => $val['id']
+														":status" =>1,
+														":blog_entry_code" => $val2['blog_entry_id'],
+														":posting_date" => $today
 													);
 													$stmt->execute($params);
-//													$count2[$val['id']] = $stmt ->fetch();
-													$blog_categorys0[$val['id']] = $stmt ->fetchAll();
+													$blog_entrys0[$val['id']][$val2['blog_entry_id']] = $stmt->fetch();
 
+												}
 
-													foreach ($blog_categorys0[$val['id']] as $val2){
-														$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
-														$stmt = $pdo->prepare($sql);
-														$params = array(
-															":blog_id" => $blog_id,
-															":client_id" => $client['id'],
-															":status" =>1,
-															":blog_entry_code" => $val2['blog_entry_id'],
-															":posting_date" => $today
-														);
-														$stmt->execute($params);
-														$blog_entrys0[$val['id']][$val2['blog_entry_id']] = $stmt->fetch();
+												$blog_entrys0[$val['id']] = array_filter($blog_entrys0[$val['id']]);
 
-													}
-
-													$blog_entrys0[$val['id']] = array_filter($blog_entrys0[$val['id']]);
-
-													$count[$val['id']] =count($blog_entrys0[$val['id']]);
+												$count[$val['id']] =count($blog_entrys0[$val['id']]);
 
 
 
-													?>
+												?>
 
-													<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count[$val['id']] ;?>)</a></li>
-												<?php endforeach; ?>
-											</ul>
-										</div>
+												<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count[$val['id']] ;?>)</a></li>
+											<?php endforeach; ?>
+										</ul>
 									</div>
 								</div>
-
-
 							</div>
-						</div>
 
-						<div class="pagination">
-							<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
-						</div>
-						<div class="pagination2">
 
-							<?php if (!($page == 1)) :?>
-								<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+						</div>
+					</div>
+
+					<div class="pagination">
+						<p class="from_to"><?php echo $count['cnt']; ?>件中 <?php echo $from_record; ?> - <?php echo $to_record;?> 件目を表示</p>
+					</div>
+					<div class="pagination2">
+
+						<?php if (!($page == 1)) :?>
+							<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 								<a href="?page=1" title="最初のページへ">« 最初へ</a>
 								<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 								<a href="?page=1&q=<?php echo $search_keyword;?>" title="最初のページへ">« 最初へ</a>
@@ -560,10 +560,10 @@ $blog_categorys2 = $stmt->fetchAll();
 								<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
 								<a href="<?php //echo $new_category_code ;?>?page=1&ccode=<?php echo $new_category_code ;?>" title="最初のページへ">« 最初へ</a>
 								<?PHP endif; ?>
-							<?PHP endif; ?>
+								<?PHP endif; ?>
 
-									<?php if ($page >= 2 ): ?>
-										<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+								<?php if ($page >= 2 ): ?>
+									<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 										<a href="?page=<?php echo($page - 1); ?>" class="page_feed">&laquo;</a>
 										<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 										<a href="?page=<?php echo($page - 1); ?>&q=<?php echo $search_keyword;?>" tclass="page_feed">&laquo;</a>
@@ -591,8 +591,8 @@ $blog_categorys2 = $stmt->fetchAll();
 										<?php endfor; ?>
 
 
-											<?php if(!($page == $max_page)) : ?>
-												<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
+										<?php if(!($page == $max_page)) : ?>
+											<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
 												<a href="?page=<?php echo($page + 1); ?>" class="page_feed">&raquo;</a>
 												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
 												<a href="?page=<?php echo($page + 1); ?>&q=<?php echo $search_keyword;?>" class="page_feed">&raquo;</a>
@@ -605,20 +605,20 @@ $blog_categorys2 = $stmt->fetchAll();
 
 											<?php if (!($page == $max_page)) :?>
 												<?php if (!isset($search_keyword) and !isset($new_category_code)) :?>
-												<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
-												<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
-												<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
-												<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
-												<a href="<?php //echo $new_category_code ;?>?page= <?php echo $max_page ; ?>&ccode=<?php echo $new_category_code ;?>"  title="最後のページへ">最後へ »</a>
-												<?PHP endif; ?>
-											<?PHP endif; ?>
+													<a href="?page= <?php echo $max_page ; ?>"  title="最後のページへ">最後へ »</a>
+													<?PHP elseif(isset($search_keyword) and !isset($new_category_code)): ?>
+													<a href="?page= <?php echo $max_page ; ?>&q=<?php echo $search_keyword;?>"  title="最後のページへ">最後へ »</a>
+													<?PHP elseif(!isset($search_keyword) and isset($new_category_code)): ?>
+													<a href="<?php //echo $new_category_code ;?>?page= <?php echo $max_page ; ?>&ccode=<?php echo $new_category_code ;?>"  title="最後のページへ">最後へ »</a>
+													<?PHP endif; ?>
+													<?PHP endif; ?>
+												</div>
+
 											</div>
 
-										</div>
 
-
-										<footer class="blog-footer">
-											<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
-											<p class="blog-footer-right">&copy; SENSE SHARE</p>
-											<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
-										</footer>
+											<footer class="blog-footer">
+												<!--<p class="blog-footer-left">プログラミング入門講座情報サイト</p>-->
+												<p class="blog-footer-right">&copy; SENSE SHARE</p>
+												<p><a href="#"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>上に戻る</a></p>
+											</footer>

@@ -6,7 +6,7 @@ $page_base_body_tag_template = "body_blog_entry.php";
 
 //id取得
 if (!empty($_REQUEST['id'])) {
-$blog_entry_code = $_REQUEST['id'];
+	$blog_entry_code = $_REQUEST['id'];
 }
 
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// CSRF対策
 	setToken();
 
-//	$_SESSION['blog_entry_code']='';
+	//	$_SESSION['blog_entry_code']='';
 
 	if(isset($blog_entry_code)){
 		//登録している記事の各項目をデータベースから取得
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 			foreach((array) $blog_categorys2 as $val2){
 
-//error_log($val2['blog_category_master_id'],3,"./error.log");
+				//error_log($val2['blog_category_master_id'],3,"./error.log");
 
 				if($val['id'] == $val2['blog_category_master_id']){
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry2 = $stmt->fetch();
 		}
 
-//error_log($start_blog_entry_code,3,"./error.log");
+		//error_log($start_blog_entry_code,3,"./error.log");
 		$title = $_POST['title'];
 		$contents = $_POST['contents'];
 		$posting_date = $_POST['posting_date'];
@@ -143,15 +143,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$category_id = $_POST['category_id'];
 
 		foreach((array) $_POST["category_id"] as $val){
-		$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_code =:blog_category_code ";
-		$stmt = $pdo->prepare($sql);
-		$params = array(
-			":blog_id" => $blog_id,
-			":client_id" => $user['id'],
-			":blog_category_code" => $val
-		);
-		$stmt->execute($params);
-		$blog_category_masters2[$val] = $stmt->fetch();
+			$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_code =:blog_category_code ";
+			$stmt = $pdo->prepare($sql);
+			$params = array(
+				":blog_id" => $blog_id,
+				":client_id" => $user['id'],
+				":blog_category_code" => $val
+			);
+			$stmt->execute($params);
+			$blog_category_masters2[$val] = $stmt->fetch();
 
 		}
 
@@ -302,46 +302,46 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 		if (!$blog_entry_code) {
 
-				//ブログカテゴリーコードのシーケンスがなかった場合
-				if ($blog_entry_code_sequence['sequence'] == '') {
-					$sql = "INSERT INTO blog_entry_code_sequence
-					(client_id, blog_id, sequence, created_at, updated_at)
-					VALUES
-					(:client_id,:blog_id, :sequence, now(), now())";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":client_id" =>$user['id'],
-						":blog_id" => $blog_id,
-						":sequence" => 1
-					);
-					$stmt->execute($params);
-					$blog_entry_code = 1;
-				} else {
-					//シーケンスがあった場合
-					$sql = "UPDATE blog_entry_code_sequence
-					SET
-					blog_id = :blog_id,
-					sequence = :sequence,
-					updated_at =now()
-					WHERE
-					client_id = :client_id";
-					$stmt = $pdo->prepare($sql);
-					$params = array(
-						":client_id" => $user['id'],
-						":blog_id" => $blog_id,
-						":sequence" => $blog_entry_code_sequence['sequence'] + 1
-					);
-					$stmt->execute($params);
+			//ブログカテゴリーコードのシーケンスがなかった場合
+			if ($blog_entry_code_sequence['sequence'] == '') {
+				$sql = "INSERT INTO blog_entry_code_sequence
+				(client_id, blog_id, sequence, created_at, updated_at)
+				VALUES
+				(:client_id,:blog_id, :sequence, now(), now())";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" =>$user['id'],
+					":blog_id" => $blog_id,
+					":sequence" => 1
+				);
+				$stmt->execute($params);
+				$blog_entry_code = 1;
+			} else {
+				//シーケンスがあった場合
+				$sql = "UPDATE blog_entry_code_sequence
+				SET
+				blog_id = :blog_id,
+				sequence = :sequence,
+				updated_at =now()
+				WHERE
+				client_id = :client_id";
+				$stmt = $pdo->prepare($sql);
+				$params = array(
+					":client_id" => $user['id'],
+					":blog_id" => $blog_id,
+					":sequence" => $blog_entry_code_sequence['sequence'] + 1
+				);
+				$stmt->execute($params);
 
-					$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
-				}
+				$blog_entry_code = $blog_entry_code_sequence['sequence'] + 1;
+			}
 
 		}
 
 
 		if (empty($err)) {
 
-//			if (!$_REQUEST['id']) {
+			//			if (!$_REQUEST['id']) {
 			if (empty($blog_entry2)) {
 				// 登録処理
 				$sql = "INSERT INTO blog_entry
@@ -551,13 +551,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		} else {
 			$status2 = 2;
 		};
-  //error_log($new_category_name,3,"./error.log");
+		//error_log($new_category_name,3,"./error.log");
 
 		$data['status'] = "$status2";
 		$data['blog_category_code'] = "$blog_category_code";
 
 
-//		$data = array("status" => "1","blog_category_code" => "$blog_category_code");
+		//		$data = array("status" => "1","blog_category_code" => "$blog_category_code");
 		//body_blog_entryにデータを送る
 		header("Content-type: application/json; charset=UTF-8");
 		echo json_encode($data);
