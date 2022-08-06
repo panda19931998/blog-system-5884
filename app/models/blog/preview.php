@@ -84,10 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 //カテゴリーを取得
 
-$sql = "SELECT * FROM blog_category WHERE status = :status AND blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
+$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
-	":status" => 1,
 	":blog_id" => $blog_id,
 	":client_id" => $user['id'],
 	":blog_entry_id" => $blog_entry2['blog_entry_code']

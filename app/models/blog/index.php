@@ -80,12 +80,7 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))){
 
 }
 
-
-error_log($search_filter,3,"./error.log");
-error_log($search_keyword,3,"./error.log");
-error_log($_COOKIE['filter'],3,"./error.log");
-error_log($_COOKIE['search_keyword'],3,"./error.log");
-
+//error_log($search_filter,3,"./error.log");
 
 unset($pdo);
 ?>

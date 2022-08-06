@@ -94,8 +94,6 @@ if(!isset($_GET['q'])){
 
 				}
 
-				$blog_entrys = array_filter($blog_entrys);
-
 				//error_log($blog_entrys,3,"./error.log");
 
 			}
@@ -333,8 +331,6 @@ $blog_categorys2 = $stmt->fetchAll();
 									<?php else : ?>
 										<h1 class="blog-list-entry-title"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/<?php echo h($val['slug']); ?>.html" title="<?php echo $val['title']; ?>"> <?php echo $val['title']; ?></a></h1>
 									<?php endif; ?>
-									<?php echo h($val['posting_date']); ?>
-									<?php echo h($today); ?>
 
 									<p class="blog-list-category-area pc-only" style="text-align:center;margin-top:20px;">
 
@@ -500,7 +496,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 											<?php foreach ($blog_categorys2 as $val): ?>
 												<?php
-												$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
+												$sql = "SELECT COUNT(*) AS cnt2 FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id";
 												$stmt = $pdo->prepare($sql);
 												$params = array(
 													":blog_id" => $blog_id,
@@ -508,34 +504,10 @@ $blog_categorys2 = $stmt->fetchAll();
 													":blog_category_master_id" => $val['id']
 												);
 												$stmt->execute($params);
-												//													$count2[$val['id']] = $stmt ->fetch();
-												$blog_categorys0[$val['id']] = $stmt ->fetchAll();
-
-
-												foreach ($blog_categorys0[$val['id']] as $val2){
-													$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
-													$stmt = $pdo->prepare($sql);
-													$params = array(
-														":blog_id" => $blog_id,
-														":client_id" => $client['id'],
-														":status" =>1,
-														":blog_entry_code" => $val2['blog_entry_id'],
-														":posting_date" => $today
-													);
-													$stmt->execute($params);
-													$blog_entrys0[$val['id']][$val2['blog_entry_id']] = $stmt->fetch();
-
-												}
-
-												$blog_entrys0[$val['id']] = array_filter($blog_entrys0[$val['id']]);
-
-												$count[$val['id']] =count($blog_entrys0[$val['id']]);
-
-
-
+												$count2[$val['id']] = $stmt ->fetch();
 												?>
 
-												<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count[$val['id']] ;?>)</a></li>
+												<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
 											<?php endforeach; ?>
 										</ul>
 									</div>

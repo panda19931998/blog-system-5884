@@ -11,6 +11,7 @@ $blog_categorys3 = array();
 $random_blog_categorys = array();
 $blog_categorys_entrys = array();
 $shuffle_blog_categorys = array();
+$blog_category_master = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
@@ -104,40 +105,41 @@ foreach ($blog_categorys0 as $val){
 }
 
 
-$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id ";
-$stmt = $pdo->prepare($sql);
-$params = array(
-	":blog_id" => $blog_id,
-	":client_id" => $client['id'],
-	":id" => $blog_category['blog_category_master_id']
-);
-$stmt->execute($params);
-$blog_category_master = $stmt->fetch();
+//$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id ";
+//$stmt = $pdo->prepare($sql);
+//$params = array(
+//	":blog_id" => $blog_id,
+//	":client_id" => $client['id'],
+//	":id" => $blog_category['blog_category_master_id']
+//);
+//$stmt->execute($params);
+//$blog_category_master = $stmt->fetch();
 
 //カテゴリーが一致する記事を４つ取得
 
-$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id AND blog_entry_id!= :blog_entry_id";
+$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
 	":client_id" => $client['id'],
-	":blog_category_master_id" => $blog_category['blog_category_master_id'],
-	":blog_entry_id" => $blog_entry['id']
+	":blog_category_master_id" => $blog_categorys0[0]['blog_category_master_id'],
 );
 $stmt->execute($params);
 $blog_categorys3 = $stmt->fetchAll();
 
 shuffle($blog_categorys3);
 
+$blog_categorys3 = array_filter($blog_categorys3);
+
 $random_blog_categorys = array_slice($blog_categorys3 , 0, 4);
 
 
 foreach ($random_blog_categorys as $val4){
 
-	$sql = "SELECT * FROM blog_entry WHERE id = :id AND status =:status AND posting_date <= :posting_date ";
+	$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND status =:status AND posting_date <= :posting_date ";
 	$stmt = $pdo->prepare($sql);
 	$params = array(
-		":id" => $val4['blog_entry_id'],
+		":blog_entry_code" => $val4['blog_entry_id'],
 		":status" => 1,
 		":posting_date" => $today
 	);
@@ -152,7 +154,7 @@ foreach ($random_blog_categorys as $val4){
 if(isset($blog_category_master['blog_category_code'])){
 
 	$blog_category_code = $blog_category_master['blog_category_code'];
-}else{
+}elseif(isset($blog_category_master['blog_category_slug'])){
 
 	$blog_category_code = $blog_category_master['blog_category_slug'];
 

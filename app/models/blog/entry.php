@@ -21,6 +21,8 @@ $blog_category_master = array();
 $blog_entry_eye_catch['eye_catch_image'] ='';
 $blog_entry_eye_catch['eye_catch_image_ext'] ='';
 
+$err = array();
+$complete_msg = "";
 
 //ブログの登録しているカテゴリーを取得の準備
 $sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id ";
@@ -43,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	setToken();
 
 	//	$_SESSION['blog_entry_code']='';
+
 
 	if(isset($blog_entry_code)){
 		//登録している記事の各項目をデータベースから取得
