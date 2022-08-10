@@ -368,7 +368,12 @@ $blog_categorys2 = $stmt->fetchAll();
 								$count2[$val['id']] = $stmt ->fetch();
 								?>
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php if (empty($val['blog_category_slug']))  : ?>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php else : ?>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_slug']); ?>"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php endif; ?>
+
 							<?php endforeach; ?>
 						</ul>
 					</div>
