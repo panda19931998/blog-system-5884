@@ -99,7 +99,7 @@ if(!isset($_GET['q'])){
 			}
 
 		}else{
-			$new_category_code = $path_arr[3];
+			$new_category_code2 = $path_arr[3];
 
 			$new_blog_category_master =array();
 			$new_blog_categorys =array();
@@ -109,7 +109,7 @@ if(!isset($_GET['q'])){
 			$params = array(
 				":blog_id" => $blog_id,
 				":client_id" => $client['id'],
-				":blog_category_slug" => $new_category_code
+				":blog_category_slug" => $new_category_code2
 			);
 			$stmt->execute($params);
 			$new_blog_category_master = $stmt->fetch();
@@ -126,16 +126,24 @@ if(!isset($_GET['q'])){
 
 			foreach ($new_blog_categorys as $val2){
 
-				$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND status =:status AND posting_date <= :posting_date ";
+
+				$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND blog_entry_code = :blog_entry_code AND posting_date <= :posting_date ";
 				$stmt = $pdo->prepare($sql);
 				$params = array(
+					":blog_id" => $blog_id,
+					":client_id" => $client['id'],
+					":status" =>1,
 					":blog_entry_code" => $val2['blog_entry_id'],
-					":status" => 1,
 					":posting_date" => $today
 				);
 				$stmt->execute($params);
 				$blog_entrys[$val2['blog_entry_id']] = $stmt->fetch();
+
+
 			}
+			//カテゴリーコード取得
+			$new_category_code = $new_blog_category_master['blog_category_code'];
+
 		}
 
 
@@ -315,8 +323,8 @@ $blog_categorys2 = $stmt->fetchAll();
 					$stmt->execute($params);
 					$blog_categorys[$val['blog_entry_code']] = $stmt->fetchAll();
 
-
 					?>
+
 
 					<div class="blog-list-entry-area panel">
 						<article class="blog-list-entry-content">
@@ -346,11 +354,17 @@ $blog_categorys2 = $stmt->fetchAll();
 												":id" => $val6['blog_category_master_id']
 											);
 											$stmt->execute($params);
-											$val6 = $stmt->fetch();
+											$category_codes[$val6['blog_category_master_id']] = $stmt->fetch();
 
 											?>
 
-											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val6['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i><?php echo h($val6['category_name']); ?></span></a>
+											<?php error_log($val6['blog_category_master_id'],3,"./error.log"); ?>
+
+											<?php if (empty($category_codes[$val6['blog_category_master_id']]['blog_category_slug']))  : ?>
+												<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($category_codes[$val6['blog_category_master_id']]['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($category_codes[$val6['blog_category_master_id']]['category_name']);?></span></a>
+											<?php else : ?>
+												<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($category_codes[$val6['blog_category_master_id']]['blog_category_slug']); ?>"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($category_codes[$val6['blog_category_master_id']]['category_name']);?></span></a>
+											<?php endif; ?>
 
 										<?php endforeach; ?>
 

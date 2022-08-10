@@ -299,16 +299,19 @@ $blog_categorys2 = $stmt->fetchAll();
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 					<?php if (!isset($err['status'])):?>
-						<?php //if (empty($blog_category_masters0))  : ?>
-							<?php// echo "未分類"; ?>
-							<?php //else : ?>
-								<?php foreach ($blog_category_masters0 as $val): ?>
-									<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
-								<?php endforeach ;?>
-								<?php //endif; ?>
-								<?php //else :?>
 
-								<?php endif ;?>
+								<?php foreach ($blog_category_masters0 as $val): ?>
+								
+										<?php if (empty($val['blog_category_slug']))  : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+										<?php else : ?>
+											<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_slug']); ?>"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+										<?php endif; ?>
+
+								<?php endforeach ;?>
+
+
+					<?php endif ;?>
 							</p>
 
 							<?php if(isset($blog_entry['eye_catch_image'])) :?>

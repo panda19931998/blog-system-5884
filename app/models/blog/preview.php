@@ -8,6 +8,11 @@ $blog_categorys2 = array();
 $blog_entry = array();
 $client_code = array();
 
+$date = new DateTime();
+$date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+$date->modify('+1 day');
+$today = $date->format('Y-m-d H:i:s');
+
 //client_codeを取得
 $sql = "SELECT * FROM client WHERE id = :id LIMIT 1";
 $stmt = $pdo->prepare($sql);
@@ -114,11 +119,13 @@ $blog_category_masters0[$val['blog_category_master_id']] = $stmt->fetch();
 
 //人気記事ランキング
 
-$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ORDER BY view_count DESC LIMIT 10";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
-	":client_id" => $client['id']
+	":client_id" => $client['id'],
+	":status" => 1,
+	":posting_date" => $today
 );
 $stmt->execute($params);
 $blog_entry_rankings = $stmt->fetchAll();
@@ -209,7 +216,13 @@ $blog_categorys2 = $stmt->fetchAll();
 					<?php// echo "未分類"; ?>
 				<?php //else : ?>
 					<?php foreach ($blog_category_masters0 as $val): ?>
-					<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+
+					<?php if (empty($val['blog_category_slug']))  : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+					<?php else : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_slug']); ?>"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+					<?php endif; ?>
+
 					<?php endforeach ;?>
 				<?php //endif; ?>
 			<?php //else :?>
