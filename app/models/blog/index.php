@@ -80,12 +80,7 @@ if(!(isset($_GET['search_filter']))&&!(isset($_GET['search_keyword']))){
 
 }
 
-
-error_log($search_filter,3,"./error.log");
-error_log($search_keyword,3,"./error.log");
-error_log($_COOKIE['filter'],3,"./error.log");
-error_log($_COOKIE['search_keyword'],3,"./error.log");
-
+//error_log($search_filter,3,"./error.log");
 
 unset($pdo);
 ?>
@@ -181,7 +176,7 @@ unset($pdo);
 										<span class="label label-danger">下書き</span>
 										<?PHP endif; ?>
 									</td>
-									<td class="text-center"><?php echo $blog_entry['id'];?></td>
+									<td class="text-center"><?php echo $blog_entry['blog_entry_code'];?></td>
 									<td><?php echo $blog_entry['title'];?></td>
 									<?php if(empty($blog_entry['slug'])) : ?>
 										<td><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/entry/<?php echo $blog_entry['blog_entry_code'];?>.html" class="btn btn-primary" " target="_blank"><?php echo $blog_entry['blog_entry_code'];?>.html</a></td>

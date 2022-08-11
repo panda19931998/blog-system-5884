@@ -15,7 +15,7 @@
 <!-- ================== END BASE CSS STYLE ================== -->
 
 <!-- ================== BEGIN PAGE LEVEL CSS STYLE ================== -->
-<?php if ($page_base_head_tag_template): ?>
+<?php if (isset($page_base_head_tag_template)): ?>
 <?php include(TEMPLATE_PATH."/page_level/".$page_base_head_tag_template); ?>
 <?php endif; ?>
 <!-- ================== END PAGE LEVEL CSS STYLE ================== -->

@@ -12,7 +12,7 @@
 <script src="<?php echo CONTENTS_SERVER_URL ?>/assets/js/apps.min.js"></script>
 <!-- ================== END BASE JS ================== -->
 <!-- ================== BEGIN PAGE LEVEL JS ================== -->
-<?php if ($page_base_body_tag_template): ?>
+<?php if (isset($page_base_body_tag_template)): ?>
 <?php include(TEMPLATE_PATH."/page_level/".$page_base_body_tag_template); ?>
 <?php endif; ?>
 <!-- ================== END PAGE LEVEL JS ================== -->

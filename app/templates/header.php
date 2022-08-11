@@ -12,7 +12,7 @@
 	<!-- begin header-nav -->
 	<ul class="navbar-nav navbar-right">
 		<li>
-			<a href="/blog/" target="_blank" title="公開ブログ">
+			<a href="http://b.blog-system-5884.localhost/client_code/" target="_blank" title="公開ブログ">
 				<i class="fa fa-clone"></i>
 			</a>
 		</li>

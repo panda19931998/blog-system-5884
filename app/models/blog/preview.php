@@ -8,6 +8,11 @@ $blog_categorys2 = array();
 $blog_entry = array();
 $client_code = array();
 
+$date = new DateTime();
+$date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
+$date->modify('+1 day');
+$today = $date->format('Y-m-d H:i:s');
+
 //client_codeを取得
 $sql = "SELECT * FROM client WHERE id = :id LIMIT 1";
 $stmt = $pdo->prepare($sql);
@@ -19,7 +24,10 @@ $client = $stmt->fetch();
 $client_code = $client['client_code'];
 
 
-
+//id取得
+if (!empty($_REQUEST['id'])) {
+$blog_entry_code = $_REQUEST['id'];
+}
 
 
 // 初めて画面にアクセスした時の処理
@@ -35,17 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$title = $_POST['title'];
 	$contents = $_POST['contents'];
 
-	if(isset($_POST['code'])){
-		$id = $_POST['code'];
-	}
-
-
-	if(isset($id)){
+	if(isset($blog_entry_code)){
 		//登録している記事の各項目をデータベースから取得
 		$sql = "SELECT * FROM blog_entry WHERE blog_entry_code = :blog_entry_code AND client_id = :client_id LIMIT 1";
 		$stmt = $pdo->prepare($sql);
 		$params = array(
-			":blog_entry_code" => $id,
+			":blog_entry_code" => $blog_entry_code,
 			":client_id" => $user['id']
 		);
 		$stmt->execute($params);
@@ -68,7 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			$blog_entry['eye_catch_image_ext'] = $blog_entry2['eye_catch_image_ext'];
 		}else{
 
-			$blog_entry['eye_catch_image_ext'] = '';
+			$blog_entry['eye_catch_image'] = $blog['blog_default_eye_catch_image'];
+			$blog_entry['eye_catch_image_ext'] = $blog['blog_default_eye_catch_image_ext'];
 
 		}
 
@@ -83,14 +87,45 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 
+//カテゴリーを取得
 
-//人気記事ランキング
-
-$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY view_count DESC LIMIT 10";
+$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
-	":client_id" => $client['id']
+	":client_id" => $user['id'],
+	":blog_entry_id" => $blog_entry2['blog_entry_code']
+);
+$stmt->execute($params);
+$blog_categorys0 = $stmt->fetchAll();
+
+//カテゴリーマスター取得
+
+//if(!empty($blog_categorys0)){}
+foreach ($blog_categorys0 as $val){
+
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND id = :id";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $user['id'],
+	":id" => $val['blog_category_master_id']
+);
+$stmt->execute($params);
+$blog_category_masters0[$val['blog_category_master_id']] = $stmt->fetch();
+
+}
+
+
+//人気記事ランキング
+
+$sql = "SELECT * FROM blog_entry WHERE blog_id = :blog_id AND client_id = :client_id AND status =:status AND posting_date <= :posting_date ORDER BY view_count DESC LIMIT 10";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":blog_id" => $blog_id,
+	":client_id" => $client['id'],
+	":status" => 1,
+	":posting_date" => $today
 );
 $stmt->execute($params);
 $blog_entry_rankings = $stmt->fetchAll();
@@ -174,6 +209,26 @@ $blog_categorys2 = $stmt->fetchAll();
 			</div>
 
 			<h1 class="blog-post-title"><?php echo $title; ?></h1>
+
+			<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
+			<?php if (!isset($err['status'])):?>
+				<?php //if (empty($blog_category_masters0))  : ?>
+					<?php// echo "未分類"; ?>
+				<?php //else : ?>
+					<?php foreach ($blog_category_masters0 as $val): ?>
+
+					<?php if (empty($val['blog_category_slug']))  : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+					<?php else : ?>
+						<a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_slug']); ?>"><span class="blog-list-category-name"><i class="fa fa-folder-open"></i> <?php echo h($val['category_name']);?></span></a>
+					<?php endif; ?>
+
+					<?php endforeach ;?>
+				<?php //endif; ?>
+			<?php //else :?>
+
+			<?php endif ;?>
+			</p>
 
 			<figure class="blog-post-eyecatch-img">
 
@@ -313,7 +368,12 @@ $blog_categorys2 = $stmt->fetchAll();
 								$count2[$val['id']] = $stmt ->fetch();
 								?>
 
-								<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php if (empty($val['blog_category_slug']))  : ?>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_code']); ?>.html"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php else : ?>
+									<li class="sidebar-category-name"><a href="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/category/<?php echo h($val['blog_category_slug']); ?>"> <?php echo h($val['category_name']); ?> (<?php echo $count2[$val['id']]['cnt2'] ;?>)</a></li>
+								<?php endif; ?>
+
 							<?php endforeach; ?>
 						</ul>
 					</div>
