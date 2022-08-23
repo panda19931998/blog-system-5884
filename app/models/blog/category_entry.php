@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$category_name = $blog_category_master['category_name'];
 		$blog_category_slug = $blog_category_master['blog_category_slug'];
 		$sort_order = $blog_category_master['sort_order'];
+		$blog_category_code =$id;
 	}
 } else {
 	checkToken();
@@ -220,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	<!-- begin wrapper -->
 	<div class="wrapper bg-silver text-right">
-		<a href="/blog/category/"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">キャンセル</button></a>
+		<a href="/blog/category_entry/?id=<?php echo h($blog_category_code);?>"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">キャンセル</button></a>
 		<button type="submit" class="btn btn-primary p-l-40 p-r-40" onclick="mainform.submit();">登録</button>
 	</div>
 	<!-- end wrapper -->

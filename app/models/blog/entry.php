@@ -4,8 +4,12 @@ $page_title = "ブログ記事作成";
 $page_base_head_tag_template = "head_blog_entry.php";
 $page_base_body_tag_template = "body_blog_entry.php";
 
+
+$blog_entry_code =null;
 //id取得
 if (!empty($_REQUEST['id'])) {
+
+	$blog_entry_code="";
 	$blog_entry_code = $_REQUEST['id'];
 }
 
@@ -17,6 +21,7 @@ $blog_entry2 = array();
 $blog_category_masters = array();
 $category_id = array();
 $blog_category_master = array();
+$blog_category_masters2 = array();
 
 $blog_entry_eye_catch['eye_catch_image'] ='';
 $blog_entry_eye_catch['eye_catch_image_ext'] ='';
@@ -25,7 +30,7 @@ $err = array();
 $complete_msg = "";
 
 //ブログの登録しているカテゴリーを取得の準備
-$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id ";
+$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id ORDER BY sort_order";
 $stmt = $pdo->prepare($sql);
 $params = array(
 	":blog_id" => $blog_id,
@@ -114,7 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 } else {
 	// フォームからサブミットされた時の処理
-	$new_category_name = $_POST['category_name'];
+	if (!empty($_POST["category_name"])) {
+
+		$new_category_name = $_POST['category_name'];
+
+	}
 	//カテゴリー名を取得していないときの処理
 	if(!isset($new_category_name)){
 
@@ -143,9 +152,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		$seo_description = $_POST['seo_description'];
 		$seo_keywords = $_POST['seo_keywords'];
 		$slug = $_POST['slug'];
-		$category_id = $_POST['category_id'];
 
-		foreach((array) $_POST["category_id"] as $val){
+		if (!empty($_POST["category_id"])) {
+
+			$category_id = $_POST['category_id'];
+
+		}
+
+//		foreach((array) $_POST["category_id"] as $val){
+		foreach((array) $category_id as $val){
 			$sql = "SELECT * FROM blog_category_master WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_code =:blog_category_code ";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
@@ -251,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		} else {
 			// 文字数チェック
 			if (strlen(mb_convert_encoding($slug, 'SJIS', 'UTF-8')) > 50) {
-				$err['blog_category_slug'] = 'スラッグは50バイト以内で入力して下さい。';
+				$err['slug'] = 'スラッグは50バイト以内で入力して下さい。';
 			} else {
 				// スラッグが重複
 				if(!isset($blog_entry_code)){
@@ -379,7 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 					$sql = "INSERT INTO blog_category
 					(client_id, blog_id, blog_entry_id, blog_category_master_id, created_at, updated_at)
 					VALUES
-					(:status, :client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
+					(:client_id, :blog_id, :blog_entry_id, :blog_category_master_id, now(), now())";
 					$stmt = $pdo->prepare($sql);
 					$params = array(
 						":client_id" => $user['id'],
