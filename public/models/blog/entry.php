@@ -73,6 +73,28 @@ if ($blog_entry['status'] !=1) {
 	$err['status'] = '記事は非公開です';
 }
 
+
+//カウントアップ
+$blog_entry_code =$blog_entry['blog_entry_code'];
+$view_count =$blog_entry['view_count'] +1;
+
+$sql = "UPDATE blog_entry
+SET
+view_count =:view_count,
+updated_at = now()
+WHERE
+client_id = :client_id AND
+blog_entry_code = :blog_entry_code";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":view_count" =>$view_count,
+	":client_id" => $client['id'],
+	":blog_entry_code" => $blog_entry_code
+);
+$stmt->execute($params);
+
+
+
 //カテゴリーを取得
 
 $sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
@@ -393,7 +415,6 @@ $blog_categorys2 = $stmt->fetchAll();
 
 			<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
 
-
 				<div class="sidebar-module">
 					<div class="panel">
 						<div class="panel-body">
@@ -460,7 +481,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 												<?php endif; ?>
 
-												<p>1</p>
+												<p></p>
 											</li>
 											<li class="sidebar-list-right">
 												<div class="sidebar-popular-list-entry-title">

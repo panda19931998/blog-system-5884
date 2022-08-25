@@ -317,6 +317,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 			<div id="main" class="col-md-8 col-sm-8 col-xs-12">
 
+
 				<?php foreach ($blog_entrys_slice as $val): ?>
 					<?php
 					//ブログの登録しているカテゴリーを取得
@@ -420,7 +421,7 @@ $blog_categorys2 = $stmt->fetchAll();
 					</div>
 				</div>
 
-				<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
+				<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog_sidebar">
 
 
 					<div class="sidebar-module">
@@ -490,7 +491,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 													<?php endif; ?>
 
-													<p>1</p>
+													<p></p>
 												</li>
 												<li class="sidebar-list-right">
 													<div class="sidebar-popular-list-entry-title">
