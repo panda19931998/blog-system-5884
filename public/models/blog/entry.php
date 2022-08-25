@@ -12,6 +12,7 @@ $random_blog_categorys = array();
 $blog_categorys_entrys = array();
 $shuffle_blog_categorys = array();
 $blog_category_master = array();
+$blog_category_masters0 = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
@@ -72,6 +73,28 @@ if ($blog_entry['status'] !=1) {
 	$err['status'] = '記事は非公開です';
 }
 
+
+//カウントアップ
+$blog_entry_code =$blog_entry['blog_entry_code'];
+$view_count =$blog_entry['view_count'] +1;
+
+$sql = "UPDATE blog_entry
+SET
+view_count =:view_count,
+updated_at = now()
+WHERE
+client_id = :client_id AND
+blog_entry_code = :blog_entry_code";
+$stmt = $pdo->prepare($sql);
+$params = array(
+	":view_count" =>$view_count,
+	":client_id" => $client['id'],
+	":blog_entry_code" => $blog_entry_code
+);
+$stmt->execute($params);
+
+
+
 //カテゴリーを取得
 
 $sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_entry_id =:blog_entry_id ";
@@ -117,6 +140,8 @@ foreach ($blog_categorys0 as $val){
 
 //カテゴリーが一致する記事を４つ取得
 
+if (!empty($blog_categorys0)){
+
 $sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id = :blog_category_master_id ";
 $stmt = $pdo->prepare($sql);
 $params = array(
@@ -148,7 +173,7 @@ foreach ($random_blog_categorys as $val4){
 
 }
 
-
+}
 
 //カテゴリーにslugが有るかどうか判定
 if(isset($blog_category_master['blog_category_code'])){
@@ -185,7 +210,6 @@ $params = array(
 );
 $stmt->execute($params);
 $blog_categorys2 = $stmt->fetchAll();
-
 
 
 ?>
@@ -299,7 +323,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 				<p class="blog-post-category-area" style="margin-bottom:40px;text-align:center;">
 					<?php if (!isset($err['status'])):?>
-
+						<?php if (isset($blog_category_masters0)):?>
 								<?php foreach ($blog_category_masters0 as $val): ?>
 
 										<?php if (empty($val['blog_category_slug']))  : ?>
@@ -309,7 +333,7 @@ $blog_categorys2 = $stmt->fetchAll();
 										<?php endif; ?>
 
 								<?php endforeach ;?>
-
+						<?php endif ;?>
 
 					<?php endif ;?>
 							</p>
@@ -391,7 +415,6 @@ $blog_categorys2 = $stmt->fetchAll();
 
 			<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
 
-
 				<div class="sidebar-module">
 					<div class="panel">
 						<div class="panel-body">
@@ -419,8 +442,8 @@ $blog_categorys2 = $stmt->fetchAll();
 				<div class="sidebar-module">
 					<div class="panel">
 						<div class="panel-body">
-							<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>" method="GET">
-								<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索">
+							<form action="http://b.blog-system-5884.localhost/<?php echo h($client_code); ?>/" method="GET">
+								<input type="text" class="form-control" name="q" id="q" placeholder="記事を検索" value="<?php if(isset($search_keyword)) echo h($search_keyword); ?>">
 							</form>
 						</div>
 					</div>
@@ -458,7 +481,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 												<?php endif; ?>
 
-												<p>1</p>
+												<p></p>
 											</li>
 											<li class="sidebar-list-right">
 												<div class="sidebar-popular-list-entry-title">

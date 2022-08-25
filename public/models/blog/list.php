@@ -44,6 +44,8 @@ if(!isset($_GET['q'])){
 		$stmt->execute($params);
 		$blog_entrys = $stmt->fetchAll();
 
+		$list_title ="記事一覧";
+
 	}else{
 		//カテゴリーのslugが有るかどうか判定
 		if(endsWith($path_arr[3],'html')||isset($ccode)) {
@@ -66,6 +68,8 @@ if(!isset($_GET['q'])){
 			);
 			$stmt->execute($params);
 			$new_blog_category_master = $stmt->fetch();
+
+			$list_title =$new_blog_category_master['category_name'];
 
 			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id ";
 			$stmt = $pdo->prepare($sql);
@@ -114,6 +118,8 @@ if(!isset($_GET['q'])){
 			$stmt->execute($params);
 			$new_blog_category_master = $stmt->fetch();
 
+			$list_title =$new_blog_category_master['category_name'];
+
 			$sql = "SELECT * FROM blog_category WHERE blog_id = :blog_id AND client_id = :client_id AND blog_category_master_id =:blog_category_master_id ";
 			$stmt = $pdo->prepare($sql);
 			$params = array(
@@ -155,6 +161,8 @@ if(!isset($_GET['q'])){
 }else{
 
 	$search_keyword = $_GET['q'];
+
+	$list_title =$search_keyword;
 
 	$search_value = $search_keyword;
 
@@ -244,7 +252,7 @@ $blog_categorys2 = $stmt->fetchAll();
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title><?php echo h($blog["blog_title"]); ?></title>
+	<title><?php echo h($list_title); ?></title>
 
 	<meta name="description" content="<?php echo h($blog["blog_description"]); ?>">
 	<meta name="keywords" content="<?php echo h($blog["blog_keywords"]); ?>" />
@@ -308,6 +316,7 @@ $blog_categorys2 = $stmt->fetchAll();
 		<div class="row blog-list">
 
 			<div id="main" class="col-md-8 col-sm-8 col-xs-12">
+
 
 				<?php foreach ($blog_entrys_slice as $val): ?>
 					<?php
@@ -412,7 +421,7 @@ $blog_categorys2 = $stmt->fetchAll();
 					</div>
 				</div>
 
-				<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog-sidebar">
+				<div id="sidebar" class="col-md-4 col-sm-4 col-xs-12 blog_sidebar">
 
 
 					<div class="sidebar-module">
@@ -482,7 +491,7 @@ $blog_categorys2 = $stmt->fetchAll();
 
 													<?php endif; ?>
 
-													<p>1</p>
+													<p></p>
 												</li>
 												<li class="sidebar-list-right">
 													<div class="sidebar-popular-list-entry-title">

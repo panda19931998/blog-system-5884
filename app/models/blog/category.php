@@ -18,7 +18,7 @@ if (isset($_GET['search_keyword'])) {
 	$search_value = '';
 }
 
-$sql = "SELECT * FROM blog_category_master where category_name LIKE '%$search_keyword%' order by id and blog_id = :blog_id ";
+$sql = "SELECT * FROM blog_category_master where (category_name LIKE '%$search_keyword%') AND blog_id = :blog_id ORDER BY sort_order";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(array(":blog_id" =>$blog_id ));
 $blog_category_masters = $stmt->fetchAll();

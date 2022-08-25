@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 	<!-- begin wrapper -->
 	<div class="wrapper bg-silver text-right">
-		<a href="https://demo.flu-x.net"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">キャンセル</button></a>
+		<a href="http://blog-system-5884.localhost/blog/setting/"><button type="button" class="btn btn-white p-l-40 p-r-40 m-r-5">キャンセル</button></a>
 		<button type="submit" class="btn btn-primary p-l-40 p-r-40" onclick="mainForm.submit();">登録</button>
 	</div>
 	<!-- end wrapper -->

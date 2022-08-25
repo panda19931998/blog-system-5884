@@ -41,6 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     	//再入力チェック
     	if ($password != $password2) {
 			$err['password'] = 'パスワードが一致しません';
+		}else{
+
+			if (strlen(mb_convert_encoding($password,'SJIS', 'UTF-8'))<7) {
+				$err['password'] ='パスワードは8文字以上で入力してください';
+			}
 		}
     }
 

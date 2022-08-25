@@ -902,7 +902,7 @@ width:100%;/* 任意の横幅 */;
 .blog-list-entry-area {
   background-color: #fff;
   padding: 10px 0 20px 0;
-  margin: 0 0 20px 0;
+  margin: 10px 0 20px 0;
   overflow:hidden;
   clear: both;
 }
@@ -955,7 +955,8 @@ width:100%;/* 任意の横幅 */;
    サイドバー
 ------------------------------------------- */
 .sidebar-module {
-  margin: 0 0 20px 0;
+  margin: 10px 0 20px 0;
+  counter-reset: rank;
 }
 .sidebar-module .panel-heading h2 {
   font-size: 15px;
@@ -1015,7 +1016,7 @@ width:100%;/* 任意の横幅 */;
   position: relative;
 }
 
-.sidebar-list-left p {
+.sidebar-list-left p::before {
   position: absolute;
   color: white;
   top: 0;
@@ -1023,6 +1024,8 @@ width:100%;/* 任意の横幅 */;
   background: #1bb4d3;
   color: #ffffff;
   padding: 1px 6px;
+  counter-increment: rank;
+  content: counter(rank);
 }
 
 .sidebar-list-right {

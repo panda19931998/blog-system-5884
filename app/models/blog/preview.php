@@ -7,6 +7,7 @@ $blog_entry_rankings = array();
 $blog_categorys2 = array();
 $blog_entry = array();
 $client_code = array();
+$blog_category_masters0 = array();
 
 $date = new DateTime();
 $date->setTimeZone(new DateTimeZone('Asia/Tokyo'));
